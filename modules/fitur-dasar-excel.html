@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitur Dasar Microsoft Excel — Belajar Merapikan & Mengolah Data</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2a2e;
+  --paper:#f6f1e6;
+  --paper-2:#efe7d4;
+  --amber:#e2a333;
+  --teal:#2f6f66;
+  --teal-dark:#1e4a44;
+  --coral:#dc5b41;
+  --line: rgba(28,42,46,0.16);
+  --card: #fffdf8;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Work Sans',sans-serif;
+  line-height:1.55;
+  background-image:
+    radial-gradient(circle, rgba(28,42,46,0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+h1,h2,h3,h4{font-family:'Fraunces',serif; margin:0 0 .4em 0; line-height:1.08; color:var(--teal-dark);}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:.72rem;
+  color:var(--coral);
+  font-weight:600;
+  display:inline-block;
+  margin-bottom:.6em;
+}
+p{margin:0 0 1em 0;}
+a{color:var(--teal-dark);}
+code{background:var(--paper-2);padding:1px 6px;border-radius:5px;font-family:'IBM Plex Mono',monospace;font-size:.88em;}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+section{padding:64px 0;border-bottom:1px dashed var(--line);}
+section:last-of-type{border-bottom:none;}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(246,241,230,0.92);
+  backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line);
+}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;max-width:1080px;flex-wrap:wrap;gap:8px;}
+.brand{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.85rem;letter-spacing:.04em;display:flex;align-items:center;gap:8px;}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--coral);display:inline-block;}
+.navlinks{display:flex;gap:14px;flex-wrap:wrap;}
+.navlinks a{font-size:.78rem;text-decoration:none;color:var(--ink);opacity:.75;font-weight:500;}
+.navlinks a:hover{opacity:1;color:var(--coral);}
+@media(max-width:900px){.navlinks{display:none;}}
+
+/* HERO */
+.hero{padding:60px 0 46px;}
+.hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center;}
+@media(max-width:800px){.hero-grid{grid-template-columns:1fr;}}
+.hero h1{font-size:clamp(2rem,4.6vw,3rem);}
+.hero .lede{font-size:1.06rem;max-width:56ch;color:#33474a;}
+.callback{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-left:4px solid var(--coral);
+  border-radius:6px;
+  padding:16px 18px;
+  font-size:.92rem;
+  margin-top:20px;
+}
+.callback b{color:var(--coral);}
+.hero-visual{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;}
+.pipeline-mini{display:flex;flex-direction:column;gap:9px;}
+.pmini{display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.75rem;}
+.pmini .n{width:24px;height:24px;border-radius:50%;background:var(--paper-2);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--teal-dark);flex-shrink:0;font-size:.7rem;}
+.pmini.active .n{background:var(--amber);color:#221805;}
+
+/* SECTION HEADERS */
+.shead{max-width:680px;margin-bottom:32px;}
+.shead h2{font-size:clamp(1.5rem,3.1vw,2.1rem);}
+
+/* CATEGORY LEGEND CARDS */
+.src-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:10px;}
+.src-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;}
+.src-card .ico{font-size:1.4rem;}
+.src-card h4{font-size:1rem;margin:8px 0 4px;color:var(--ink);}
+.src-card p{font-size:.87rem;color:#4a4238;margin:0;}
+a.src-card{text-decoration:none;display:block;transition:transform .15s, box-shadow .15s;}
+a.src-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(28,42,46,0.1);}
+
+/* FITUR CARDS */
+.fitur-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:6px;}
+.fitur-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;}
+.fitur-card .tag{font-family:'IBM Plex Mono',monospace;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--coral);display:block;margin-bottom:6px;}
+.fitur-card h4{font-size:1.06rem;margin:0 0 8px;display:flex;align-items:center;gap:8px;}
+.fitur-card h4 .fico{font-size:1.15rem;}
+.fitur-card p.apagunanya{font-size:.89rem;color:#33474a;margin-bottom:10px;}
+.fitur-card ol{margin:0 0 12px 20px;padding:0;font-size:.86rem;color:#3a3327;}
+.fitur-card ol li{margin-bottom:4px;}
+.fitur-card .tips{background:var(--paper-2);border-radius:8px;padding:8px 12px;font-size:.79rem;color:#4a4238;}
+.fitur-card .tips b{color:var(--coral);}
+
+/* BUTTONS */
+.btn{
+  font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:.02em;font-size:.85rem;
+  background:var(--teal-dark);color:#fff;border:none;border-radius:8px;padding:11px 22px;cursor:pointer;
+}
+.btn:hover{background:var(--coral);}
+.btn.ghost{background:transparent;color:var(--teal-dark);border:1.5px solid var(--teal-dark);}
+.btn.ghost:hover{background:var(--teal-dark);color:#fff;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+
+/* GAME PANEL */
+.game-panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px;}
+.idform{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+@media(max-width:600px){.idform{grid-template-columns:1fr;}}
+.mode-toggle{display:flex;gap:10px;margin-bottom:20px;}
+.pill-btn{
+  border:1.5px solid var(--line);background:#fff;border-radius:20px;padding:9px 20px;font-family:'Work Sans',sans-serif;
+  font-size:.85rem;cursor:pointer;font-weight:600;transition:.15s;
+}
+.mode-btn.active{background:var(--teal);border-color:var(--teal);color:#fff;}
+.field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;color:#5b5344;}
+.field input{
+  width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:'Work Sans',sans-serif;
+  font-size:.95rem;background:#fff;
+}
+.field input:focus{outline:2px solid var(--amber);border-color:var(--amber);}
+.hidden{display:none !important;}
+
+.rules-box{background:#fbf3e2;border:1px solid #e9cf95;border-radius:10px;padding:16px 18px;font-size:.87rem;margin-bottom:22px;}
+.rules-box h4{margin:0 0 8px;font-size:.9rem;color:#7a6a3a;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;}
+.rules-box ul{margin:0;padding-left:18px;}
+.rules-box li{margin-bottom:4px;}
+
+.game-hud{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
+.hud-cat{font-weight:600;font-size:.92rem;font-family:'IBM Plex Mono',monospace;color:var(--teal-dark);}
+.hud-right{display:flex;align-items:center;gap:14px;}
+.hearts{font-size:1.05rem;letter-spacing:2px;}
+.score-pill{font-family:'IBM Plex Mono',monospace;font-size:.85rem;background:var(--paper-2);padding:6px 14px;border-radius:20px;white-space:nowrap;}
+
+.q-progress-wrap{background:var(--paper-2);border-radius:20px;height:8px;overflow:hidden;margin-bottom:20px;}
+.q-progress-bar{background:var(--amber);height:100%;width:0%;transition:width .3s;}
+
+.q-card{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:26px 24px;}
+.q-card .qcat{font-family:'IBM Plex Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--coral);display:block;margin-bottom:10px;}
+.q-card .qtext{font-size:1.08rem;color:var(--ink);margin-bottom:20px;font-weight:600;line-height:1.45;}
+.q-options{display:grid;gap:10px;}
+.q-opt{
+  text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:13px 16px;
+  font-family:'Work Sans',sans-serif;font-size:.92rem;cursor:pointer;transition:.15s;color:var(--ink);
+}
+.q-opt:hover:not(:disabled){border-color:var(--teal);background:#f4faf8;}
+.q-opt.correct{border-color:var(--teal);background:#e5f3ee;color:var(--teal-dark);font-weight:600;}
+.q-opt.wrong{border-color:var(--coral);background:#fdece6;color:var(--coral);font-weight:600;}
+.q-opt:disabled{cursor:default;}
+.q-feedback{margin-top:16px;padding:14px 16px;border-radius:10px;font-size:.87rem;display:none;}
+.q-feedback.show{display:block;}
+.q-feedback.ok{background:#e5f3ee;color:var(--teal-dark);}
+.q-feedback.bad{background:#fdece6;color:var(--coral);}
+.q-nextrow{margin-top:18px;text-align:right;}
+
+.result-box{display:none;background:var(--teal-dark);color:#fff;border-radius:14px;padding:32px 28px;text-align:center;margin-top:22px;}
+.result-box .big{font-family:'Fraunces',serif;font-size:2.4rem;color:var(--amber);}
+.result-box p{color:#e5ede7;}
+.result-actions{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:20px;}
+.btn-send{
+  font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:.02em;font-size:1rem;
+  background:var(--amber);color:#221805;border:none;border-radius:12px;padding:17px 38px;cursor:pointer;
+  box-shadow:0 6px 0 #a9761e, 0 14px 26px rgba(0,0,0,0.28);
+  transform:translateY(0);
+  transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+.btn-send:hover:not(:disabled){ transform:translateY(-3px); box-shadow:0 9px 0 #a9761e, 0 18px 30px rgba(0,0,0,0.32); }
+.btn-send:active:not(:disabled){ transform:translateY(3px); box-shadow:0 3px 0 #a9761e, 0 8px 16px rgba(0,0,0,0.25); }
+.btn-send:disabled{ opacity:.5; box-shadow:none; transform:none; cursor:not-allowed; }
+.btn-playagain{
+  background:transparent;border:none;color:#cfe3dd;text-decoration:underline;
+  font-family:'Work Sans',sans-serif;font-size:.85rem;cursor:pointer;padding:4px;
+}
+.btn-playagain:hover{ color:#fff; }
+.sendnote{font-size:.8rem;color:var(--amber);margin-top:10px;min-height:1.2em;}
+
+footer{padding:30px 0;text-align:center;font-size:.8rem;color:#7c7461;}
+
+.reveal{opacity:1;transform:none;}
+.reveal.in{opacity:1;transform:none;}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  .reveal{transition:none;opacity:1;transform:none;}
+}
+
+/* Loading indicator shown while guard.js checks visibility status */
+#guard-loading{
+  position:fixed;inset:0;background:#f6f1e6;z-index:999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  font-family:'IBM Plex Mono',monospace;color:#5b5344;font-size:.85rem;
+}
+#guard-loading .spin{
+  width:34px;height:34px;border-radius:50%;
+  border:3px solid rgba(28,42,46,0.15);border-top-color:#dc5b41;
+  animation:guardspin .8s linear infinite;
+}
+@keyframes guardspin{to{transform:rotate(360deg);}}
+
+/* ================= ILUSTRASI MINI-EXCEL ================= */
+.xl-mock{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 10px 26px rgba(28,42,46,0.1);}
+.xl-mock-bar{background:#e9e2d0;padding:8px 12px;display:flex;align-items:center;gap:6px;}
+.xl-dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+.xl-dot.r{background:#e2685b;}
+.xl-dot.y{background:#e2b33f;}
+.xl-dot.g{background:#59b37a;}
+.xl-mock-title{margin-left:8px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:#6b6350;}
+.xl-mock-ribbon{background:var(--teal-dark);display:flex;gap:2px;padding:0 8px;}
+.xl-mock-ribbon .rb{color:#dff2ec;font-size:.65rem;padding:6px 10px;font-family:'Work Sans',sans-serif;}
+.xl-mock-ribbon .rb.active{background:#fff;color:var(--teal-dark);border-radius:4px 4px 0 0;font-weight:600;}
+.xl-mock-formula{display:flex;align-items:center;gap:8px;background:#faf7ef;border-bottom:1px solid var(--line);padding:5px 10px;}
+.fx-cell{font-family:'IBM Plex Mono',monospace;font-size:.65rem;background:#fff;border:1px solid var(--line);border-radius:3px;padding:2px 8px;color:#5b5344;}
+.fx-bar{flex:1;height:14px;border-bottom:1px solid var(--line);}
+.xl-mock-grid{position:relative;display:grid;grid-template-columns:28px repeat(4,84px);font-family:'IBM Plex Mono',monospace;font-size:.68rem;}
+.xc{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px 6px;color:#3a3327;background:#fff;display:flex;align-items:center;height:16px;}
+.xc.corner,.xc.colhead,.xc.rownum{background:var(--paper-2);font-weight:600;justify-content:center;color:#5b5344;}
+.xc.dataheader{background:#dfeee9;font-weight:600;color:var(--teal-dark);}
+.xl-cursor{position:absolute;width:80px;height:24px;border:2px solid var(--coral);border-radius:2px;pointer-events:none;animation:moveCursor 6s ease-in-out infinite;}
+@keyframes moveCursor{
+  0%,16%{transform:translate(114px,54px);}
+  25%,41%{transform:translate(198px,54px);}
+  50%,66%{transform:translate(198px,80px);}
+  75%,91%{transform:translate(114px,80px);}
+  100%{transform:translate(114px,54px);}
+}
+@media (prefers-reduced-motion: reduce){.xl-cursor{animation:none;}}
+
+.mini-illus{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;margin:14px 0;}
+
+/* Freeze Panes */
+.freeze-row{background:#efe0b8;color:#7a6a3a;padding:7px 10px;font-weight:600;border-bottom:2px solid var(--amber);font-family:'IBM Plex Mono',monospace;font-size:.72rem;}
+.freeze-scroll{height:78px;overflow:hidden;position:relative;}
+.freeze-track{animation:scrollUp 6s linear infinite;}
+.frow{padding:7px 10px;border-bottom:1px solid var(--line);display:flex;gap:8px;color:#3a3327;font-family:'IBM Plex Mono',monospace;font-size:.72rem;}
+.fcol{color:var(--amber);}
+@keyframes scrollUp{0%{transform:translateY(0);}100%{transform:translateY(-50%);}}
+@media (prefers-reduced-motion: reduce){.freeze-track{animation:none;}}
+
+/* Merge */
+.merge-before,.merge-after{display:flex;gap:4px;padding:10px;}
+.mcell{flex:1;background:#fff;border:1px solid var(--line);border-radius:4px;padding:8px 6px;font-size:.68rem;text-align:center;color:#3a3327;font-family:'IBM Plex Mono',monospace;}
+.mcell.wide{flex:3;background:#dfeee9;color:var(--teal-dark);font-weight:600;}
+.merge-arrow{text-align:center;font-size:.7rem;color:var(--coral);font-family:'IBM Plex Mono',monospace;padding:0 0 8px;}
+
+/* Hide & Unhide */
+.hide-row{display:flex;border-top:1px solid var(--line);}
+.hcell{flex:1;background:#fff;padding:10px 0;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:.72rem;border-right:1px solid var(--line);color:#3a3327;}
+.hcell.shrink{animation:shrinkCol 4.5s ease-in-out infinite;background:var(--paper-2);}
+@keyframes shrinkCol{0%,14%{flex:1;opacity:1;}36%,78%{flex:0.001;opacity:0;padding:10px 0;}96%,100%{flex:1;opacity:1;}}
+@media (prefers-reduced-motion: reduce){.hcell.shrink{animation:none;}}
+.hide-caption{font-size:.72rem;color:#5b5344;font-style:italic;padding:8px 10px;background:var(--paper-2);}
+
+/* Flash Fill */
+.ff-row{display:flex;gap:8px;padding:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:.72rem;}
+.ffcell{flex:1;background:#fff;border:1px solid var(--line);border-radius:4px;padding:6px 8px;color:#3a3327;}
+.ffresult{background:#dfeee9;color:var(--teal-dark);font-weight:600;display:flex;align-items:center;}
+.ffresult.ghost{opacity:.45;background:#fff;}
+.ff-cursor{animation:blinkCursor 1s step-end infinite;margin-left:2px;}
+@keyframes blinkCursor{50%{opacity:0;}}
+@media (prefers-reduced-motion: reduce){.ff-cursor{animation:none;}}
+
+/* Sort */
+.sort-illus{display:flex;align-items:center;gap:10px;padding:12px 10px;}
+.sort-col{flex:1;}
+.sort-label{font-family:'IBM Plex Mono',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;color:#8a8270;margin-bottom:6px;}
+.srow{background:#fff;border:1px solid var(--line);border-radius:4px;padding:6px 8px;margin-bottom:4px;font-size:.74rem;color:#3a3327;font-family:'IBM Plex Mono',monospace;}
+.srow.ok{background:#e5f3ee;border-color:var(--teal);color:var(--teal-dark);}
+.sort-arrow{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--coral);white-space:nowrap;}
+
+/* Conditional Formatting demo */
+.cf-illus{display:flex;gap:6px;padding:12px 10px;}
+.cf-cell{flex:1;text-align:center;padding:9px 4px;border:1px solid var(--line);border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:.72rem;background:#fff;color:#3a3327;}
+.cf-cell.dup{background:#fdece6;color:var(--coral);font-weight:700;animation:pulseCf 1.8s ease-in-out infinite;}
+@keyframes pulseCf{0%,100%{box-shadow:0 0 0 0 rgba(220,91,65,0);}50%{box-shadow:0 0 0 4px rgba(220,91,65,.18);}}
+@media (prefers-reduced-motion: reduce){.cf-cell.dup{animation:none;}}
+</style>
+</head>
+<body>
+
+<div id="guard-loading">
+  <div class="spin"></div>
+  <div>Memuat materi…</div>
+</div>
+
+<div id="konten-utama" style="visibility:hidden">
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> FITUR DASAR EXCEL</div>
+    <div class="navlinks">
+      <a href="../index.html" style="opacity:.55;">← Portal</a>
+      <a href="#merapikan">Merapikan</a>
+      <a href="#menyunting">Menyunting</a>
+      <a href="#format">Format</a>
+      <a href="#urutfilter">Urut &amp; Saring</a>
+      <a href="#cf">Conditional Format</a>
+      <a href="#main">Main &amp; Kuis</a>
+      <a href="#sumber">Sumber</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">LKPD Informatika · Fitur Dasar Microsoft Excel</span>
+      <h1>Merapikan &amp; Mengolah Data dengan Fitur Dasar Excel</h1>
+      <p class="lede">Data mentah umumnya masih berantakan: ada baris kosong, penulisan yang tidak konsisten, dan angka yang belum berformat rapi. Sebelum menyusun rumus yang lebih kompleks, kalian perlu menguasai terlebih dahulu <b>18 fitur dasar</b> berikut — mulai dari merapikan tabel, menyunting data dengan cepat, memformat angka &amp; tanggal, mengurutkan &amp; menyaring, hingga menyorot data secara otomatis dengan Conditional Formatting.</p>
+      <div class="callback">
+        📋 <b>Mengapa ini penting?</b> Fitur-fitur inilah yang paling sering digunakan dalam pekerjaan kantor sehari-hari — jauh sebelum menyentuh rumus yang rumit. Apabila tabel sudah rapi sejak awal, rumus dan analisis yang dibangun di atasnya akan jauh lebih mudah disusun dan lebih jarang menimbulkan galat (error).
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="xl-mock reveal">
+        <div class="xl-mock-bar">
+          <span class="xl-dot r"></span><span class="xl-dot y"></span><span class="xl-dot g"></span>
+          <span class="xl-mock-title">Data Karyawan.xlsx — Excel</span>
+        </div>
+        <div class="xl-mock-ribbon">
+          <span class="rb active">Beranda</span><span class="rb">Sisipkan</span><span class="rb">Tata Letak</span><span class="rb">Data</span><span class="rb">Tinjau</span>
+        </div>
+        <div class="xl-mock-formula">
+          <span class="fx-cell">C3</span><span class="fx-bar"></span>
+        </div>
+        <div class="xl-mock-grid">
+          <div class="xc corner"></div>
+          <div class="xc colhead">A</div>
+          <div class="xc colhead">B</div>
+          <div class="xc colhead">C</div>
+          <div class="xc colhead">D</div>
+
+          <div class="xc rownum">1</div>
+          <div class="xc dataheader">Nama</div>
+          <div class="xc dataheader">Departemen</div>
+          <div class="xc dataheader">Gaji</div>
+          <div class="xc dataheader">Status</div>
+
+          <div class="xc rownum">2</div>
+          <div class="xc">Ana</div>
+          <div class="xc">IT</div>
+          <div class="xc">Rp 6,2jt</div>
+          <div class="xc">Aktif</div>
+
+          <div class="xc rownum">3</div>
+          <div class="xc">Budi</div>
+          <div class="xc">Sales</div>
+          <div class="xc">Rp 5,8jt</div>
+          <div class="xc">Aktif</div>
+
+          <div class="xl-cursor" aria-hidden="true"></div>
+        </div>
+      </div>
+      <span class="eyebrow" style="margin:16px 0 14px;display:block;">5 kelompok fitur</span>
+      <div class="pipeline-mini">
+        <div class="pmini active"><span class="n">1</span> Merapikan &amp; Menyusun Data</div>
+        <div class="pmini"><span class="n">2</span> Menyunting &amp; Menyalin Cepat</div>
+        <div class="pmini"><span class="n">3</span> Format Angka &amp; Tanggal</div>
+        <div class="pmini"><span class="n">4</span> Mengurutkan &amp; Menyaring</div>
+        <div class="pmini"><span class="n">5</span> Conditional Formatting</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= 1. MERAPIKAN & MENYUSUN DATA ================= -->
+<section id="merapikan">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">01 · Merapikan &amp; Menyusun Data</span>
+      <h2>Rapikan tabel terlebih dahulu sebelum diproses lebih lanjut</h2>
+      <p>Enam fitur ini merupakan langkah penataan paling dasar: membuang data yang kosong, merapikan ukuran sel, menyatukan sel untuk judul, mengunci tampilan header saat digulir (scroll), dan menyembunyikan bagian yang tidak perlu ditampilkan.</p>
+    </div>
+    <div class="fitur-grid reveal">
+
+      <div class="fitur-card">
+        <span class="tag">Tambahan</span>
+        <h4><span class="fico">🧹</span> Menghapus Baris Kosong</h4>
+        <p class="apagunanya">Data yang berlubang di bagian tengah dapat menyebabkan rumus dan filter menjadi tidak akurat. Baris kosong perlu dihapus terlebih dahulu sebelum data diolah lebih lanjut.</p>
+        <ol>
+          <li>Blok seluruh data (termasuk baris-baris kosongnya).</li>
+          <li>Buka <code>Home &gt; Find &amp; Select &gt; Go To Special</code> (atau tekan <code>Ctrl+G</code> lalu klik Special).</li>
+          <li>Pilih <b>Blanks</b>, klik OK — seluruh sel kosong akan langsung terseleksi.</li>
+          <li>Klik kanan salah satu sel terseleksi &gt; <b>Delete &gt; Entire Row</b>.</li>
+        </ol>
+        <div class="tips"><b>Perlu diperhatikan:</b> jangan gunakan tombol Delete biasa — perintah itu hanya mengosongkan isi sel, bukan menghapus barisnya.</div>
+      </div>
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">📐</span> Membuat Format Tabel</h4>
+        <p class="apagunanya">Data biasa hanyalah kumpulan sel. Jika diubah menjadi Tabel resmi, Excel akan otomatis merapikan header, menyediakan filter, dan memperluas rentang datanya sendiri setiap kali baris baru ditambahkan.</p>
+        <ol>
+          <li>Klik salah satu sel di dalam data.</li>
+          <li>Tekan <code>Ctrl+T</code> (atau <code>Insert &gt; Table</code>).</li>
+          <li>Pastikan kotak "My table has headers" tercentang.</li>
+          <li>Klik OK.</li>
+        </ol>
+        <div class="tips"><b>Tips:</b> nama tabel dapat diganti melalui tab <i>Table Design</i> agar lebih mudah dipanggil dalam rumus.</div>
+      </div>
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">📏</span> Format Tinggi &amp; Lebar Sel</h4>
+        <p class="apagunanya">Kolom yang terlalu sempit menyebabkan isi terpotong atau muncul tanda <code>#####</code>; baris header yang terlalu rapat juga membuat tabel lebih sulit dibaca.</p>
+        <ol>
+          <li>Blok seluruh kolom yang ingin dirapikan.</li>
+          <li><code>Home &gt; Format &gt; AutoFit Column Width</code>.</li>
+          <li>Blok baris header, lalu <code>Home &gt; Format &gt; Row Height</code>, isi angka yang diinginkan (misalnya 22).</li>
+        </ol>
+        <div class="tips"><b>Tips:</b> mengklik dua kali garis batas antar-kolom di header juga langsung menerapkan AutoFit.</div>
+      </div>
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">🔗</span> Penggunaan Merge (Merge Cells)</h4>
+        <p class="apagunanya">Menggabungkan beberapa sel yang bersebelahan menjadi satu sel yang lebih besar — cocok digunakan untuk judul laporan yang melebar di atas banyak kolom.</p>
+        <div class="mini-illus">
+          <div class="merge-before">
+            <span class="mcell">Sel 1</span><span class="mcell">Sel 2</span><span class="mcell">Sel 3</span>
+          </div>
+          <div class="merge-arrow">↓ Merge &amp; Center</div>
+          <div class="merge-after"><span class="mcell wide">LAPORAN DATA KARYAWAN</span></div>
+        </div>
+        <ol>
+          <li>Blok sel-sel bersebelahan yang ingin digabung.</li>
+          <li><code>Home &gt; Merge &amp; Center</code>.</li>
+          <li>Ketik judulnya pada sel gabungan tersebut.</li>
+        </ol>
+        <div class="tips"><b>Perlu diperhatikan:</b> hanya isi sel paling kiri-atas yang akan disimpan; isi sel lain yang ikut digabung akan otomatis terhapus, jadi pindahkan dahulu datanya apabila masih diperlukan.</div>
+      </div>
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">🧊</span> Penggunaan Freeze Panes</h4>
+        <p class="apagunanya">Agar baris header dan/atau kolom pertama tetap terlihat meskipun tabel digulir jauh ke bawah atau ke kanan.</p>
+        <div class="mini-illus">
+          <div class="freeze-row">📌 Baris 1 (Header) — dibekukan</div>
+          <div class="freeze-scroll">
+            <div class="freeze-track">
+              <div class="frow"><span class="fcol">📌</span> 1. Ana — IT</div>
+              <div class="frow"><span class="fcol">📌</span> 2. Budi — Sales</div>
+              <div class="frow"><span class="fcol">📌</span> 3. Citra — Finance</div>
+              <div class="frow"><span class="fcol">📌</span> 4. Dewi — Marketing</div>
+              <div class="frow"><span class="fcol">📌</span> 1. Ana — IT</div>
+              <div class="frow"><span class="fcol">📌</span> 2. Budi — Sales</div>
+              <div class="frow"><span class="fcol">📌</span> 3. Citra — Finance</div>
+              <div class="frow"><span class="fcol">📌</span> 4. Dewi — Marketing</div>
+            </div>
+          </div>
+        </div>
+        <p class="apagunanya">Menu <code>View &gt; Freeze Panes</code> memiliki tiga pilihan, tergantung bagian mana yang ingin dikunci:</p>
+        <ol>
+          <li><b>Freeze Panes</b> — membekukan baris <i>dan</i> kolom sekaligus, sesuai posisi sel yang sedang dipilih. Contoh: klik sel B2 terlebih dahulu, lalu pilih menu ini, agar baris 1 dan kolom A sama-sama terkunci.</li>
+          <li><b>Freeze Top Row</b> — langsung membekukan baris 1 saja, tanpa perlu memilih sel terlebih dahulu.</li>
+          <li><b>Freeze First Column</b> — langsung membekukan kolom A saja, tanpa perlu memilih sel terlebih dahulu.</li>
+        </ol>
+        <div class="tips"><b>Melepas kembali:</b> pilih <code>View &gt; Freeze Panes &gt; Unfreeze Panes</code> untuk mengembalikan tampilan seperti semula.</div>
+      </div>
+
+      <div class="fitur-card">
+        <span class="tag">Tambahan</span>
+        <h4><span class="fico">🙈</span> Hide &amp; Unhide (Baris &amp; Kolom)</h4>
+        <p class="apagunanya">Menyembunyikan kolom atau baris yang datanya sudah terwakili oleh kolom lain, atau memang tidak perlu ditampilkan, tanpa perlu menghapusnya secara permanen.</p>
+        <div class="mini-illus">
+          <div class="hide-row">
+            <span class="hcell">A</span><span class="hcell">B</span><span class="hcell shrink">C</span><span class="hcell">D</span>
+          </div>
+          <div class="hide-caption">Kolom C disembunyikan — perhatikan garis ganda yang muncul di antara kolom B dan D.</div>
+        </div>
+        <ol>
+          <li>Blok kolom atau baris yang ingin disembunyikan (tahan <code>Ctrl</code> untuk memilih beberapa yang tidak berdekatan).</li>
+          <li>Klik kanan &gt; <b>Hide</b>.</li>
+          <li>Untuk menampilkan kembali: blok kolom/baris di sisi kiri dan kanannya, klik kanan &gt; <b>Unhide</b>.</li>
+        </ol>
+        <div class="tips"><b>Tanda pengenal:</b> garis ganda di antara dua header kolom atau baris menandakan ada bagian yang sedang disembunyikan di situ.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2. MENYUNTING & MENYALIN CEPAT ================= -->
+<section id="menyunting">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">02 · Menyunting &amp; Menyalin Cepat</span>
+      <h2>Bekerja cepat tanpa perlu mengetik ulang</h2>
+      <p>Excel dapat "menebak" pola data, mencari dan mengganti data secara massal, menyalin tampilan sel, serta mengubah hasil rumus menjadi angka tetap. Empat fitur ini paling banyak menghemat waktu dalam pekerjaan sehari-hari.</p>
+    </div>
+    <div class="fitur-grid reveal">
+
+      <div class="fitur-card">
+        <span class="tag">Tambahan</span>
+        <h4><span class="fico">⚡</span> Flash Fill</h4>
+        <p class="apagunanya">Excel menebak pola dari satu atau dua contoh yang diketik, lalu otomatis melengkapi sisanya — cocok digunakan untuk memisahkan atau menggabungkan teks tanpa rumus.</p>
+        <div class="mini-illus">
+          <div class="ff-row"><span class="ffcell">Budi Santoso</span><span class="ffresult">BS<span class="ff-cursor">|</span></span></div>
+          <div class="ff-row"><span class="ffcell">Ani Wijaya</span><span class="ffresult ghost">AW</span></div>
+          <div class="ff-row"><span class="ffcell">Citra Dewi</span><span class="ffresult ghost">CD</span></div>
+        </div>
+        <ol>
+          <li>Pada kolom kosong di sebelah data sumber, ketik hasil yang diinginkan untuk baris pertama (misalnya "Budi Santoso" → "BS").</li>
+          <li>Mulai mengetik untuk baris kedua — Excel biasanya akan langsung menampilkan pratinjau otomatis.</li>
+          <li>Tekan <code>Enter</code> untuk menerima, atau tekan <code>Ctrl+E</code> kapan saja untuk menjalankan Flash Fill secara manual.</li>
+        </ol>
+        <div class="tips"><b>Tips:</b> Flash Fill akan lebih akurat apabila pola datanya konsisten di semua baris.</div>
+      </div>
+
+      <div class="fitur-card">
+        <span class="tag">Tambahan</span>
+        <h4><span class="fico">🔍</span> Find &amp; Replace</h4>
+        <p class="apagunanya">Menyeragamkan atau memperbaiki banyak data sekaligus, tanpa perlu mengetik ulang satu per satu.</p>
+        <ol>
+          <li>Blok area yang ingin dicari (atau biarkan tanpa blok untuk mencari di seluruh sheet).</li>
+          <li>Tekan <code>Ctrl+H</code> untuk membuka <i>Find and Replace</i>.</li>
+          <li>Isi kata yang dicari pada "Find what" dan penggantinya pada "Replace with".</li>
+          <li>Klik <b>Replace All</b>.</li>
+        </ol>
+        <div class="tips"><b>Tips:</b> tekan <code>Ctrl+F</code> apabila hanya ingin mencari tanpa mengganti.</div>
+      </div>
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">🖌️</span> Format Painter</h4>
+        <p class="apagunanya">Menyalin tampilan (warna, ketebalan huruf, border, dan sebagainya) dari satu sel ke sel lain tanpa perlu mengatur ulang dari awal.</p>
+        <ol>
+          <li>Klik sel yang formatnya ingin disalin.</li>
+          <li>Klik ikon Format Painter (kuas) pada tab Home.</li>
+          <li>Klik atau seret kursor ke sel tujuan.</li>
+        </ol>
+        <div class="tips"><b>Tips:</b> klik dua kali pada ikon Format Painter agar kuasnya tetap aktif dan bisa dipakai berulang kali; tekan <code>Esc</code> untuk menonaktifkannya.</div>
+      </div>
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">📋</span> Penggunaan Paste Value (Paste Special)</h4>
+        <p class="apagunanya">Mengubah hasil rumus menjadi angka atau teks biasa yang nilainya tidak berubah lagi walaupun data sumbernya diedit atau dihapus.</p>
+        <ol>
+          <li>Blok sel yang berisi rumus, tekan <code>Ctrl+C</code>.</li>
+          <li>Klik kanan pada sel tujuan (boleh di tempat yang sama), pilih <b>Paste Special</b>.</li>
+          <li>Pilih <b>Values Only</b>, lalu klik OK.</li>
+        </ol>
+        <div class="tips"><b>Sebagai tambahan:</b> Paste Special juga memiliki opsi lain, misalnya <i>Formats</i> saja atau <i>Transpose</i> (memutar baris menjadi kolom).</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3. FORMAT ANGKA & TANGGAL ================= -->
+<section id="format">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">03 · Format Angka &amp; Tanggal</span>
+      <h2>Angka dan tanggal yang lebih mudah dibaca</h2>
+      <p>Mengubah format tampilan tidak mengubah nilai aslinya di dalam sel — hanya cara Excel menampilkannya kepada kita.</p>
+    </div>
+    <div class="fitur-grid reveal">
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">💰</span> Currency / Accounting Format (Rp)</h4>
+        <p class="apagunanya">Menampilkan angka sebagai nilai uang yang mudah dibaca, lengkap dengan simbol mata uang.</p>
+        <ol>
+          <li>Blok sel/kolom angka yang ingin diformat.</li>
+          <li>Tekan <code>Ctrl+1</code> untuk membuka Format Cells.</li>
+          <li>Pilih kategori <b>Accounting</b> (atau Currency), pilih simbol <b>Rp</b>, atur jumlah desimal.</li>
+          <li>Klik OK.</li>
+        </ol>
+        <div class="tips"><b>Perbedaan tipis:</b> Accounting menempatkan simbol mata uang rata di sisi kiri sel, sedangkan Currency menempelkan simbolnya persis di depan angka.</div>
+      </div>
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">📅</span> Penggunaan Date (Format Tanggal)</h4>
+        <p class="apagunanya">Tanggal dapat ditampilkan dalam berbagai gaya tanpa mengubah nilai aslinya — cukup mengganti tampilannya saja.</p>
+        <ol>
+          <li>Blok kolom tanggal.</li>
+          <li>Tekan <code>Ctrl+1</code>, pilih kategori <b>Date</b>, atau pilih <b>Custom</b> apabila ingin membuat format sendiri.</li>
+          <li>Untuk format custom, ketik kode seperti <code>dd mmmm yyyy</code> agar hasilnya menjadi "17 Agustus 1995".</li>
+          <li>Klik OK.</li>
+        </ol>
+        <div class="tips"><b>Tips:</b> karena nilai aslinya tidak berubah, perhitungan tanggal (misalnya dengan DATEDIF) tetap akurat meskipun tampilannya diganti-ganti.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4. MENGURUTKAN & MENYARING ================= -->
+<section id="urutfilter">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">04 · Mengurutkan &amp; Menyaring</span>
+      <h2>Susun secara rapi, tampilkan yang diperlukan saja</h2>
+      <p>Data dalam jumlah besar akan lebih mudah dianalisis apabila dapat diurutkan sesuai kebutuhan, dan disaring agar hanya menampilkan baris yang relevan.</p>
+    </div>
+    <div class="fitur-grid reveal">
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">🔤</span> Penggunaan Sort</h4>
+        <p class="apagunanya">Menyusun ulang data agar lebih mudah dibaca atau dianalisis, misalnya mengurutkan nama dari A ke Z.</p>
+        <div class="mini-illus">
+          <div class="sort-illus">
+            <div class="sort-col">
+              <div class="sort-label">Sebelum</div>
+              <div class="srow">Citra</div><div class="srow">Ana</div><div class="srow">Budi</div>
+            </div>
+            <div class="sort-arrow">A→Z<br>➡</div>
+            <div class="sort-col">
+              <div class="sort-label">Sesudah</div>
+              <div class="srow ok">Ana</div><div class="srow ok">Budi</div><div class="srow ok">Citra</div>
+            </div>
+          </div>
+        </div>
+        <ol>
+          <li>Klik salah satu sel pada kolom yang ingin diurutkan (tidak perlu memblok seluruh data — Excel otomatis mendeteksi batas datanya sendiri).</li>
+          <li>Tombol Sort dapat diakses dari dua tempat: tab <b>Home &gt; Sort &amp; Filter &gt; Sort A to Z</b>, atau tab <b>Data &gt; A→Z</b>. Keduanya menghasilkan hasil yang sama.</li>
+        </ol>
+        <div class="tips"><b>Perlu diperhatikan:</b> jika hanya satu kolom yang diblok (bukan satu sel saja) lalu diurutkan, Excel akan menampilkan kotak peringatan "Sort Warning". Pilih <b>Expand the selection</b> agar kolom-kolom lain ikut menyesuaikan urutannya — jika tidak, data pada baris yang sama bisa jadi tidak sinkron satu sama lain.</div>
+      </div>
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">🎛️</span> Penggunaan Custom Sort</h4>
+        <p class="apagunanya">Terkadang urutan yang diinginkan bukan abjad biasa — misalnya "Manajemen" harus berada di atas "IT", bukan berdasarkan urutan huruf. Custom Sort digunakan untuk kebutuhan seperti ini.</p>
+        <ol>
+          <li>Klik salah satu sel di dalam data (tidak wajib memblok semuanya, karena Excel akan otomatis mendeteksi seluruh rentang datanya).</li>
+          <li>Buka menu Sort melalui <b>Data &gt; Sort</b>, atau <b>Home &gt; Sort &amp; Filter &gt; Custom Sort</b>.</li>
+          <li>Pilih kolom yang ingin diurutkan, pada kotak Order pilih <b>Custom List</b>.</li>
+          <li>Ketik urutan yang diinginkan (satu per baris), klik Add lalu OK.</li>
+          <li>Tambahkan <b>Add Level</b> untuk urutan kedua (misalnya Nama A-Z) apabila diperlukan.</li>
+        </ol>
+        <div class="tips"><b>Tips:</b> Custom List yang pernah dibuat akan tersimpan dan dapat digunakan kembali kapan saja tanpa perlu mengetik ulang.</div>
+      </div>
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">🔽</span> Penggunaan Filter</h4>
+        <p class="apagunanya">Menyembunyikan sementara baris yang tidak sesuai kriteria, agar fokus hanya pada data yang relevan.</p>
+        <ol>
+          <li>Klik sel dalam data, aktifkan <b>Data &gt; Filter</b> (apabila menggunakan Tabel resmi, filter biasanya sudah otomatis aktif).</li>
+          <li>Klik panah pada header kolom.</li>
+          <li>Centang nilai yang ingin ditampilkan, hapus centang pada nilai yang ingin disembunyikan, lalu klik OK.</li>
+        </ol>
+        <div class="tips"><b>Penting:</b> filter tidak menghapus data — baris yang tidak lolos kriteria hanya disembunyikan sementara dan akan muncul kembali setelah filternya dihapus.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5. CONDITIONAL FORMATTING ================= -->
+<section id="cf">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">05 · Conditional Formatting</span>
+      <h2>Biarkan Excel yang menyorot, bukan mata kita</h2>
+      <p>Seluruh aturan berikut berada pada menu yang sama: <code>Home &gt; Conditional Formatting &gt; Highlight Cells Rules</code> — tinggal dipilih jenis aturannya.</p>
+    </div>
+    <div class="fitur-grid reveal">
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">👯</span> CF – Data Ganda (Duplicate)</h4>
+        <p class="apagunanya">Menandai secara otomatis data yang muncul lebih dari sekali — berguna untuk memeriksa kode/ID yang seharusnya bersifat unik.</p>
+        <div class="mini-illus">
+          <div class="cf-illus">
+            <div class="cf-cell">K001</div>
+            <div class="cf-cell dup">K002</div>
+            <div class="cf-cell">K003</div>
+            <div class="cf-cell dup">K002</div>
+          </div>
+        </div>
+        <ol>
+          <li>Blok kolom yang ingin diperiksa.</li>
+          <li><code>Home &gt; Conditional Formatting &gt; Highlight Cells Rules &gt; Duplicate Values</code>.</li>
+          <li>Pilih warna, klik OK.</li>
+        </ol>
+      </div>
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">🔠</span> CF – Text Contains</h4>
+        <p class="apagunanya">Mewarnai baris atau sel yang mengandung kata tertentu, tanpa perlu mencarinya satu per satu.</p>
+        <ol>
+          <li>Blok kolom yang ingin diperiksa.</li>
+          <li><code>Home &gt; Conditional Formatting &gt; Highlight Cells Rules &gt; Text that Contains</code>.</li>
+          <li>Ketik kata kuncinya, pilih warna, klik OK.</li>
+        </ol>
+      </div>
+
+      <div class="fitur-card">
+        <span class="tag">Wajib</span>
+        <h4><span class="fico">⚖️</span> CF – Less Than &amp; Greater Than</h4>
+        <p class="apagunanya">Menyorot secara otomatis nilai yang lebih tinggi atau lebih rendah dari batas tertentu, misalnya nilai ujian di atas KKM.</p>
+        <ol>
+          <li>Blok kolom angka.</li>
+          <li><code>Home &gt; Conditional Formatting &gt; Highlight Cells Rules &gt; Greater Than</code> (atau <i>Less Than</i>).</li>
+          <li>Isi angka batasnya, pilih warna, klik OK.</li>
+        </ol>
+        <div class="tips"><b>Tips:</b> dua aturan dapat dipasang sekaligus pada kolom yang sama — satu untuk nilai tinggi, satu untuk nilai rendah.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= MAIN & KUIS ================= -->
+<section id="main">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">06 · Main &amp; Kuis</span>
+      <h2>Kuis Detektif Fitur Excel</h2>
+      <p>Terdapat 18 soal skenario singkat, satu untuk setiap fitur yang telah dipelajari. Isi identitas terlebih dahulu, lalu jawab secepat dan setepat mungkin. Hasilnya dapat langsung dikirim kepada guru di akhir permainan.</p>
+    </div>
+
+    <div class="game-panel reveal">
+      <div class="rules-box">
+        <h4>Aturan permainan</h4>
+        <ul>
+          <li>Terdapat 18 soal skenario singkat — satu soal untuk setiap fitur yang telah dipelajari di atas.</li>
+          <li>Setiap pemain memiliki 3 ❤️. Setiap jawaban yang salah akan mengurangi 1 nyawa.</li>
+          <li>Apabila nyawa habis (3 kali salah), permainan akan berhenti dan skor akhir langsung ditampilkan.</li>
+          <li>Jawablah seluruh 18 soal dengan selamat untuk meraih kemenangan penuh.</li>
+        </ul>
+      </div>
+
+      <div id="gIdentityBlock">
+        <div class="mode-toggle">
+          <button class="pill-btn mode-btn active" id="gModeIndividu" type="button">👤 Individu</button>
+          <button class="pill-btn mode-btn" id="gModeKelompok" type="button">👥 Kelompok</button>
+        </div>
+        <div class="idform" id="gFormIndividu">
+          <div class="field"><label for="gNama">Nama Lengkap</label><input id="gNama" type="text" placeholder="Nama lengkap"></div>
+          <div class="field"><label for="gKelas">Kelas</label><input id="gKelas" type="text" placeholder="Contoh: XII 1"></div>
+          <div class="field"><label for="gNis">NIS</label><input id="gNis" type="text" placeholder="Nomor Induk Siswa"></div>
+          <div class="field"><label for="gAbsen">No. Absen</label><input id="gAbsen" type="text" placeholder="Nomor absen"></div>
+        </div>
+        <div class="idform hidden" id="gFormKelompok">
+          <div class="field"><label for="gNamaKelompok">Nama Kelompok</label><input id="gNamaKelompok" type="text" placeholder="Contoh: Kelompok 3"></div>
+          <div class="field"><label for="gKelasKelompok">Kelas</label><input id="gKelasKelompok" type="text" placeholder="Contoh: XII 1"></div>
+          <div class="field" style="grid-column:1 / -1;"><label for="gAnggota">Anggota Kelompok (pisahkan dengan koma)</label><input id="gAnggota" type="text" placeholder="Contoh: Ani, Budi, Citra, Deni"></div>
+        </div>
+        <button class="btn" id="gStartBtn">Mulai Kuis</button>
+      </div>
+
+      <div id="gPlayBlock" class="hidden">
+        <div class="game-hud">
+          <div class="hud-cat" id="gameCatLabel">Soal 1 / 18</div>
+          <div class="hud-right">
+            <div class="hearts" id="gameHearts">❤️❤️❤️</div>
+            <div class="score-pill">Skor: <span id="gameScore">0 / 18</span></div>
+          </div>
+        </div>
+        <div class="q-progress-wrap"><div class="q-progress-bar" id="qProgressBar"></div></div>
+
+        <div class="q-card">
+          <span class="qcat" id="qCatLabel">Kategori</span>
+          <div class="qtext" id="qText">—</div>
+          <div class="q-options" id="qOptions"></div>
+          <div class="q-feedback" id="qFeedback"></div>
+          <div class="q-nextrow">
+            <button class="btn" id="qNextBtn" disabled>Soal Berikutnya →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-box" id="gResultBox">
+        <div class="eyebrow" style="color:var(--amber);" id="gResultTitle">Kuis selesai</div>
+        <div class="big" id="gResultScore">0/18</div>
+        <p id="gResultMsg"></p>
+        <div class="result-actions">
+          <button class="btn-send" id="gSendBtn">📨 Kirim Hasil ke Guru</button>
+          <button class="btn-playagain" id="gPlayAgainBtn">Main Lagi</button>
+        </div>
+        <div class="sendnote" id="gSendNote"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SUMBER MATERI ================= -->
+<section id="sumber">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">07 · Sumber Materi</span>
+      <h2>Referensi yang digunakan</h2>
+      <p>Materi di halaman ini disusun berdasarkan sumber-sumber resmi berikut agar langkah dan istilahnya tetap akurat.</p>
+    </div>
+    <div class="src-grid reveal">
+      <div class="src-card">
+        <div class="ico">📘</div>
+        <h4>Buku Panduan Mata Pelajaran Informatika</h4>
+        <p>Pusat Kurikulum dan Pembelajaran, Badan Standar, Kurikulum, dan Asesmen Pendidikan, Kemendikbudristek (2025) — acuan kurikulum Fase F.</p>
+      </div>
+      <a class="src-card" href="https://support.microsoft.com/id-id/excel/get-started/create-and-format-tables" target="_blank" rel="noopener">
+        <div class="ico">📐</div>
+        <h4>Membuat dan memformat tabel</h4>
+        <p>Microsoft Support — cara mengubah data menjadi Tabel resmi Excel dengan Ctrl+T.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/id-id/excel/use-conditional-formatting-to-highlight-information-in-excel" target="_blank" rel="noopener">
+        <div class="ico">🎯</div>
+        <h4>Menggunakan pemformatan bersyarat untuk menyorot informasi</h4>
+        <p>Microsoft Support — dasar Conditional Formatting, termasuk Duplicate Values dan Text Contains.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/id-id/excel/sort-data-in-a-range-or-table-in-excel" target="_blank" rel="noopener">
+        <div class="ico">🔤</div>
+        <h4>Mengurutkan data dalam rentang atau tabel</h4>
+        <p>Microsoft Support — Sort dan Custom Sort dengan daftar kustom.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/id-id/office/memfilter-data-dalam-rentang-atau-tabel-di-excel-01832226-31b5-4568-8806-38c37dcc180e" target="_blank" rel="noopener">
+        <div class="ico">🔽</div>
+        <h4>Memfilter data dalam rentang atau tabel</h4>
+        <p>Microsoft Support — cara kerja AutoFilter di Excel.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/id-id/excel/paste-options" target="_blank" rel="noopener">
+        <div class="ico">📋</div>
+        <h4>Opsi tempel (Paste Options)</h4>
+        <p>Microsoft Support — penjelasan Paste Special, termasuk Values Only.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/id-id/excel/format-numbers-as-currency-in-excel" target="_blank" rel="noopener">
+        <div class="ico">💰</div>
+        <h4>Memformat angka sebagai mata uang</h4>
+        <p>Microsoft Support — perbedaan format Currency dan Accounting.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/id-id/excel/get-started/create-a-custom-number-format" target="_blank" rel="noopener">
+        <div class="ico">🔧</div>
+        <h4>Membuat format angka kustom</h4>
+        <p>Microsoft Support — dasar format tanggal/angka Custom di Format Cells.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/id-id/excel/get-started/merge-and-unmerge-cells-in-excel" target="_blank" rel="noopener">
+        <div class="ico">🔗</div>
+        <h4>Menggabungkan dan memisahkan sel</h4>
+        <p>Microsoft Support — cara kerja Merge &amp; Center dan akibatnya pada isi sel.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/id-id/excel/get-started/freeze-panes-to-lock-rows-and-columns" target="_blank" rel="noopener">
+        <div class="ico">🧊</div>
+        <h4>Membekukan panel untuk mengunci baris dan kolom</h4>
+        <p>Microsoft Support — cara kerja Freeze Panes.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/id-id/excel/get-started/hide-or-show-rows-or-columns" target="_blank" rel="noopener">
+        <div class="ico">🙈</div>
+        <h4>Menyembunyikan atau memperlihatkan baris atau kolom</h4>
+        <p>Microsoft Support — langkah Hide dan Unhide.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/id-id/excel/get-started/find-or-replace-text-and-numbers-on-a-worksheet" target="_blank" rel="noopener">
+        <div class="ico">🔍</div>
+        <h4>Menemukan atau mengganti teks dan angka di lembar kerja</h4>
+        <p>Microsoft Support — cara kerja Find and Replace (Ctrl+H).</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/office/using-flash-fill-in-excel-3f9bcf1e-db93-4890-94a0-1578341f73f7" target="_blank" rel="noopener">
+        <div class="ico">⚡</div>
+        <h4>Using Flash Fill in Excel</h4>
+        <p>Microsoft Support — cara kerja Flash Fill dan shortcut Ctrl+E.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/id-id/excel/locate-hidden-cells-on-a-worksheet" target="_blank" rel="noopener">
+        <div class="ico">👻</div>
+        <h4>Menemukan sel tersembunyi di lembar kerja</h4>
+        <p>Microsoft Support — Go To Special, dasar untuk menyeleksi sel kosong.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/office/video-copy-formatting-b8bd64c0-a698-4177-a890-5645d6c50aa9" target="_blank" rel="noopener">
+        <div class="ico">🖌️</div>
+        <h4>Video: Menyalin pemformatan</h4>
+        <p>Microsoft Support — cara kerja Format Painter.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>Dibuat untuk Informatika Kelas XII · SMA Negeri 8 Denpasar</footer>
+
+</div><!-- /#konten-utama -->
+
+<script>const MODUL_ID = "XII-105";</script>
+<script src="../config.js"></script>
+<script src="../guard.js"></script>
+<script>
+// Failsafe pratinjau: kalau config.js / guard.js gagal dimuat (misalnya saat
+// file ini dibuka sendirian tanpa struktur folder GitHub Pages di sebelahnya),
+// paksa tampilkan konten setelah 1.5 detik supaya tidak macet selamanya di
+// layar "Memuat materi...". Setelah diunggah ke folder modules/ yang benar
+// (dengan config.js & guard.js di sebelahnya), guard.js akan sempat berjalan
+// duluan dan failsafe ini tidak berpengaruh.
+setTimeout(function(){
+  var k = document.getElementById('konten-utama');
+  if(k && k.style.visibility !== 'visible'){ k.style.visibility = 'visible'; }
+  var l = document.getElementById('guard-loading');
+  if(l) l.remove();
+}, 1500);
+</script>
+
+<script>
+/* ---------- Reveal on scroll ---------- */
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+},{threshold:0.1});
+revealEls.forEach(el=>io.observe(el));
+
+/* ---------- Navigasi anchor internal (scroll manual) ---------- */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click', function(e){
+    const id = this.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if(target){
+      e.preventDefault();
+      target.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+});
+
+/* ---------- Mode Individu / Kelompok (identitas) ---------- */
+let modeAktif = 'Individu';
+const btnIndividu = document.getElementById('gModeIndividu');
+const btnKelompok = document.getElementById('gModeKelompok');
+const formIndividu = document.getElementById('gFormIndividu');
+const formKelompok = document.getElementById('gFormKelompok');
+btnIndividu.addEventListener('click', ()=>{
+  modeAktif = 'Individu';
+  btnIndividu.classList.add('active'); btnKelompok.classList.remove('active');
+  formIndividu.classList.remove('hidden'); formKelompok.classList.add('hidden');
+});
+btnKelompok.addEventListener('click', ()=>{
+  modeAktif = 'Kelompok';
+  btnKelompok.classList.add('active'); btnIndividu.classList.remove('active');
+  formKelompok.classList.remove('hidden'); formIndividu.classList.add('hidden');
+});
+
+/* ---------- Kirim hasil ke Google Sheet (lewat Apps Script di config.js) ---------- */
+const MATERI_LABEL = "Fitur Dasar Microsoft Excel";
+async function kirimKeSheet(materi, skor, total, identitas){
+  if(typeof CONTROL_URL === 'undefined'){
+    console.warn('CONTROL_URL belum tersedia — lewati pengiriman ke Sheet.');
+    return false;
+  }
+  const payload = {
+    waktu: new Date().toLocaleString('id-ID'),
+    mode: identitas.mode,
+    nama: identitas.nama,
+    nis: identitas.nis || '',
+    absen: identitas.absen || '',
+    kelas: identitas.kelas,
+    anggota: identitas.anggota || '',
+    materi: materi,
+    skor: skor,
+    total: total
+  };
+  try{
+    await fetch(CONTROL_URL, { method: 'POST', body: JSON.stringify(payload) });
+    return true;
+  }catch(err){
+    console.error('Gagal mengirim hasil ke spreadsheet:', materi, err);
+    return false;
+  }
+}
+
+/* ==================================================================
+   KUIS: DETEKTIF FITUR EXCEL
+   ================================================================== */
+const SOAL = [
+  { kat:"Merapikan Data", teks:"Kamu punya 100 baris data, tapi ada beberapa baris kosong menyelip di tengah. Cara tercepat menyeleksi SEMUA baris kosong sekaligus (bukan klik satu-satu) adalah...",
+    opsi:["Go To Special > Blanks","Freeze Panes","Text to Columns","Merge & Center"], jawaban:0,
+    penjelasan:"Go To Special > Blanks langsung menyeleksi semua sel kosong di area yang diblok, lalu tinggal Delete Entire Row." },
+
+  { kat:"Merapikan Data", teks:"Shortcut keyboard untuk langsung mengubah data terblok menjadi Tabel resmi Excel adalah...",
+    opsi:["Ctrl+M","Ctrl+T","Ctrl+B","Ctrl+G"], jawaban:1,
+    penjelasan:"Ctrl+T membuka dialog Create Table untuk data yang sedang diblok." },
+
+  { kat:"Merapikan Data", teks:"Supaya lebar kolom otomatis pas dengan isi terpanjang di dalamnya, fitur yang dipakai adalah...",
+    opsi:["Wrap Text","Merge Cells","AutoFit Column Width","Freeze Panes"], jawaban:2,
+    penjelasan:"AutoFit Column Width menyesuaikan lebar kolom otomatis sesuai isi terpanjang." },
+
+  { kat:"Merapikan Data", teks:"Saat 3 sel digabung dengan Merge & Center, isi yang tersisa di sel gabungan berasal dari...",
+    opsi:["Rata-rata semua sel","Sel paling kiri-atas","Sel paling kanan","Dijumlahkan otomatis"], jawaban:1,
+    penjelasan:"Hanya isi sel paling kiri-atas yang disimpan; isi sel lain yang ikut digabung akan terhapus." },
+
+  { kat:"Merapikan Data", teks:"Supaya baris header tetap kelihatan meski tabel di-scroll jauh ke bawah, fitur yang dipakai adalah...",
+    opsi:["Freeze Panes","Hide Rows","Sort","Conditional Formatting"], jawaban:0,
+    penjelasan:"Freeze Panes mengunci baris/kolom tertentu agar tetap terlihat saat scroll." },
+
+  { kat:"Merapikan Data", teks:"Tanda bahwa ada kolom yang sedang disembunyikan di antara dua kolom lain adalah...",
+    opsi:["Kolom berubah warna merah","Muncul tanda bintang di header","Garis ganda di antara dua header kolom","Kolom menjadi miring"], jawaban:2,
+    penjelasan:"Garis ganda di antara dua header kolom/baris menandakan ada kolom/baris tersembunyi di situ." },
+
+  { kat:"Menyunting Cepat", teks:"Shortcut keyboard untuk menjalankan Flash Fill secara manual adalah...",
+    opsi:["Ctrl+E","Ctrl+F","Ctrl+D","Ctrl+R"], jawaban:0,
+    penjelasan:"Ctrl+E menjalankan Flash Fill secara manual kapan pun dibutuhkan." },
+
+  { kat:"Menyunting Cepat", teks:"Untuk membuka kotak dialog Replace (bukan hanya Find), shortcut yang digunakan adalah...",
+    opsi:["Ctrl+F","Ctrl+H","Ctrl+R","Ctrl+E"], jawaban:1,
+    penjelasan:"Ctrl+H langsung membuka tab Replace pada dialog Find and Replace." },
+
+  { kat:"Menyunting Cepat", teks:"Supaya kuas Format Painter tetap aktif dan bisa dipakai berkali-kali ke banyak sel berbeda, caranya adalah...",
+    opsi:["Klik dua kali (double-click) ikonnya","Tahan Shift saat klik","Klik kanan lalu pilih Repeat","Tekan Ctrl+P"], jawaban:0,
+    penjelasan:"Double-click ikon Format Painter membuat kuasnya tetap aktif sampai ditekan Esc." },
+
+  { kat:"Menyunting Cepat", teks:"Supaya hasil rumus disalin sebagai ANGKA biasa (bukan rumus lagi) saat ditempel di tempat lain, opsi Paste Special yang dipilih adalah...",
+    opsi:["Formulas","Formats","Values Only","Transpose"], jawaban:2,
+    penjelasan:"Values Only menempelkan hasil akhirnya saja sebagai angka/teks biasa, tanpa membawa rumusnya." },
+
+  { kat:"Format Angka & Tanggal", teks:"Perbedaan paling terlihat antara format Accounting dan Currency di Excel adalah...",
+    opsi:["Accounting merapikan simbol mata uang rata di sisi kiri sel, Currency menempel di depan angka","Accounting tidak punya simbol mata uang","Currency selalu wajib 2 angka desimal","Tidak ada beda sama sekali"], jawaban:0,
+    penjelasan:"Accounting merapikan simbol mata uang rata kiri sel, sedangkan Currency menempelkan simbolnya tepat di depan angka." },
+
+  { kat:"Format Angka & Tanggal", teks:"Untuk membuat tampilan tanggal custom (misalnya '17 Agustus 1995'), kita masuk ke Format Cells kategori...",
+    opsi:["General","Text","Custom","Special"], jawaban:2,
+    penjelasan:"Kategori Custom memungkinkan kita mengetik kode format sendiri, misalnya dd mmmm yyyy." },
+
+  { kat:"Urutkan & Saring", teks:"Untuk mengurutkan satu kolom teks dari A ke Z, cara tercepat lewat tab Data adalah klik tombol...",
+    opsi:["A→Z","Filter","Freeze Panes","Merge"], jawaban:0,
+    penjelasan:"Tombol A→Z di tab Data langsung mengurutkan kolom terpilih secara alfabetis." },
+
+  { kat:"Urutkan & Saring", teks:"Supaya Excel mengurutkan kolom Departemen sesuai urutan tertentu (bukan abjad), opsi Order yang dipilih adalah...",
+    opsi:["Largest to Smallest","A to Z","Custom List","Cell Color"], jawaban:2,
+    penjelasan:"Custom List memungkinkan kita menentukan urutan sendiri, misalnya Manajemen, IT, Finance, dst." },
+
+  { kat:"Urutkan & Saring", teks:"Saat AutoFilter aktif dan sebuah baris tidak sesuai kriteria yang dipilih, yang terjadi pada baris itu adalah...",
+    opsi:["Dihapus permanen","Disembunyikan sementara","Warnanya berubah merah","Dipindah ke sheet lain"], jawaban:1,
+    penjelasan:"Filter hanya menyembunyikan baris yang tidak sesuai kriteria — datanya tetap ada dan akan muncul kembali setelah filter dihapus." },
+
+  { kat:"Conditional Formatting", teks:"Untuk menyorot otomatis semua kode yang muncul lebih dari sekali dalam satu kolom, pilih Highlight Cells Rules >...",
+    opsi:["Greater Than","Duplicate Values","Text that Contains","Data Bars"], jawaban:1,
+    penjelasan:"Duplicate Values otomatis menandai nilai yang muncul lebih dari sekali dalam rentang yang dipilih." },
+
+  { kat:"Conditional Formatting", teks:"Untuk mewarnai semua baris yang kolom Departemen-nya mengandung kata 'Sales', aturan yang dipakai adalah...",
+    opsi:["Between","Text that Contains","Duplicate Values","Top 10 Items"], jawaban:1,
+    penjelasan:"Text that Contains menandai sel yang isinya mengandung kata kunci tertentu." },
+
+  { kat:"Conditional Formatting", teks:"Untuk mewarnai nilai kinerja yang lebih besar dari 90 dengan warna hijau, aturan yang dipakai adalah...",
+    opsi:["Equal To","Less Than","Greater Than","Text that Contains"], jawaban:2,
+    penjelasan:"Greater Than menyorot sel yang nilainya lebih besar dari angka batas yang ditentukan." },
+];
+
+const TOTAL_SOAL = SOAL.length; // 18
+let identitas = null;
+let urutanSoal = [];
+let idxSoal = 0;
+let skor = 0;
+let nyawa = 3;
+let terkunci = false;
+
+function shuffleIdx(n){
+  const arr = Array.from({length:n}, (_,i)=>i);
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function initKuis(){
+  urutanSoal = shuffleIdx(TOTAL_SOAL);
+  idxSoal = 0;
+  skor = 0;
+  nyawa = 3;
+  terkunci = false;
+  document.getElementById('gResultBox').style.display = 'none';
+  tampilkanSoal();
+}
+
+function updateHUD(){
+  document.getElementById('gameCatLabel').textContent = `Soal ${idxSoal+1} / ${TOTAL_SOAL}`;
+  document.getElementById('gameHearts').textContent = '❤️'.repeat(Math.max(0,nyawa)) + '🖤'.repeat(3-nyawa);
+  document.getElementById('gameScore').textContent = skor + ' / ' + TOTAL_SOAL;
+  document.getElementById('qProgressBar').style.width = Math.round((idxSoal/TOTAL_SOAL)*100) + '%';
+}
+
+function tampilkanSoal(){
+  updateHUD();
+  const s = SOAL[urutanSoal[idxSoal]];
+  document.getElementById('qCatLabel').textContent = s.kat;
+  document.getElementById('qText').textContent = s.teks;
+  const optWrap = document.getElementById('qOptions');
+  optWrap.innerHTML = '';
+  const urutanOpsi = shuffleIdx(s.opsi.length);
+  urutanOpsi.forEach(oi=>{
+    const btn = document.createElement('button');
+    btn.className = 'q-opt';
+    btn.type = 'button';
+    btn.textContent = s.opsi[oi];
+    btn.addEventListener('click', ()=> jawabSoal(oi, s, btn, optWrap));
+    optWrap.appendChild(btn);
+  });
+  const fb = document.getElementById('qFeedback');
+  fb.className = 'q-feedback';
+  fb.textContent = '';
+  document.getElementById('qNextBtn').disabled = true;
+}
+
+function jawabSoal(dipilih, s, btnDipilih, optWrap){
+  if(terkunci) return;
+  terkunci = true;
+  const semuaBtn = optWrap.querySelectorAll('.q-opt');
+  semuaBtn.forEach(b=> b.disabled = true);
+
+  const fb = document.getElementById('qFeedback');
+  if(dipilih === s.jawaban){
+    skor++;
+    btnDipilih.classList.add('correct');
+    fb.className = 'q-feedback show ok';
+    fb.textContent = '✓ Benar! ' + s.penjelasan;
+  } else {
+    nyawa--;
+    btnDipilih.classList.add('wrong');
+    semuaBtn[s.jawaban] && semuaBtn[s.jawaban].classList.add('correct');
+    fb.className = 'q-feedback show bad';
+    fb.textContent = '✗ Belum tepat. ' + s.penjelasan;
+  }
+  updateHUD();
+
+  if(nyawa <= 0){
+    document.getElementById('qNextBtn').disabled = true;
+    setTimeout(()=> selesaiKuis(false), 900);
+    return;
+  }
+  document.getElementById('qNextBtn').disabled = false;
+}
+
+document.getElementById('qNextBtn').addEventListener('click', ()=>{
+  idxSoal++;
+  terkunci = false;
+  if(idxSoal >= TOTAL_SOAL){
+    selesaiKuis(true);
+  } else {
+    tampilkanSoal();
+  }
+});
+
+function selesaiKuis(tuntas){
+  document.getElementById('gPlayBlock').classList.add('hidden');
+  const box = document.getElementById('gResultBox');
+  const title = document.getElementById('gResultTitle');
+  const msg = document.getElementById('gResultMsg');
+  if(!tuntas){
+    title.textContent = 'Kuis Berhenti';
+    msg.textContent = 'Nyawa habis setelah 3 kali salah jawab. Skor akhir: ' + skor + '/' + TOTAL_SOAL + '.';
+  } else if(skor === TOTAL_SOAL){
+    title.textContent = '🎉 Sempurna!';
+    msg.textContent = 'Semua ' + TOTAL_SOAL + ' soal terjawab benar. Kamu benar-benar detektif fitur Excel!';
+  } else {
+    title.textContent = 'Kuis Selesai';
+    msg.textContent = 'Anda menjawab ' + skor + ' dari ' + TOTAL_SOAL + ' soal dengan benar.';
+  }
+  document.getElementById('gResultScore').textContent = skor + '/' + TOTAL_SOAL;
+  box.style.display = 'block';
+  document.getElementById('gSendBtn').disabled = false;
+  document.getElementById('gSendNote').textContent = '';
+  box.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+/* ---------- Mulai kuis (validasi identitas terlebih dahulu) ---------- */
+document.getElementById('gStartBtn').addEventListener('click', ()=>{
+  let ident = { mode: modeAktif };
+  if(modeAktif === 'Individu'){
+    const nama = document.getElementById('gNama').value.trim();
+    const kelas = document.getElementById('gKelas').value.trim();
+    const nis = document.getElementById('gNis').value.trim();
+    const absen = document.getElementById('gAbsen').value.trim();
+    if(!nama || !kelas || !nis || !absen){
+      alert('Mohon lengkapi Nama, Kelas, NIS, dan No. Absen terlebih dahulu.');
+      return;
+    }
+    ident.nama = nama; ident.kelas = kelas; ident.nis = nis; ident.absen = absen;
+  } else {
+    const nama = document.getElementById('gNamaKelompok').value.trim();
+    const kelas = document.getElementById('gKelasKelompok').value.trim();
+    const anggota = document.getElementById('gAnggota').value.trim();
+    if(!nama || !kelas || !anggota){
+      alert('Mohon lengkapi Nama Kelompok, Kelas, dan Anggota Kelompok terlebih dahulu.');
+      return;
+    }
+    ident.nama = nama; ident.kelas = kelas; ident.anggota = anggota;
+  }
+  identitas = ident;
+  document.getElementById('gIdentityBlock').classList.add('hidden');
+  document.getElementById('gPlayBlock').classList.remove('hidden');
+  initKuis();
+});
+
+document.getElementById('gPlayAgainBtn').addEventListener('click', ()=>{
+  document.getElementById('gPlayBlock').classList.remove('hidden');
+  initKuis();
+});
+
+document.getElementById('gSendBtn').addEventListener('click', async ()=>{
+  if(!identitas) return;
+  const btn = document.getElementById('gSendBtn');
+  const note = document.getElementById('gSendNote');
+  btn.disabled = true;
+  note.textContent = 'Mengirim...';
+  const ok = await kirimKeSheet(MATERI_LABEL + ' — Kuis Detektif Fitur Excel', skor, TOTAL_SOAL, identitas);
+  note.textContent = ok ? '✓ Hasil terkirim ke guru.' : 'Gagal mengirim — coba lagi (periksa koneksi internet).';
+  if(!ok) btn.disabled = false;
+});
+</script>
+</body>
+</html>
