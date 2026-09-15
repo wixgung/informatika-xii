@@ -968,7 +968,18 @@ if(typeof pasangAutoisiSiswa === 'function'){
 /* ---------- Kirim hasil ke Google Sheet (lewat Apps Script di config.js) ---------- */
 const MATERI_LABEL = "Fitur Dasar Microsoft Excel";
 
-// Cek apakah identitas ini sudah pernah mengisi kuis ini sebelumnya
+// fetch dengan batas waktu — kalau server tidak merespons dalam
+// timeoutMs, permintaan dibatalkan otomatis (tidak menggantung selamanya)
+function fetchDenganTimeout(url, opsi, timeoutMs){
+  const kontrol = new AbortController();
+  const id = setTimeout(()=> kontrol.abort(), timeoutMs);
+  return fetch(url, Object.assign({}, opsi, { signal: kontrol.signal }))
+    .finally(()=> clearTimeout(id));
+}
+
+// Cek apakah identitas ini sudah pernah mengisi kuis ini sebelumnya.
+// Timeout pendek (6 detik) — kalau lambat/gagal, LEWATI saja pengecekan
+// ini dan lanjut kirim, supaya siswa tidak menunggu tanpa kepastian.
 async function cekHasilSebelumnya(materi, identitas){
   if(typeof CONTROL_URL === 'undefined') return { ada:false };
   try{
@@ -976,22 +987,28 @@ async function cekHasilSebelumnya(materi, identitas){
       action: 'cekHasil', mode: identitas.mode, materi,
       nis: identitas.nis || '', nama: identitas.nama || '', kelas: identitas.kelas || ''
     });
-    const res = await fetch(CONTROL_URL + '?' + params.toString());
+    const res = await fetchDenganTimeout(CONTROL_URL + '?' + params.toString(), {}, 6000);
     return await res.json();
   }catch(err){
-    console.warn('Gagal memeriksa hasil sebelumnya:', err);
+    console.warn('Gagal memeriksa hasil sebelumnya (dilewati, lanjut kirim):', err);
     return { ada:false };
   }
 }
 
 // Kirim hasil. Return true = terkirim, false = gagal, null = dibatalkan siswa.
-async function kirimKeSheet(materi, skor, total, identitas){
+// onStatus(teks) opsional, dipanggil untuk kasih tahu tahap yang sedang berjalan.
+// cekRiwayatAwal (opsional) = Promise dari cekHasilSebelumnya() yang sudah
+// dimulai LEBIH DULU (mis. sejak kuis dimulai) — kalau dikirim, dipakai
+// langsung tanpa mengulang fetch, jadi biasanya sudah selesai duluan.
+async function kirimKeSheet(materi, skor, total, identitas, onStatus, cekRiwayatAwal){
+  const status = onStatus || function(){};
   if(typeof CONTROL_URL === 'undefined'){
     console.warn('CONTROL_URL belum tersedia — lewati pengiriman ke Sheet.');
     return false;
   }
 
-  const cekLama = await cekHasilSebelumnya(materi, identitas);
+  status('Memeriksa riwayat...');
+  const cekLama = await (cekRiwayatAwal || cekHasilSebelumnya(materi, identitas));
   if(cekLama.ada){
     const lanjut = confirm(
       'Kamu sudah pernah mengirim hasil kuis ini sebelumnya (skor ' + cekLama.skor + '/' + cekLama.total + ', ' + cekLama.waktu + ').\n\n' +
@@ -1013,17 +1030,19 @@ async function kirimKeSheet(materi, skor, total, identitas){
     total: total
   };
 
-  // Coba kirim, verifikasi respons server, ulangi sekali kalau gagal
+  status('Mengirim...');
+  // Coba kirim (maks 15 detik per percobaan), verifikasi respons server,
+  // ulangi sekali kalau gagal/timeout
   for(let percobaan = 1; percobaan <= 2; percobaan++){
     try{
-      const res = await fetch(CONTROL_URL, { method: 'POST', body: JSON.stringify(payload) });
+      const res = await fetchDenganTimeout(CONTROL_URL, { method: 'POST', body: JSON.stringify(payload) }, 15000);
       const hasil = await res.json();
       if(hasil.status === 'ok') return true;
       console.warn('Server menolak pengiriman:', hasil);
     }catch(err){
-      console.error('Percobaan ' + percobaan + ' gagal mengirim hasil:', materi, err);
+      console.error('Percobaan ' + percobaan + ' gagal mengirim hasil (timeout/gagal):', materi, err);
     }
-    if(percobaan === 1) await new Promise(r => setTimeout(r, 1000));
+    if(percobaan === 1){ status('Mencoba lagi...'); await new Promise(r => setTimeout(r, 1000)); }
   }
   return false;
 }
@@ -1107,6 +1126,7 @@ const SOAL = [
 
 const TOTAL_SOAL = SOAL.length; // 18
 let identitas = null;
+let cekRiwayatPromise = null; // mulai dicek sejak kuis dimulai, bukan saat klik Kirim
 let urutanSoal = [];
 let idxSoal = 0;
 let skor = 0;
@@ -1250,6 +1270,10 @@ document.getElementById('gStartBtn').addEventListener('click', ()=>{
     ident.nama = nama; ident.kelas = kelas; ident.anggota = anggota;
   }
   identitas = ident;
+  // Mulai cek riwayat pengiriman DARI SEKARANG, berjalan di belakang layar
+  // selagi siswa mengerjakan kuis — supaya saat nanti klik "Kirim", hasil
+  // pengecekan biasanya sudah siap dan tidak perlu menunggu lagi.
+  cekRiwayatPromise = cekHasilSebelumnya(MATERI_LABEL + ' — Kuis Detektif Fitur Excel', identitas);
   document.getElementById('gIdentityBlock').classList.add('hidden');
   document.getElementById('gPlayBlock').classList.remove('hidden');
   initKuis();
@@ -1257,6 +1281,9 @@ document.getElementById('gStartBtn').addEventListener('click', ()=>{
 
 document.getElementById('gPlayAgainBtn').addEventListener('click', ()=>{
   document.getElementById('gPlayBlock').classList.remove('hidden');
+  // Main lagi = percobaan baru -> cek ulang riwayat dari sekarang juga,
+  // supaya kalau tadi sempat kirim, pengecekan kedua ini tahu itu.
+  cekRiwayatPromise = cekHasilSebelumnya(MATERI_LABEL + ' — Kuis Detektif Fitur Excel', identitas);
   initKuis();
 });
 
@@ -1265,8 +1292,11 @@ document.getElementById('gSendBtn').addEventListener('click', async ()=>{
   const btn = document.getElementById('gSendBtn');
   const note = document.getElementById('gSendNote');
   btn.disabled = true;
-  note.textContent = 'Memeriksa...';
-  const ok = await kirimKeSheet(MATERI_LABEL + ' — Kuis Detektif Fitur Excel', skor, TOTAL_SOAL, identitas);
+  const ok = await kirimKeSheet(
+    MATERI_LABEL + ' — Kuis Detektif Fitur Excel', skor, TOTAL_SOAL, identitas,
+    (teks)=>{ note.textContent = teks; },
+    cekRiwayatPromise
+  );
   if(ok === true){
     note.textContent = '✓ Hasil terkirim ke guru.';
   } else if(ok === null){
