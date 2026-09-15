@@ -273,7 +273,7 @@ Mengecek status "Tampilkan" dari Sheet sebelum materi bisa diakses. Kalau `Tampi
 
 ### `siswa.js` — file baru, auto-isi Nama/Kelas/Absen dari NIS
 
-Data siswa mulai diambil sejak halaman kuis dibuka (bukan menunggu siswa mengetik), dan disimpan sementara di `sessionStorage` selama 30 menit supaya kuis-kuis berikutnya di jam yang sama tidak perlu mengambil ulang.
+Data siswa mulai diambil sejak halaman kuis dibuka (bukan menunggu siswa mengetik), disimpan sementara di `sessionStorage` selama 30 menit, dan divalidasi bentuknya sebelum dipakai — kalau cache atau respons server ternyata bukan daftar siswa (mis. Apps Script belum ter-deploy dengan benar), otomatis dibuang dan diambil ulang, bukan dipakai apa adanya. Ada juga teks status di bawah kolom NIS yang membedakan "Memeriksa...", "NIS tidak ditemukan", dan "Gagal memuat data" — supaya kalau ada masalah, penyebabnya kelihatan.
 
 ```javascript
 // ============================================================
@@ -283,14 +283,22 @@ Data siswa mulai diambil sejak halaman kuis dibuka (bukan menunggu siswa mengeti
 //   <script src="../config.js"></script>
 //   <script src="../siswa.js"></script>
 // Lalu panggil sekali di bagian script kuis:
-//   pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen', 'gCekNisBtn');
-// (idAbsen dan idTombol boleh dikosongkan kalau file itu tidak
-// punya field/tombol itu)
+//   pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen', 'gCekNisBtn', 'gStatusNis');
+// (idAbsen, idTombol, idStatus boleh dikosongkan kalau file itu
+// tidak punya field/tombol/teks status itu)
 // ============================================================
 const _KUNCI_CACHE_SISWA = 'daftarSiswaCache';
 const _MASA_BERLAKU_CACHE_MS = 30 * 60 * 1000; // 30 menit
 
 let _daftarSiswaPromise = null;
+
+// Cache/hasil dianggap valid hanya kalau berupa array DAN (kosong,
+// atau) baris pertamanya benar-benar punya field "nis". Mencegah
+// data salah bentuk (mis. daftar Materi ke-fetch karena Apps Script
+// belum di-deploy ulang) ikut dipakai sebagai daftar siswa.
+function _bentukValid(data) {
+  return Array.isArray(data) && (data.length === 0 || Object.prototype.hasOwnProperty.call(data[0], 'nis'));
+}
 
 function ambilDaftarSiswa() {
   if (_daftarSiswaPromise) return _daftarSiswaPromise;
@@ -299,9 +307,13 @@ function ambilDaftarSiswa() {
     const mentah = sessionStorage.getItem(_KUNCI_CACHE_SISWA);
     if (mentah) {
       const cache = JSON.parse(mentah);
-      if (Date.now() - cache.waktu < _MASA_BERLAKU_CACHE_MS) {
+      if (Date.now() - cache.waktu < _MASA_BERLAKU_CACHE_MS && _bentukValid(cache.data)) {
         _daftarSiswaPromise = Promise.resolve(cache.data);
         return _daftarSiswaPromise;
+      }
+      if (!_bentukValid(cache.data)) {
+        console.warn("Cache daftar siswa bentuknya tidak valid, diabaikan & diambil ulang.");
+        sessionStorage.removeItem(_KUNCI_CACHE_SISWA);
       }
     }
   } catch (e) { /* sessionStorage bermasalah -> abaikan, lanjut fetch biasa */ }
@@ -310,26 +322,36 @@ function ambilDaftarSiswa() {
   _daftarSiswaPromise = fetch(CONTROL_URL + "?action=siswa")
     .then(res => res.json())
     .then(data => {
+      if (!_bentukValid(data)) {
+        console.warn("Respons ?action=siswa bentuknya tidak sesuai (bukan daftar siswa). Cek apakah Apps Script sudah di-deploy sebagai versi terbaru.", data);
+        _daftarSiswaPromise = null;
+        return [];
+      }
       try {
         sessionStorage.setItem(_KUNCI_CACHE_SISWA, JSON.stringify({ waktu: Date.now(), data }));
       } catch (e) { /* sessionStorage penuh/nonaktif -> tidak masalah, tetap jalan */ }
       return data;
     })
     .catch(err => {
-      console.warn("Gagal mengambil daftar siswa:", err);
+      console.warn("Gagal mengambil daftar siswa (cek CONTROL_URL / koneksi / deployment Apps Script):", err);
       _daftarSiswaPromise = null;
       return [];
     });
   return _daftarSiswaPromise;
 }
 
-function pasangAutoisiSiswa(idNis, idNama, idKelas, idAbsen, idTombol) {
+function pasangAutoisiSiswa(idNis, idNama, idKelas, idAbsen, idTombol, idStatus) {
   const inputNis = document.getElementById(idNis);
   const inputNama = document.getElementById(idNama);
   const inputKelas = document.getElementById(idKelas);
   const inputAbsen = idAbsen ? document.getElementById(idAbsen) : null;
   const tombolCek = idTombol ? document.getElementById(idTombol) : null;
+  const statusEl = idStatus ? document.getElementById(idStatus) : null;
   if (!inputNis || !inputNama || !inputKelas) return;
+
+  function tulisStatus(teks) {
+    if (statusEl) statusEl.textContent = teks;
+  }
 
   // Mulai ambil data dari SEKARANG (saat halaman kuis dibuka), jangan
   // tunggu sampai siswa mengetik.
@@ -337,18 +359,30 @@ function pasangAutoisiSiswa(idNis, idNama, idKelas, idAbsen, idTombol) {
 
   async function cariSiswa() {
     const nis = inputNis.value.trim();
-    if (!nis) return;
+    if (!nis) { tulisStatus(''); return; }
     if (tombolCek) { tombolCek.disabled = true; tombolCek.textContent = '...'; }
+    tulisStatus('Memeriksa...');
+
     const daftar = await ambilDaftarSiswa();
+
+    if (!Array.isArray(daftar) || daftar.length === 0) {
+      inputNama.value = ''; inputKelas.value = ''; if (inputAbsen) inputAbsen.value = '';
+      tulisStatus('Gagal memuat data siswa dari server. Periksa koneksi internet, lalu coba klik 🔍 Cek lagi.');
+      if (tombolCek) { tombolCek.disabled = false; tombolCek.textContent = '🔍 Cek'; }
+      return;
+    }
+
     const cocok = daftar.find(s => String(s.nis).trim() === nis);
     if (cocok) {
       inputNama.value = cocok.nama || '';
       inputKelas.value = cocok.kelas || '';
       if (inputAbsen) inputAbsen.value = cocok.absen || '';
+      tulisStatus('');
     } else {
       inputNama.value = '';
       inputKelas.value = '';
       if (inputAbsen) inputAbsen.value = '';
+      tulisStatus('NIS tidak ditemukan di data siswa. Periksa kembali NIS-mu.');
     }
     if (tombolCek) { tombolCek.disabled = false; tombolCek.textContent = '🔍 Cek'; }
   }
@@ -390,6 +424,7 @@ Ganti `XII-XXX` dengan ID unik materi tersebut (harus sama dengan kolom **ID** d
       <input id="gNis" type="text" placeholder="Ketik NIS (min. 4 digit)" inputmode="numeric">
       <button type="button" class="btn-cek-nis" id="gCekNisBtn">🔍 Cek</button>
     </div>
+    <div id="gStatusNis" class="status-nis"></div>
   </div>
   <div class="field"><label for="gNama">Nama Lengkap</label><input id="gNama" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
   <div class="field"><label for="gKelas">Kelas</label><input id="gKelas" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
@@ -409,6 +444,7 @@ CSS tambahan (taruh dekat aturan `.field input:focus`):
 }
 .btn-cek-nis:hover{background:var(--teal-dark);}
 .btn-cek-nis:disabled{opacity:.6;cursor:default;}
+.status-nis{font-size:.76rem;margin-top:5px;min-height:1.1em;color:var(--coral);}
 ```
 
 **Mode Kelompok dinonaktifkan** — tombol pemilihan mode disembunyikan (form tetap ada di HTML untuk kompatibilitas kode, tapi tidak pernah terlihat siswa):
@@ -424,7 +460,7 @@ CSS tambahan (taruh dekat aturan `.field input:focus`):
 
 ```javascript
 if(typeof pasangAutoisiSiswa === 'function'){
-  pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen', 'gCekNisBtn');
+  pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen', 'gCekNisBtn', 'gStatusNis');
 }
 ```
 
