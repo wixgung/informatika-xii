@@ -136,6 +136,7 @@ a.src-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(28,42,46,
   font-size:.95rem;background:#fff;
 }
 .field input:focus{outline:2px solid var(--amber);border-color:var(--amber);}
+.field input[readonly]{background:var(--paper-2);color:#6b6355;cursor:not-allowed;}
 .hidden{display:none !important;}
 
 .rules-box{background:#fbf3e2;border:1px solid #e9cf95;border-radius:10px;padding:16px 18px;font-size:.87rem;margin-bottom:22px;}
@@ -744,15 +745,15 @@ footer{padding:30px 0;text-align:center;font-size:.8rem;color:#7c7461;}
       </div>
 
       <div id="gIdentityBlock">
-        <div class="mode-toggle">
+        <div class="mode-toggle hidden">
           <button class="pill-btn mode-btn active" id="gModeIndividu" type="button">👤 Individu</button>
           <button class="pill-btn mode-btn" id="gModeKelompok" type="button">👥 Kelompok</button>
         </div>
         <div class="idform" id="gFormIndividu">
-          <div class="field"><label for="gNama">Nama Lengkap</label><input id="gNama" type="text" placeholder="Nama lengkap"></div>
-          <div class="field"><label for="gKelas">Kelas</label><input id="gKelas" type="text" placeholder="Contoh: XII 1"></div>
-          <div class="field"><label for="gNis">NIS</label><input id="gNis" type="text" placeholder="Nomor Induk Siswa"></div>
-          <div class="field"><label for="gAbsen">No. Absen</label><input id="gAbsen" type="text" placeholder="Nomor absen"></div>
+          <div class="field"><label for="gNis">NIS</label><input id="gNis" type="text" placeholder="Ketik NIS lalu pindah kolom" inputmode="numeric"></div>
+          <div class="field"><label for="gNama">Nama Lengkap</label><input id="gNama" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
+          <div class="field"><label for="gKelas">Kelas</label><input id="gKelas" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
+          <div class="field"><label for="gAbsen">No. Absen</label><input id="gAbsen" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
         </div>
         <div class="idform hidden" id="gFormKelompok">
           <div class="field"><label for="gNamaKelompok">Nama Kelompok</label><input id="gNamaKelompok" type="text" placeholder="Contoh: Kelompok 3"></div>
@@ -892,6 +893,7 @@ footer{padding:30px 0;text-align:center;font-size:.8rem;color:#7c7461;}
 <script>const MODUL_ID = "XII-105";</script>
 <script src="../config.js"></script>
 <script src="../guard.js"></script>
+<script src="../siswa.js"></script>
 <script>
 // Failsafe pratinjau: kalau config.js / guard.js gagal dimuat (misalnya saat
 // file ini dibuka sendirian tanpa struktur folder GitHub Pages di sebelahnya),
@@ -943,14 +945,45 @@ btnKelompok.addEventListener('click', ()=>{
   btnKelompok.classList.add('active'); btnIndividu.classList.remove('active');
   formKelompok.classList.remove('hidden'); formIndividu.classList.add('hidden');
 });
+if(typeof pasangAutoisiSiswa === 'function'){
+  pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen');
+}
 
 /* ---------- Kirim hasil ke Google Sheet (lewat Apps Script di config.js) ---------- */
 const MATERI_LABEL = "Fitur Dasar Microsoft Excel";
+
+// Cek apakah identitas ini sudah pernah mengisi kuis ini sebelumnya
+async function cekHasilSebelumnya(materi, identitas){
+  if(typeof CONTROL_URL === 'undefined') return { ada:false };
+  try{
+    const params = new URLSearchParams({
+      action: 'cekHasil', mode: identitas.mode, materi,
+      nis: identitas.nis || '', nama: identitas.nama || '', kelas: identitas.kelas || ''
+    });
+    const res = await fetch(CONTROL_URL + '?' + params.toString());
+    return await res.json();
+  }catch(err){
+    console.warn('Gagal memeriksa hasil sebelumnya:', err);
+    return { ada:false };
+  }
+}
+
+// Kirim hasil. Return true = terkirim, false = gagal, null = dibatalkan siswa.
 async function kirimKeSheet(materi, skor, total, identitas){
   if(typeof CONTROL_URL === 'undefined'){
     console.warn('CONTROL_URL belum tersedia — lewati pengiriman ke Sheet.');
     return false;
   }
+
+  const cekLama = await cekHasilSebelumnya(materi, identitas);
+  if(cekLama.ada){
+    const lanjut = confirm(
+      'Kamu sudah pernah mengirim hasil kuis ini sebelumnya (skor ' + cekLama.skor + '/' + cekLama.total + ', ' + cekLama.waktu + ').\n\n' +
+      'Kirim ulang untuk mengganti dengan hasil yang baru (' + skor + '/' + total + ')?'
+    );
+    if(!lanjut) return null;
+  }
+
   const payload = {
     waktu: new Date().toLocaleString('id-ID'),
     mode: identitas.mode,
@@ -963,13 +996,20 @@ async function kirimKeSheet(materi, skor, total, identitas){
     skor: skor,
     total: total
   };
-  try{
-    await fetch(CONTROL_URL, { method: 'POST', body: JSON.stringify(payload) });
-    return true;
-  }catch(err){
-    console.error('Gagal mengirim hasil ke spreadsheet:', materi, err);
-    return false;
+
+  // Coba kirim, verifikasi respons server, ulangi sekali kalau gagal
+  for(let percobaan = 1; percobaan <= 2; percobaan++){
+    try{
+      const res = await fetch(CONTROL_URL, { method: 'POST', body: JSON.stringify(payload) });
+      const hasil = await res.json();
+      if(hasil.status === 'ok') return true;
+      console.warn('Server menolak pengiriman:', hasil);
+    }catch(err){
+      console.error('Percobaan ' + percobaan + ' gagal mengirim hasil:', materi, err);
+    }
+    if(percobaan === 1) await new Promise(r => setTimeout(r, 1000));
   }
+  return false;
 }
 
 /* ==================================================================
@@ -1174,8 +1214,12 @@ document.getElementById('gStartBtn').addEventListener('click', ()=>{
     const kelas = document.getElementById('gKelas').value.trim();
     const nis = document.getElementById('gNis').value.trim();
     const absen = document.getElementById('gAbsen').value.trim();
-    if(!nama || !kelas || !nis || !absen){
-      alert('Mohon lengkapi Nama, Kelas, NIS, dan No. Absen terlebih dahulu.');
+    if(!nis){
+      alert('Mohon isi NIS terlebih dahulu.');
+      return;
+    }
+    if(!nama || !kelas || !absen){
+      alert('NIS tidak ditemukan di data siswa, atau data belum lengkap. Periksa kembali NIS-mu, atau hubungi guru.');
       return;
     }
     ident.nama = nama; ident.kelas = kelas; ident.nis = nis; ident.absen = absen;
@@ -1205,10 +1249,17 @@ document.getElementById('gSendBtn').addEventListener('click', async ()=>{
   const btn = document.getElementById('gSendBtn');
   const note = document.getElementById('gSendNote');
   btn.disabled = true;
-  note.textContent = 'Mengirim...';
+  note.textContent = 'Memeriksa...';
   const ok = await kirimKeSheet(MATERI_LABEL + ' — Kuis Detektif Fitur Excel', skor, TOTAL_SOAL, identitas);
-  note.textContent = ok ? '✓ Hasil terkirim ke guru.' : 'Gagal mengirim — coba lagi (periksa koneksi internet).';
-  if(!ok) btn.disabled = false;
+  if(ok === true){
+    note.textContent = '✓ Hasil terkirim ke guru.';
+  } else if(ok === null){
+    note.textContent = 'Dibatalkan — hasil lama tetap tersimpan.';
+    btn.disabled = false;
+  } else {
+    note.textContent = 'Gagal mengirim — coba lagi (periksa koneksi internet).';
+    btn.disabled = false;
+  }
 });
 </script>
 </body>
