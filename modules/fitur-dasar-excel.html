@@ -145,6 +145,7 @@ a.src-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(28,42,46,
 }
 .btn-cek-nis:hover{background:var(--teal-dark);}
 .btn-cek-nis:disabled{opacity:.6;cursor:default;}
+.status-nis{font-size:.76rem;margin-top:5px;min-height:1.1em;color:var(--coral);}
 .hidden{display:none !important;}
 
 .rules-box{background:#fbf3e2;border:1px solid #e9cf95;border-radius:10px;padding:16px 18px;font-size:.87rem;margin-bottom:22px;}
@@ -764,6 +765,7 @@ footer{padding:30px 0;text-align:center;font-size:.8rem;color:#7c7461;}
               <input id="gNis" type="text" placeholder="Ketik NIS (min. 4 digit)" inputmode="numeric">
               <button type="button" class="btn-cek-nis" id="gCekNisBtn">🔍 Cek</button>
             </div>
+            <div id="gStatusNis" class="status-nis"></div>
           </div>
           <div class="field"><label for="gNama">Nama Lengkap</label><input id="gNama" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
           <div class="field"><label for="gKelas">Kelas</label><input id="gKelas" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
@@ -960,7 +962,7 @@ btnKelompok.addEventListener('click', ()=>{
   formKelompok.classList.remove('hidden'); formIndividu.classList.add('hidden');
 });
 if(typeof pasangAutoisiSiswa === 'function'){
-  pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen', 'gCekNisBtn');
+  pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen', 'gCekNisBtn', 'gStatusNis');
 }
 
 /* ---------- Kirim hasil ke Google Sheet (lewat Apps Script di config.js) ---------- */
