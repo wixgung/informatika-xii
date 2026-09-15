@@ -137,6 +137,14 @@ a.src-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(28,42,46,
 }
 .field input:focus{outline:2px solid var(--amber);border-color:var(--amber);}
 .field input[readonly]{background:var(--paper-2);color:#6b6355;cursor:not-allowed;}
+.field-nis-row{display:flex;gap:8px;align-items:stretch;}
+.field-nis-row input{flex:1;}
+.btn-cek-nis{
+  flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.82rem;
+  background:var(--teal);color:#fff;border:none;border-radius:8px;padding:0 16px;cursor:pointer;white-space:nowrap;
+}
+.btn-cek-nis:hover{background:var(--teal-dark);}
+.btn-cek-nis:disabled{opacity:.6;cursor:default;}
 .hidden{display:none !important;}
 
 .rules-box{background:#fbf3e2;border:1px solid #e9cf95;border-radius:10px;padding:16px 18px;font-size:.87rem;margin-bottom:22px;}
@@ -750,7 +758,13 @@ footer{padding:30px 0;text-align:center;font-size:.8rem;color:#7c7461;}
           <button class="pill-btn mode-btn" id="gModeKelompok" type="button">👥 Kelompok</button>
         </div>
         <div class="idform" id="gFormIndividu">
-          <div class="field"><label for="gNis">NIS</label><input id="gNis" type="text" placeholder="Ketik NIS lalu pindah kolom" inputmode="numeric"></div>
+          <div class="field">
+            <label for="gNis">NIS</label>
+            <div class="field-nis-row">
+              <input id="gNis" type="text" placeholder="Ketik NIS (min. 4 digit)" inputmode="numeric">
+              <button type="button" class="btn-cek-nis" id="gCekNisBtn">🔍 Cek</button>
+            </div>
+          </div>
           <div class="field"><label for="gNama">Nama Lengkap</label><input id="gNama" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
           <div class="field"><label for="gKelas">Kelas</label><input id="gKelas" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
           <div class="field"><label for="gAbsen">No. Absen</label><input id="gAbsen" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
@@ -946,7 +960,7 @@ btnKelompok.addEventListener('click', ()=>{
   formKelompok.classList.remove('hidden'); formIndividu.classList.add('hidden');
 });
 if(typeof pasangAutoisiSiswa === 'function'){
-  pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen');
+  pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen', 'gCekNisBtn');
 }
 
 /* ---------- Kirim hasil ke Google Sheet (lewat Apps Script di config.js) ---------- */
