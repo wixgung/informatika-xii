@@ -279,7 +279,7 @@ Mengecek status "Tampilkan" dari Sheet sebelum materi bisa diakses. Kalau `Tampi
 
 ### `siswa.js` — file baru, auto-isi Nama/Kelas/Absen dari NIS
 
-Data siswa mulai diambil sejak halaman kuis dibuka (bukan menunggu siswa mengetik), disimpan sementara di `sessionStorage` selama 30 menit, dan divalidasi bentuknya sebelum dipakai — kalau cache atau respons server ternyata bukan daftar siswa (mis. Apps Script belum ter-deploy dengan benar), otomatis dibuang dan diambil ulang, bukan dipakai apa adanya. Ada juga teks status di bawah kolom NIS yang membedakan "Memeriksa...", "NIS tidak ditemukan", dan "Gagal memuat data" — supaya kalau ada masalah, penyebabnya kelihatan.
+Data siswa mulai diambil sejak halaman kuis dibuka (bukan menunggu siswa mengetik), disimpan sementara di `localStorage` selama 30 menit, dan divalidasi bentuknya sebelum dipakai — kalau cache atau respons server ternyata bukan daftar siswa (mis. Apps Script belum ter-deploy dengan benar), otomatis dibuang dan diambil ulang, bukan dipakai apa adanya. Dipakai `localStorage` (bukan `sessionStorage`) supaya cache-nya **dibagikan antar tab browser** — penting karena portal membuka tiap materi di tab baru (`target="_blank"`), jadi begitu satu kuis berhasil ambil data siswa, kuis lain yang dibuka di tab lain pada jam yang sama langsung pakai cache itu juga. Ada juga teks status di bawah kolom NIS yang membedakan "Memeriksa...", "NIS tidak ditemukan", dan "Gagal memuat data" — supaya kalau ada masalah, penyebabnya kelihatan.
 
 ```javascript
 // ============================================================
@@ -309,8 +309,10 @@ function _bentukValid(data) {
 function ambilDaftarSiswa() {
   if (_daftarSiswaPromise) return _daftarSiswaPromise;
 
+  // localStorage (bukan sessionStorage) supaya cache dibagikan antar
+  // tab browser — portal membuka tiap materi di tab baru.
   try {
-    const mentah = sessionStorage.getItem(_KUNCI_CACHE_SISWA);
+    const mentah = localStorage.getItem(_KUNCI_CACHE_SISWA);
     if (mentah) {
       const cache = JSON.parse(mentah);
       if (Date.now() - cache.waktu < _MASA_BERLAKU_CACHE_MS && _bentukValid(cache.data)) {
@@ -319,10 +321,10 @@ function ambilDaftarSiswa() {
       }
       if (!_bentukValid(cache.data)) {
         console.warn("Cache daftar siswa bentuknya tidak valid, diabaikan & diambil ulang.");
-        sessionStorage.removeItem(_KUNCI_CACHE_SISWA);
+        localStorage.removeItem(_KUNCI_CACHE_SISWA);
       }
     }
-  } catch (e) { /* sessionStorage bermasalah -> abaikan, lanjut fetch biasa */ }
+  } catch (e) { /* localStorage bermasalah -> abaikan, lanjut fetch biasa */ }
 
   if (typeof CONTROL_URL === "undefined") return Promise.resolve([]);
   _daftarSiswaPromise = fetch(CONTROL_URL + "?action=siswa")
@@ -334,8 +336,8 @@ function ambilDaftarSiswa() {
         return [];
       }
       try {
-        sessionStorage.setItem(_KUNCI_CACHE_SISWA, JSON.stringify({ waktu: Date.now(), data }));
-      } catch (e) { /* sessionStorage penuh/nonaktif -> tidak masalah, tetap jalan */ }
+        localStorage.setItem(_KUNCI_CACHE_SISWA, JSON.stringify({ waktu: Date.now(), data }));
+      } catch (e) { /* localStorage penuh/nonaktif -> tidak masalah, tetap jalan */ }
       return data;
     })
     .catch(err => {
