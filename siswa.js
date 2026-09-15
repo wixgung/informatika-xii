@@ -11,28 +11,57 @@
 // Kalau tab "Siswa" belum dibuat / kosong, fitur ini diam saja
 // dan form tetap bisa diisi manual seperti biasa.
 //
-// Perilaku pengecekan:
-// - Otomatis dicek begitu NIS sudah diketik minimal 4 digit (tiap
-//   ketikan berikutnya dicek ulang) — cepat, karena daftar siswa
-//   di-cache sekali di memori setelah pengambilan pertama.
-// - Juga dicek saat kolom NIS kehilangan fokus (blur), untuk NIS
-//   yang panjangnya kurang dari 4 digit.
-// - Tombol manual (opsional) untuk siswa yang ingin memicu
-//   pengecekan sendiri kapan saja.
+// Perilaku pengecekan & kecepatan:
+// - Daftar siswa mulai diambil begitu pasangAutoisiSiswa() dipanggil
+//   (saat halaman kuis dibuka), BUKAN menunggu siswa mulai mengetik.
+//   Jadi saat siswa selesai mengetik NIS, datanya biasanya sudah siap
+//   di memori dan pencariannya jadi instan.
+// - Selama menunggu, kalau ada beberapa pemicu sekaligus (mengetik +
+//   blur + klik tombol), semuanya berbagi satu proses pengambilan
+//   yang sama — tidak memicu beberapa request sekaligus.
+// - Hasilnya juga disimpan sementara di sessionStorage (kadaluarsa
+//   30 menit) supaya kalau siswa membuka kuis lain di jam yang sama,
+//   tidak perlu mengambil ulang dari awal — halaman kuis berikutnya
+//   langsung baca dari cache ini tanpa menunggu.
+// - Otomatis dicek begitu NIS sudah diketik minimal 4 digit, juga
+//   saat kolom NIS kehilangan fokus (blur), dan lewat tombol manual.
 // ============================================================
-let _daftarSiswaCache = null;
+const _KUNCI_CACHE_SISWA = 'daftarSiswaCache';
+const _MASA_BERLAKU_CACHE_MS = 30 * 60 * 1000; // 30 menit
 
-async function ambilDaftarSiswa() {
-  if (_daftarSiswaCache) return _daftarSiswaCache;
-  if (typeof CONTROL_URL === "undefined") return [];
+let _daftarSiswaPromise = null;
+
+function ambilDaftarSiswa() {
+  if (_daftarSiswaPromise) return _daftarSiswaPromise; // sudah/sedang diambil, jangan ulang
+
+  // 1) Coba dari sessionStorage dulu (bertahan antar-halaman kuis)
   try {
-    const res = await fetch(CONTROL_URL + "?action=siswa");
-    _daftarSiswaCache = await res.json();
-  } catch (err) {
-    console.warn("Gagal mengambil daftar siswa:", err);
-    _daftarSiswaCache = [];
-  }
-  return _daftarSiswaCache;
+    const mentah = sessionStorage.getItem(_KUNCI_CACHE_SISWA);
+    if (mentah) {
+      const cache = JSON.parse(mentah);
+      if (Date.now() - cache.waktu < _MASA_BERLAKU_CACHE_MS) {
+        _daftarSiswaPromise = Promise.resolve(cache.data);
+        return _daftarSiswaPromise;
+      }
+    }
+  } catch (e) { /* sessionStorage bermasalah -> abaikan, lanjut fetch biasa */ }
+
+  // 2) Kalau tidak ada cache valid, ambil dari server sekali saja
+  if (typeof CONTROL_URL === "undefined") return Promise.resolve([]);
+  _daftarSiswaPromise = fetch(CONTROL_URL + "?action=siswa")
+    .then(res => res.json())
+    .then(data => {
+      try {
+        sessionStorage.setItem(_KUNCI_CACHE_SISWA, JSON.stringify({ waktu: Date.now(), data }));
+      } catch (e) { /* sessionStorage penuh/nonaktif -> tidak masalah, tetap jalan */ }
+      return data;
+    })
+    .catch(err => {
+      console.warn("Gagal mengambil daftar siswa:", err);
+      _daftarSiswaPromise = null; // biar bisa dicoba ulang lain kali
+      return [];
+    });
+  return _daftarSiswaPromise;
 }
 
 function pasangAutoisiSiswa(idNis, idNama, idKelas, idAbsen, idTombol) {
@@ -42,6 +71,10 @@ function pasangAutoisiSiswa(idNis, idNama, idKelas, idAbsen, idTombol) {
   const inputAbsen = idAbsen ? document.getElementById(idAbsen) : null;
   const tombolCek = idTombol ? document.getElementById(idTombol) : null;
   if (!inputNis || !inputNama || !inputKelas) return;
+
+  // Mulai ambil data dari SEKARANG (saat halaman kuis dibuka), jangan
+  // tunggu sampai siswa mengetik — ini yang memangkas rasa "lama".
+  ambilDaftarSiswa();
 
   async function cariSiswa() {
     const nis = inputNis.value.trim();

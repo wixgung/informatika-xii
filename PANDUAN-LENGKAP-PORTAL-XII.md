@@ -273,7 +273,7 @@ Mengecek status "Tampilkan" dari Sheet sebelum materi bisa diakses. Kalau `Tampi
 
 ### `siswa.js` — file baru, auto-isi Nama/Kelas/Absen dari NIS
 
-Cek berjalan otomatis begitu NIS sudah 4 digit (tiap ketikan berikutnya dicek ulang), plus tombol manual "🔍 Cek" untuk jaga-jaga.
+Data siswa mulai diambil sejak halaman kuis dibuka (bukan menunggu siswa mengetik), dan disimpan sementara di `sessionStorage` selama 30 menit supaya kuis-kuis berikutnya di jam yang sama tidak perlu mengambil ulang.
 
 ```javascript
 // ============================================================
@@ -287,19 +287,40 @@ Cek berjalan otomatis begitu NIS sudah 4 digit (tiap ketikan berikutnya dicek ul
 // (idAbsen dan idTombol boleh dikosongkan kalau file itu tidak
 // punya field/tombol itu)
 // ============================================================
-let _daftarSiswaCache = null;
+const _KUNCI_CACHE_SISWA = 'daftarSiswaCache';
+const _MASA_BERLAKU_CACHE_MS = 30 * 60 * 1000; // 30 menit
 
-async function ambilDaftarSiswa() {
-  if (_daftarSiswaCache) return _daftarSiswaCache;
-  if (typeof CONTROL_URL === "undefined") return [];
+let _daftarSiswaPromise = null;
+
+function ambilDaftarSiswa() {
+  if (_daftarSiswaPromise) return _daftarSiswaPromise;
+
   try {
-    const res = await fetch(CONTROL_URL + "?action=siswa");
-    _daftarSiswaCache = await res.json();
-  } catch (err) {
-    console.warn("Gagal mengambil daftar siswa:", err);
-    _daftarSiswaCache = [];
-  }
-  return _daftarSiswaCache;
+    const mentah = sessionStorage.getItem(_KUNCI_CACHE_SISWA);
+    if (mentah) {
+      const cache = JSON.parse(mentah);
+      if (Date.now() - cache.waktu < _MASA_BERLAKU_CACHE_MS) {
+        _daftarSiswaPromise = Promise.resolve(cache.data);
+        return _daftarSiswaPromise;
+      }
+    }
+  } catch (e) { /* sessionStorage bermasalah -> abaikan, lanjut fetch biasa */ }
+
+  if (typeof CONTROL_URL === "undefined") return Promise.resolve([]);
+  _daftarSiswaPromise = fetch(CONTROL_URL + "?action=siswa")
+    .then(res => res.json())
+    .then(data => {
+      try {
+        sessionStorage.setItem(_KUNCI_CACHE_SISWA, JSON.stringify({ waktu: Date.now(), data }));
+      } catch (e) { /* sessionStorage penuh/nonaktif -> tidak masalah, tetap jalan */ }
+      return data;
+    })
+    .catch(err => {
+      console.warn("Gagal mengambil daftar siswa:", err);
+      _daftarSiswaPromise = null;
+      return [];
+    });
+  return _daftarSiswaPromise;
 }
 
 function pasangAutoisiSiswa(idNis, idNama, idKelas, idAbsen, idTombol) {
@@ -309,6 +330,10 @@ function pasangAutoisiSiswa(idNis, idNama, idKelas, idAbsen, idTombol) {
   const inputAbsen = idAbsen ? document.getElementById(idAbsen) : null;
   const tombolCek = idTombol ? document.getElementById(idTombol) : null;
   if (!inputNis || !inputNama || !inputKelas) return;
+
+  // Mulai ambil data dari SEKARANG (saat halaman kuis dibuka), jangan
+  // tunggu sampai siswa mengetik.
+  ambilDaftarSiswa();
 
   async function cariSiswa() {
     const nis = inputNis.value.trim();
