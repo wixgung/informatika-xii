@@ -35,8 +35,10 @@ Header baris pertama, urutan kolom harus persis:
 
 ### Tab "Siswa" — untuk auto-isi identitas dari NIS
 
-| NIS | Nama | Kelas | Absen |
-|---|---|---|---|
+Minimal berisi kolom **NIS, Nama, Kelas, Absen** — boleh urutannya berbeda, boleh huruf besar/kecil bebas (mis. `NAMA` atau `Nama` sama-sama kebaca), dan boleh ada kolom tambahan seperti `JK` (akan diabaikan). Contoh:
+
+| NIS | NAMA | JK | ABSEN | KELAS |
+|---|---|---|---|---|
 
 - **Wajib diisi lengkap** untuk semua siswa yang akan mengerjakan kuis. Sejak field Nama/Kelas/Absen di form kuis dikunci (readonly), siswa yang NIS-nya tidak ada di tab ini **tidak bisa lanjut mengerjakan** — dia hanya akan melihat pesan untuk memeriksa NIS atau menghubungi guru.
 
@@ -178,15 +180,18 @@ function getSiswaList(ss) {
   if (!sheet) return [];
   const rows = sheet.getDataRange().getValues();
   const header = rows.shift();
+  // Dicocokkan tanpa peduli besar-kecil huruf & urutan kolom, supaya
+  // header "NIS/NAMA/KELAS/ABSEN" atau "Nis/Nama/Kelas/Absen" sama-sama
+  // kebaca, dan kolom tambahan (mis. "JK") aman diabaikan.
   const idx = {};
-  header.forEach((h, i) => idx[h.trim()] = i);
+  header.forEach((h, i) => idx[String(h).trim().toUpperCase()] = i);
   return rows
     .filter(r => String(r[idx["NIS"]]).trim() !== "")
     .map(r => ({
       nis: String(r[idx["NIS"]]).trim(),
-      nama: r[idx["Nama"]],
-      kelas: r[idx["Kelas"]],
-      absen: idx["Absen"] !== undefined ? String(r[idx["Absen"]]).trim() : ""
+      nama: idx["NAMA"] !== undefined ? r[idx["NAMA"]] : "",
+      kelas: idx["KELAS"] !== undefined ? r[idx["KELAS"]] : "",
+      absen: idx["ABSEN"] !== undefined ? String(r[idx["ABSEN"]]).trim() : ""
     }));
 }
 ```
@@ -268,6 +273,8 @@ Mengecek status "Tampilkan" dari Sheet sebelum materi bisa diakses. Kalau `Tampi
 
 ### `siswa.js` — file baru, auto-isi Nama/Kelas/Absen dari NIS
 
+Cek berjalan otomatis begitu NIS sudah 4 digit (tiap ketikan berikutnya dicek ulang), plus tombol manual "🔍 Cek" untuk jaga-jaga.
+
 ```javascript
 // ============================================================
 // SISWA — auto-isi Nama, Kelas & No. Absen begitu siswa mengetik
@@ -276,7 +283,9 @@ Mengecek status "Tampilkan" dari Sheet sebelum materi bisa diakses. Kalau `Tampi
 //   <script src="../config.js"></script>
 //   <script src="../siswa.js"></script>
 // Lalu panggil sekali di bagian script kuis:
-//   pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen');
+//   pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen', 'gCekNisBtn');
+// (idAbsen dan idTombol boleh dikosongkan kalau file itu tidak
+// punya field/tombol itu)
 // ============================================================
 let _daftarSiswaCache = null;
 
@@ -293,28 +302,37 @@ async function ambilDaftarSiswa() {
   return _daftarSiswaCache;
 }
 
-function pasangAutoisiSiswa(idNis, idNama, idKelas, idAbsen) {
+function pasangAutoisiSiswa(idNis, idNama, idKelas, idAbsen, idTombol) {
   const inputNis = document.getElementById(idNis);
   const inputNama = document.getElementById(idNama);
   const inputKelas = document.getElementById(idKelas);
   const inputAbsen = idAbsen ? document.getElementById(idAbsen) : null;
+  const tombolCek = idTombol ? document.getElementById(idTombol) : null;
   if (!inputNis || !inputNama || !inputKelas) return;
 
-  inputNis.addEventListener("blur", async () => {
+  async function cariSiswa() {
     const nis = inputNis.value.trim();
     if (!nis) return;
+    if (tombolCek) { tombolCek.disabled = true; tombolCek.textContent = '...'; }
     const daftar = await ambilDaftarSiswa();
     const cocok = daftar.find(s => String(s.nis).trim() === nis);
     if (cocok) {
-      inputNama.value = cocok.nama;
-      inputKelas.value = cocok.kelas;
+      inputNama.value = cocok.nama || '';
+      inputKelas.value = cocok.kelas || '';
       if (inputAbsen) inputAbsen.value = cocok.absen || '';
     } else {
       inputNama.value = '';
       inputKelas.value = '';
       if (inputAbsen) inputAbsen.value = '';
     }
+    if (tombolCek) { tombolCek.disabled = false; tombolCek.textContent = '🔍 Cek'; }
+  }
+
+  inputNis.addEventListener('input', () => {
+    if (inputNis.value.trim().length >= 4) cariSiswa();
   });
+  inputNis.addEventListener('blur', cariSiswa);
+  if (tombolCek) tombolCek.addEventListener('click', cariSiswa);
 }
 ```
 
@@ -341,17 +359,31 @@ Ganti `XII-XXX` dengan ID unik materi tersebut (harus sama dengan kolom **ID** d
 
 ```html
 <div class="idform" id="gFormIndividu">
-  <div class="field"><label for="gNis">NIS</label><input id="gNis" type="text" placeholder="Ketik NIS lalu pindah kolom" inputmode="numeric"></div>
+  <div class="field">
+    <label for="gNis">NIS</label>
+    <div class="field-nis-row">
+      <input id="gNis" type="text" placeholder="Ketik NIS (min. 4 digit)" inputmode="numeric">
+      <button type="button" class="btn-cek-nis" id="gCekNisBtn">🔍 Cek</button>
+    </div>
+  </div>
   <div class="field"><label for="gNama">Nama Lengkap</label><input id="gNama" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
   <div class="field"><label for="gKelas">Kelas</label><input id="gKelas" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
   <div class="field"><label for="gAbsen">No. Absen</label><input id="gAbsen" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
 </div>
 ```
 
-CSS tambahan untuk field yang dikunci (taruh dekat aturan `.field input:focus`):
+CSS tambahan (taruh dekat aturan `.field input:focus`):
 
 ```css
 .field input[readonly]{background:var(--paper-2);color:#6b6355;cursor:not-allowed;}
+.field-nis-row{display:flex;gap:8px;align-items:stretch;}
+.field-nis-row input{flex:1;}
+.btn-cek-nis{
+  flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.82rem;
+  background:var(--teal);color:#fff;border:none;border-radius:8px;padding:0 16px;cursor:pointer;white-space:nowrap;
+}
+.btn-cek-nis:hover{background:var(--teal-dark);}
+.btn-cek-nis:disabled{opacity:.6;cursor:default;}
 ```
 
 **Mode Kelompok dinonaktifkan** — tombol pemilihan mode disembunyikan (form tetap ada di HTML untuk kompatibilitas kode, tapi tidak pernah terlihat siswa):
@@ -367,7 +399,7 @@ CSS tambahan untuk field yang dikunci (taruh dekat aturan `.field input:focus`):
 
 ```javascript
 if(typeof pasangAutoisiSiswa === 'function'){
-  pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen');
+  pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen', 'gCekNisBtn');
 }
 ```
 
@@ -482,7 +514,7 @@ document.getElementById('gSendBtn').addEventListener('click', async ()=>{
 ## Bagian E — Langkah setup dari nol, urut
 
 1. **Buat Google Sheet** 3 tab sesuai Bagian A (Materi, HasilKuis, Siswa — Siswa diisi lengkap NIS/Nama/Kelas/Absen semua murid).
-2. **Pasang Apps Script** sesuai Bagian B, deploy sebagai Web App, salin URL exec.
+2. **Pasang Apps Script** sesuai Bagian B, deploy sebagai Web App, salin URL exec. Kalau di kemudian hari mengedit `Code.gs` lagi, WAJIB pakai **Manage deployments → New version** (bukan bikin deployment baru), supaya URL exec tidak berubah dan `config.js` tidak perlu diutak-atik lagi.
 3. **Siapkan 3 file di root repo**: `config.js` (isi URL exec), `guard.js`, `siswa.js` — sesuai Bagian C.
 4. **Buat file materi/kuis** di folder `modules/`, ikuti pola lengkap di Bagian D.
 5. **Tambah 1 baris** di tab Materi untuk materi tersebut (ID, Judul, Deskripsi, Kategori, Semester, Icon, File, centang Tampilkan saat siap dibuka).
