@@ -91,10 +91,16 @@ function doGet(e) {
 }
 
 function doPost(e) {
-  // Lock: kalau 2 siswa submit bersamaan, yang kedua menunggu
-  // giliran (maks 30 detik) supaya tidak saling menimpa baris.
+  // Lock: kalau 2 siswa submit bersamaan, yang kedua menunggu giliran
+  // (maks 10 detik, lebih pendek dari timeout 15 detik di sisi siswa)
+  // supaya tidak saling menimpa baris, dan kalau memang macet siswa
+  // dapat jawaban gagal untuk dicoba lagi — bukan menggantung.
   const lock = LockService.getScriptLock();
-  lock.waitLock(30000);
+  try {
+    lock.waitLock(10000);
+  } catch (err) {
+    return jsonOutput({ status: "error", pesan: "Server sedang sibuk (banyak yang mengirim bersamaan), coba lagi sebentar." });
+  }
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sheet = ss.getSheetByName("HasilKuis");
@@ -401,7 +407,7 @@ Upload ketiga file ini (`config.js`, `guard.js`, `siswa.js`) di root repo, sejaj
 
 ## Bagian D — Pola wajib di setiap file kuis (HTML)
 
-Setiap file materi/kuis di folder `modules/` harus mengikuti pola ini. `fitur-dasar-excel.html` sudah jadi contoh lengkapnya — untuk kuis lain, terapkan 5 hal yang sama:
+Setiap file materi/kuis di folder `modules/` harus mengikuti pola ini. `fitur-dasar-excel.html` sudah jadi contoh lengkapnya — untuk kuis lain, terapkan 6 hal yang sama:
 
 ### 1. Script include, tepat sebelum `</body>`
 
@@ -484,11 +490,25 @@ if(modeAktif === 'Individu'){
 }
 ```
 
-### 5. Fungsi kirim hasil (cek duplikat + verifikasi + retry)
+### 5. Fungsi kirim hasil (cek duplikat + verifikasi + retry + timeout)
+
+Timeout penting di sini: tanpa batas waktu, kalau server lambat/nyangkut, browser akan menunggu tanpa henti dan siswa merasa aplikasinya macet total. Pengecekan riwayat dibatasi 6 detik (kalau gagal/lambat, dilewati saja supaya tidak menghalangi pengiriman), pengiriman hasil dibatasi 15 detik per percobaan.
 
 ```javascript
 const MATERI_LABEL = "Nama Materi Ini"; // sesuaikan per file
 
+// fetch dengan batas waktu — kalau server tidak merespons dalam
+// timeoutMs, permintaan dibatalkan otomatis (tidak menggantung selamanya)
+function fetchDenganTimeout(url, opsi, timeoutMs){
+  const kontrol = new AbortController();
+  const id = setTimeout(()=> kontrol.abort(), timeoutMs);
+  return fetch(url, Object.assign({}, opsi, { signal: kontrol.signal }))
+    .finally(()=> clearTimeout(id));
+}
+
+// Cek apakah identitas ini sudah pernah mengisi kuis ini sebelumnya.
+// Timeout pendek (6 detik) — kalau lambat/gagal, LEWATI saja pengecekan
+// ini dan lanjut kirim, supaya siswa tidak menunggu tanpa kepastian.
 async function cekHasilSebelumnya(materi, identitas){
   if(typeof CONTROL_URL === 'undefined') return { ada:false };
   try{
@@ -496,22 +516,28 @@ async function cekHasilSebelumnya(materi, identitas){
       action: 'cekHasil', mode: identitas.mode, materi,
       nis: identitas.nis || '', nama: identitas.nama || '', kelas: identitas.kelas || ''
     });
-    const res = await fetch(CONTROL_URL + '?' + params.toString());
+    const res = await fetchDenganTimeout(CONTROL_URL + '?' + params.toString(), {}, 6000);
     return await res.json();
   }catch(err){
-    console.warn('Gagal memeriksa hasil sebelumnya:', err);
+    console.warn('Gagal memeriksa hasil sebelumnya (dilewati, lanjut kirim):', err);
     return { ada:false };
   }
 }
 
-// Return true = terkirim, false = gagal, null = dibatalkan siswa.
-async function kirimKeSheet(materi, skor, total, identitas){
+// Kirim hasil. Return true = terkirim, false = gagal, null = dibatalkan siswa.
+// onStatus(teks) opsional, dipanggil untuk kasih tahu tahap yang sedang berjalan.
+// cekRiwayatAwal (opsional) = Promise dari cekHasilSebelumnya() yang sudah
+// dimulai LEBIH DULU (mis. sejak kuis dimulai) — kalau dikirim, dipakai
+// langsung tanpa mengulang fetch, jadi biasanya sudah selesai duluan.
+async function kirimKeSheet(materi, skor, total, identitas, onStatus, cekRiwayatAwal){
+  const status = onStatus || function(){};
   if(typeof CONTROL_URL === 'undefined'){
     console.warn('CONTROL_URL belum tersedia — lewati pengiriman ke Sheet.');
     return false;
   }
 
-  const cekLama = await cekHasilSebelumnya(materi, identitas);
+  status('Memeriksa riwayat...');
+  const cekLama = await (cekRiwayatAwal || cekHasilSebelumnya(materi, identitas));
   if(cekLama.ada){
     const lanjut = confirm(
       'Kamu sudah pernah mengirim hasil kuis ini sebelumnya (skor ' + cekLama.skor + '/' + cekLama.total + ', ' + cekLama.waktu + ').\n\n' +
@@ -533,16 +559,17 @@ async function kirimKeSheet(materi, skor, total, identitas){
     total: total
   };
 
+  status('Mengirim...');
   for(let percobaan = 1; percobaan <= 2; percobaan++){
     try{
-      const res = await fetch(CONTROL_URL, { method: 'POST', body: JSON.stringify(payload) });
+      const res = await fetchDenganTimeout(CONTROL_URL, { method: 'POST', body: JSON.stringify(payload) }, 15000);
       const hasil = await res.json();
       if(hasil.status === 'ok') return true;
       console.warn('Server menolak pengiriman:', hasil);
     }catch(err){
-      console.error('Percobaan ' + percobaan + ' gagal mengirim hasil:', materi, err);
+      console.error('Percobaan ' + percobaan + ' gagal mengirim hasil (timeout/gagal):', materi, err);
     }
-    if(percobaan === 1) await new Promise(r => setTimeout(r, 1000));
+    if(percobaan === 1){ status('Mencoba lagi...'); await new Promise(r => setTimeout(r, 1000)); }
   }
   return false;
 }
@@ -556,8 +583,11 @@ document.getElementById('gSendBtn').addEventListener('click', async ()=>{
   const btn = document.getElementById('gSendBtn');
   const note = document.getElementById('gSendNote');
   btn.disabled = true;
-  note.textContent = 'Memeriksa...';
-  const ok = await kirimKeSheet(MATERI_LABEL + ' — nama kuisnya', skor, TOTAL_SOAL, identitas);
+  const ok = await kirimKeSheet(
+    MATERI_LABEL + ' — nama kuisnya', skor, TOTAL_SOAL, identitas,
+    (teks)=>{ note.textContent = teks; },
+    cekRiwayatPromise
+  );
   if(ok === true){
     note.textContent = '✓ Hasil terkirim ke guru.';
   } else if(ok === null){
@@ -570,6 +600,31 @@ document.getElementById('gSendBtn').addEventListener('click', async ()=>{
 });
 ```
 
+### 6. Mulai pengecekan riwayat sejak kuis dimulai (bukan saat klik Kirim)
+
+Ini yang paling menentukan kecepatan yang terasa oleh siswa: filter di server tidak banyak membantu (Apps Script tetap harus membaca seluruh sheet HasilKuis lebih dulu), tapi memulai pengecekan lebih awal — sejak siswa menekan "Mulai Kuis", bukan menunggu sampai mereka menekan "Kirim" — membuat pengecekan itu **berjalan di belakang layar selama siswa mengerjakan soal**. Karena mengerjakan kuis biasanya makan waktu beberapa menit, saat siswa selesai dan klik kirim, hasilnya kemungkinan besar sudah siap.
+
+Tambahkan variabel global (dekat `let identitas = null;`):
+
+```javascript
+let cekRiwayatPromise = null;
+```
+
+Di handler tombol "Mulai Kuis", tepat setelah `identitas` di-set:
+
+```javascript
+identitas = ident;
+cekRiwayatPromise = cekHasilSebelumnya(MATERI_LABEL + ' — nama kuisnya', identitas);
+```
+
+Di handler tombol "Main Lagi" (kalau kuisnya bisa diulang), cek ulang juga supaya percobaan kedua tidak memakai hasil basi dari sebelum pengiriman pertama:
+
+```javascript
+cekRiwayatPromise = cekHasilSebelumnya(MATERI_LABEL + ' — nama kuisnya', identitas);
+```
+
+Lalu di handler tombol Kirim, teruskan `cekRiwayatPromise` sebagai argumen ke-6 `kirimKeSheet(...)` (lihat contoh lengkap di poin 5 di atas).
+
 ---
 
 ## Bagian E — Langkah setup dari nol, urut
@@ -577,7 +632,7 @@ document.getElementById('gSendBtn').addEventListener('click', async ()=>{
 1. **Buat Google Sheet** 3 tab sesuai Bagian A (Materi, HasilKuis, Siswa — Siswa diisi lengkap NIS/Nama/Kelas/Absen semua murid).
 2. **Pasang Apps Script** sesuai Bagian B, deploy sebagai Web App, salin URL exec. Kalau di kemudian hari mengedit `Code.gs` lagi, WAJIB pakai **Manage deployments → New version** (bukan bikin deployment baru), supaya URL exec tidak berubah dan `config.js` tidak perlu diutak-atik lagi.
 3. **Siapkan 3 file di root repo**: `config.js` (isi URL exec), `guard.js`, `siswa.js` — sesuai Bagian C.
-4. **Buat file materi/kuis** di folder `modules/`, ikuti pola lengkap di Bagian D.
+4. **Buat file materi/kuis** di folder `modules/`, ikuti pola lengkap di Bagian D (termasuk poin 6: mulai cek riwayat sejak kuis dimulai).
 5. **Tambah 1 baris** di tab Materi untuk materi tersebut (ID, Judul, Deskripsi, Kategori, Semester, Icon, File, centang Tampilkan saat siap dibuka).
 6. **Uji coba sebagai siswa**: isi NIS yang terdaftar → cek Nama/Kelas/Absen otomatis muncul → kerjakan kuis → kirim hasil → cek muncul di tab HasilKuis. Coba kirim kedua kalinya dengan NIS sama → pastikan muncul dialog konfirmasi dan baris lama ikut terganti (bukan baris baru).
 
