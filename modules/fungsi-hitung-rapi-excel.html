@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fungsi Menghitung, Menjumlah & Merapikan Data — COUNT, COUNTA, COUNTBLANK, SUM, AVERAGE, TRIM, LEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2a2e;
+  --paper:#f6f1e6;
+  --paper-2:#efe7d4;
+  --amber:#e2a333;
+  --teal:#2f6f66;
+  --teal-dark:#1e4a44;
+  --coral:#dc5b41;
+  --line: rgba(28,42,46,0.16);
+  --card: #fffdf8;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Work Sans',sans-serif;
+  line-height:1.55;
+  background-image:
+    radial-gradient(circle, rgba(28,42,46,0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+h1,h2,h3,h4{font-family:'Fraunces',serif; margin:0 0 .4em 0; line-height:1.08; color:var(--teal-dark);}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:.72rem;
+  color:var(--coral);
+  font-weight:600;
+  display:inline-block;
+  margin-bottom:.6em;
+}
+p{margin:0 0 1em 0;}
+a{color:var(--teal-dark);}
+code{background:var(--paper-2);padding:1px 6px;border-radius:5px;font-family:'IBM Plex Mono',monospace;font-size:.88em;}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+section{padding:64px 0;border-bottom:1px dashed var(--line);}
+section:last-of-type{border-bottom:none;}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(246,241,230,0.92);
+  backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line);
+}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;max-width:1080px;flex-wrap:wrap;gap:8px;}
+.brand{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.85rem;letter-spacing:.04em;display:flex;align-items:center;gap:8px;}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--coral);display:inline-block;}
+.navlinks{display:flex;gap:14px;flex-wrap:wrap;}
+.navlinks a{font-size:.78rem;text-decoration:none;color:var(--ink);opacity:.75;font-weight:500;}
+.navlinks a:hover{opacity:1;color:var(--coral);}
+@media(max-width:900px){.navlinks{display:none;}}
+
+/* HERO */
+.hero{padding:60px 0 46px;}
+.hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center;}
+@media(max-width:800px){.hero-grid{grid-template-columns:1fr;}}
+.hero h1{font-size:clamp(2rem,4.6vw,3rem);}
+.hero .lede{font-size:1.06rem;max-width:56ch;color:#33474a;}
+.callback{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-left:4px solid var(--coral);
+  border-radius:6px;
+  padding:16px 18px;
+  font-size:.92rem;
+  margin-top:20px;
+}
+.callback b{color:var(--coral);}
+.hero-visual{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;}
+.pipeline-mini{display:flex;flex-direction:column;gap:9px;}
+.pmini{display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.75rem;}
+.pmini .n{width:24px;height:24px;border-radius:50%;background:var(--paper-2);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--teal-dark);flex-shrink:0;font-size:.7rem;}
+.pmini.active .n{background:var(--amber);color:#221805;}
+
+/* SECTION HEADERS */
+.shead{max-width:680px;margin-bottom:32px;}
+.shead h2{font-size:clamp(1.5rem,3.1vw,2.1rem);}
+
+/* CATEGORY LEGEND CARDS */
+.src-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:10px;}
+.src-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;}
+.src-card .ico{font-size:1.4rem;}
+.src-card h4{font-size:1rem;margin:8px 0 4px;color:var(--ink);}
+.src-card p{font-size:.87rem;color:#4a4238;margin:0;}
+a.src-card{text-decoration:none;display:block;transition:transform .15s, box-shadow .15s;}
+a.src-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(28,42,46,0.1);}
+
+/* FITUR CARDS */
+.fitur-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:6px;}
+.fitur-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;}
+.fitur-card .tag{font-family:'IBM Plex Mono',monospace;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--coral);display:block;margin-bottom:6px;}
+.fitur-card h4{font-size:1.06rem;margin:0 0 8px;display:flex;align-items:center;gap:8px;}
+.fitur-card h4 .fico{font-size:1.15rem;}
+.fitur-card p.apagunanya{font-size:.89rem;color:#33474a;margin-bottom:10px;}
+.fitur-card .sintaks{font-size:.85rem;margin-bottom:10px;}
+.fitur-card ol{margin:0 0 12px 20px;padding:0;font-size:.86rem;color:#3a3327;}
+.fitur-card ol li{margin-bottom:4px;}
+.fitur-card .tips{background:var(--paper-2);border-radius:8px;padding:8px 12px;font-size:.79rem;color:#4a4238;}
+.fitur-card .tips b{color:var(--coral);}
+
+/* BUTTONS */
+.btn{
+  font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:.02em;font-size:.85rem;
+  background:var(--teal-dark);color:#fff;border:none;border-radius:8px;padding:11px 22px;cursor:pointer;
+}
+.btn:hover{background:var(--coral);}
+.btn.ghost{background:transparent;color:var(--teal-dark);border:1.5px solid var(--teal-dark);}
+.btn.ghost:hover{background:var(--teal-dark);color:#fff;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+
+/* GAME PANEL */
+.game-panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px;}
+.idform{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+@media(max-width:600px){.idform{grid-template-columns:1fr;}}
+.mode-toggle{display:flex;gap:10px;margin-bottom:20px;}
+.pill-btn{
+  border:1.5px solid var(--line);background:#fff;border-radius:20px;padding:9px 20px;font-family:'Work Sans',sans-serif;
+  font-size:.85rem;cursor:pointer;font-weight:600;transition:.15s;
+}
+.mode-btn.active{background:var(--teal);border-color:var(--teal);color:#fff;}
+.field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;color:#5b5344;}
+.field input{
+  width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:'Work Sans',sans-serif;
+  font-size:.95rem;background:#fff;
+}
+.field input:focus{outline:2px solid var(--amber);border-color:var(--amber);}
+.field input[readonly]{background:var(--paper-2);color:#6b6355;cursor:not-allowed;}
+.field-nis-row{display:flex;gap:8px;align-items:stretch;}
+.field-nis-row input{flex:1;}
+.btn-cek-nis{
+  flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.82rem;
+  background:var(--teal);color:#fff;border:none;border-radius:8px;padding:0 16px;cursor:pointer;white-space:nowrap;
+}
+.btn-cek-nis:hover{background:var(--teal-dark);}
+.btn-cek-nis:disabled{opacity:.6;cursor:default;}
+.status-nis{font-size:.76rem;margin-top:5px;min-height:1.1em;color:var(--coral);}
+.hidden{display:none !important;}
+
+.rules-box{background:#fbf3e2;border:1px solid #e9cf95;border-radius:10px;padding:16px 18px;font-size:.87rem;margin-bottom:22px;}
+.rules-box h4{margin:0 0 8px;font-size:.9rem;color:#7a6a3a;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;}
+.rules-box ul{margin:0;padding-left:18px;}
+.rules-box li{margin-bottom:4px;}
+
+.game-hud{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.hud-cat{font-weight:600;font-size:.92rem;font-family:'IBM Plex Mono',monospace;color:var(--teal-dark);}
+.hud-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.hearts{font-size:1.05rem;letter-spacing:2px;}
+.score-pill{font-family:'IBM Plex Mono',monospace;font-size:.85rem;background:var(--paper-2);padding:6px 14px;border-radius:20px;white-space:nowrap;}
+.streak-pill{font-family:'IBM Plex Mono',monospace;font-size:.78rem;background:var(--amber);color:#221805;padding:5px 12px;border-radius:20px;white-space:nowrap;font-weight:700;opacity:0;transition:opacity .2s;}
+.streak-pill.show{opacity:1;}
+
+/* Rute pengiriman (progress bar bertema kurir) */
+.route-wrap{position:relative;background:var(--paper-2);border-radius:20px;height:30px;margin-bottom:10px;overflow:hidden;border:1px solid var(--line);}
+.route-track{position:absolute;inset:0;background:repeating-linear-gradient(90deg, transparent, transparent 26px, rgba(28,42,46,0.10) 26px, rgba(28,42,46,0.10) 30px);}
+.route-fill{position:absolute;top:0;left:0;bottom:0;background:linear-gradient(90deg, #dfeee9, #cdeade);width:0%;transition:width .5s ease;}
+.route-truck{position:absolute;top:50%;transform:translate(-50%,-50%) scaleX(-1);font-size:1.25rem;left:0%;transition:left .5s ease;filter:drop-shadow(0 1px 1px rgba(0,0,0,0.25));}
+.route-flag{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:1.1rem;}
+
+
+.q-progress-wrap{background:var(--paper-2);border-radius:20px;height:8px;overflow:hidden;margin-bottom:20px;}
+.q-progress-bar{background:var(--amber);height:100%;width:0%;transition:width .3s;}
+
+.q-card{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:26px 24px;}
+.q-card .qcat{font-family:'IBM Plex Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--coral);display:block;margin-bottom:10px;}
+.q-card .qtext{font-size:1.04rem;color:var(--ink);margin-bottom:16px;font-weight:600;line-height:1.45;}
+.q-card .qtext .q-excel{font-weight:400;font-size:1rem;margin:10px 0;max-width:280px;}
+.q-options{display:grid;gap:10px;grid-template-columns:1fr 1fr;}
+@media(max-width:560px){.q-options{grid-template-columns:1fr;}}
+.q-opt{
+  text-align:center;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:15px 16px;
+  font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.98rem;cursor:pointer;transition:.15s;color:var(--ink);
+  white-space:pre-wrap;
+}
+.q-opt:hover:not(:disabled){border-color:var(--teal);background:#f4faf8;transform:translateY(-2px);}
+.q-opt.correct{border-color:var(--teal);background:#e5f3ee;color:var(--teal-dark);}
+.q-opt.wrong{border-color:var(--coral);background:#fdece6;color:var(--coral);}
+.q-opt:disabled{cursor:default;}
+.q-feedback{margin-top:16px;padding:14px 16px;border-radius:10px;font-size:.87rem;display:none;}
+.q-feedback.show{display:block;}
+.q-feedback.ok{background:#e5f3ee;color:var(--teal-dark);}
+.q-feedback.bad{background:#fdece6;color:var(--coral);}
+.q-nextrow{margin-top:18px;text-align:right;}
+
+.result-box{display:none;background:var(--teal-dark);color:#fff;border-radius:14px;padding:32px 28px;text-align:center;margin-top:22px;}
+.result-box .badge{font-size:2.6rem;margin-bottom:4px;}
+.result-box .big{font-family:'Fraunces',serif;font-size:2.2rem;color:var(--amber);}
+.result-box .sub-big{font-family:'IBM Plex Mono',monospace;font-size:.95rem;color:#cfe3dd;margin-top:2px;}
+.result-box p{color:#e5ede7;}
+.result-actions{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:20px;}
+.btn-send{
+  font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:.02em;font-size:1rem;
+  background:var(--amber);color:#221805;border:none;border-radius:12px;padding:17px 38px;cursor:pointer;
+  box-shadow:0 6px 0 #a9761e, 0 14px 26px rgba(0,0,0,0.28);
+  transform:translateY(0);
+  transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+.btn-send:hover:not(:disabled){ transform:translateY(-3px); box-shadow:0 9px 0 #a9761e, 0 18px 30px rgba(0,0,0,0.32); }
+.btn-send:active:not(:disabled){ transform:translateY(3px); box-shadow:0 3px 0 #a9761e, 0 8px 16px rgba(0,0,0,0.25); }
+.btn-send:disabled{ opacity:.5; box-shadow:none; transform:none; cursor:not-allowed; }
+.btn-playagain{
+  background:transparent;border:none;color:#cfe3dd;text-decoration:underline;
+  font-family:'Work Sans',sans-serif;font-size:.85rem;cursor:pointer;padding:4px;
+}
+.btn-playagain:hover{ color:#fff; }
+.sendnote{font-size:.8rem;color:var(--amber);margin-top:10px;min-height:1.2em;}
+
+footer{padding:30px 0;text-align:center;font-size:.8rem;color:#7c7461;}
+
+.reveal{opacity:1;transform:none;}
+.reveal.in{opacity:1;transform:none;}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  .reveal{transition:none;opacity:1;transform:none;}
+}
+
+/* Loading indicator shown while guard.js checks visibility status */
+#guard-loading{
+  position:fixed;inset:0;background:#f6f1e6;z-index:999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  font-family:'IBM Plex Mono',monospace;color:#5b5344;font-size:.85rem;
+}
+#guard-loading .spin{
+  width:34px;height:34px;border-radius:50%;
+  border:3px solid rgba(28,42,46,0.15);border-top-color:#dc5b41;
+  animation:guardspin .8s linear infinite;
+}
+@keyframes guardspin{to{transform:rotate(360deg);}}
+
+/* ================= ILUSTRASI MINI-EXCEL ================= */
+.xl-mock{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 10px 26px rgba(28,42,46,0.1);}
+.xl-mock-bar{background:#e9e2d0;padding:8px 12px;display:flex;align-items:center;gap:6px;}
+.xl-dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+.xl-dot.r{background:#e2685b;}
+.xl-dot.y{background:#e2b33f;}
+.xl-dot.g{background:#59b37a;}
+.xl-mock-title{margin-left:8px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:#6b6350;}
+.xl-mock-ribbon{background:var(--teal-dark);display:flex;gap:2px;padding:0 8px;}
+.xl-mock-ribbon .rb{color:#dff2ec;font-size:.65rem;padding:6px 10px;font-family:'Work Sans',sans-serif;}
+.xl-mock-ribbon .rb.active{background:#fff;color:var(--teal-dark);border-radius:4px 4px 0 0;font-weight:600;}
+.xl-mock-formula{display:flex;align-items:center;gap:8px;background:#faf7ef;border-bottom:1px solid var(--line);padding:5px 10px;}
+.fx-cell{font-family:'IBM Plex Mono',monospace;font-size:.65rem;background:#fff;border:1px solid var(--line);border-radius:3px;padding:2px 8px;color:#5b5344;}
+.fx-bar{flex:1;height:14px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:#8a8270;display:flex;align-items:center;}
+.xl-mock-grid{position:relative;display:grid;grid-template-columns:28px repeat(4,84px);font-family:'IBM Plex Mono',monospace;font-size:.68rem;}
+.xc{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px 6px;color:#3a3327;background:#fff;display:flex;align-items:center;height:16px;}
+.xc.corner,.xc.colhead,.xc.rownum{background:var(--paper-2);font-weight:600;justify-content:center;color:#5b5344;}
+.xc.dataheader{background:#dfeee9;font-weight:600;color:var(--teal-dark);}
+.xl-cursor{position:absolute;width:80px;height:24px;border:2px solid var(--coral);border-radius:2px;pointer-events:none;animation:moveCursor 6s ease-in-out infinite;}
+@keyframes moveCursor{
+  0%,16%{transform:translate(114px,54px);}
+  25%,41%{transform:translate(198px,54px);}
+  50%,66%{transform:translate(198px,80px);}
+  75%,91%{transform:translate(114px,80px);}
+  100%{transform:translate(114px,54px);}
+}
+@media (prefers-reduced-motion: reduce){.xl-cursor{animation:none;}}
+
+.mini-illus{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;margin:14px 0;}
+
+/* Ilustrasi data di dalam kartu fitur — dibuat semirip mungkin tampilan lembar kerja
+   Excel sungguhan (baris angka, kolom huruf, formula bar) memakai ulang komponen .xc
+   dari mockup hero di atas, hanya lebar kolomnya diatur lewat inline style tiap kartu. */
+.mx-grid{position:relative;display:grid;font-family:'IBM Plex Mono',monospace;font-size:.7rem;}
+/* display:block (bukan flex) supaya teks panjang bisa membungkus ke baris baru —
+   flex item anonim tidak akan menyusut di bawah lebar kontennya (min-width:auto
+   bawaan flex), sehingga teks malah meluber alih-alih membungkus. */
+.mx-grid .xc{display:block;height:auto;min-height:20px;min-width:0;white-space:normal;overflow-wrap:break-word;line-height:1.3;padding-top:6px;padding-bottom:6px;}
+.mx-grid .xc.corner,.mx-grid .xc.colhead,.mx-grid .xc.rownum,.mx-grid .xc.dataheader{display:flex;align-items:center;justify-content:center;}
+.mx-grid .xc.dataheader{justify-content:flex-start;}
+.mx-grid .xc.included{background:#e5f3ee;color:var(--teal-dark);font-weight:700;}
+.mx-grid .xc.excluded{background:var(--paper-2);color:#b3a992;font-style:italic;}
+.cf-caption{font-size:.76rem;color:#5b5344;font-style:italic;padding:8px 10px 10px;border-top:1px solid var(--line);}
+.spasi{color:var(--coral);font-weight:700;}
+
+/* Banner mode guru (aktif lewat ?guru=1 di alamat halaman) */
+.guru-banner{display:flex;gap:10px;align-items:flex-start;background:#fff4d9;border:1px solid var(--amber);border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:.86rem;color:#6b5416;line-height:1.5;}
+.guru-banner .gi{font-size:1.3rem;line-height:1;}
+.guru-banner b{color:#8a6a12;}
+</style>
+</head>
+<body>
+
+<div id="guard-loading">
+  <div class="spin"></div>
+  <div>Memuat materi…</div>
+</div>
+
+<div id="konten-utama" style="visibility:hidden">
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> HITUNG &amp; RAPIKAN DATA</div>
+    <div class="navlinks">
+      <a href="../index.html" style="opacity:.55;">← Portal</a>
+      <a href="#hitung">Menghitung Sel</a>
+      <a href="#jumlah">Menjumlah &amp; Rata-rata</a>
+      <a href="#rapikan">Merapikan &amp; Mengukur Teks</a>
+      <a href="#main">Main &amp; Kuis</a>
+      <a href="#sumber">Sumber</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">LKPD Informatika · Fungsi Menghitung, Menjumlah &amp; Merapikan Data</span>
+      <h1>COUNT, COUNTA, COUNTBLANK, SUM, AVERAGE, TRIM, LEN</h1>
+      <p class="lede">Setelah bisa mengolah TEKS (LEFT, RIGHT, MID, dst.), sekarang giliran mengolah kumpulan data dalam satu rentang sekaligus. Kalian akan belajar <b>7 fungsi dasar</b>: tiga fungsi untuk menghitung isi sel (COUNT, COUNTA, COUNTBLANK), dua fungsi untuk menjumlah &amp; merata-ratakan angka (SUM, AVERAGE), dan dua fungsi untuk merapikan &amp; mengukur teks (TRIM, LEN).</p>
+      <div class="callback">
+        📋 <b>Mengapa ini penting?</b> Data yang dikumpulkan dari lapangan (misalnya hasil isian formulir) hampir selalu berantakan — ada yang kosong, ada yang ketikannya kelebihan spasi. Sebelum data itu dihitung atau dijumlahkan, kita perlu tahu persis berapa banyak yang terisi, berapa yang kosong, dan bagaimana merapikannya lebih dulu.
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="xl-mock reveal">
+        <div class="xl-mock-bar">
+          <span class="xl-dot r"></span><span class="xl-dot y"></span><span class="xl-dot g"></span>
+          <span class="xl-mock-title">Rekap Nilai Ujian.xlsx — Excel</span>
+        </div>
+        <div class="xl-mock-ribbon">
+          <span class="rb active">Beranda</span><span class="rb">Sisipkan</span><span class="rb">Rumus</span><span class="rb">Data</span><span class="rb">Tinjau</span>
+        </div>
+        <div class="xl-mock-formula">
+          <span class="fx-cell">B7</span><span class="fx-bar">=COUNTBLANK(B2:B6)</span>
+        </div>
+        <div class="xl-mock-grid">
+          <div class="xc corner"></div>
+          <div class="xc colhead">A</div>
+          <div class="xc colhead">B</div>
+          <div class="xc colhead">C</div>
+          <div class="xc colhead">D</div>
+
+          <div class="xc rownum">1</div>
+          <div class="xc dataheader">Nama</div>
+          <div class="xc dataheader">Nilai</div>
+          <div class="xc dataheader">Status</div>
+          <div class="xc dataheader">Ket.</div>
+
+          <div class="xc rownum">2</div>
+          <div class="xc">Ana</div>
+          <div class="xc">82</div>
+          <div class="xc">Hadir</div>
+          <div class="xc"></div>
+
+          <div class="xc rownum">3</div>
+          <div class="xc">Budi</div>
+          <div class="xc"></div>
+          <div class="xc">Izin</div>
+          <div class="xc"></div>
+
+          <div class="xl-cursor" aria-hidden="true"></div>
+        </div>
+      </div>
+      <span class="eyebrow" style="margin:16px 0 14px;display:block;">3 kelompok fungsi</span>
+      <div class="pipeline-mini">
+        <div class="pmini active"><span class="n">1</span> Menghitung Isi Sel</div>
+        <div class="pmini"><span class="n">2</span> Menjumlah &amp; Merata-ratakan</div>
+        <div class="pmini"><span class="n">3</span> Merapikan &amp; Mengukur Teks</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= 1. MENGHITUNG ISI SEL ================= -->
+<section id="hitung">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">01 · Menghitung Isi Sel</span>
+      <h2>COUNT, COUNTA, dan COUNTBLANK — menghitung tanpa membaca satu per satu</h2>
+      <p>Ketiga fungsi ini menjawab pertanyaan yang sama: "ada berapa banyak sel di rentang ini?" — hanya saja masing-masing menghitung JENIS ISI yang berbeda: hanya angka, apa pun asalkan tidak kosong, atau justru yang kosong saja.</p>
+    </div>
+    <div class="fitur-grid reveal">
+
+      <div class="fitur-card">
+        <h4><span class="fico">🔢</span> COUNT — Menghitung Sel Berisi ANGKA</h4>
+        <p class="apagunanya"><b>Pengertian &amp; fungsi:</b> COUNT menghitung banyaknya sel dalam suatu rentang yang isinya berupa ANGKA saja. Sel yang berisi teks, kosong, atau nilai logika akan dilewati (tidak dihitung).</p>
+        <p class="sintaks"><b>Sintaks:</b> <code>=COUNT(rentang_sel)</code></p>
+        <div class="mini-illus">
+          <div class="xl-mock-formula"><span class="fx-cell">A8</span><span class="fx-bar">=COUNT(A2:A6)</span></div>
+          <div class="mx-grid" style="grid-template-columns:22px 100px;">
+            <div class="xc corner"></div><div class="xc colhead">A</div>
+            <div class="xc rownum">1</div><div class="xc dataheader">Nilai</div>
+            <div class="xc rownum">2</div><div class="xc included">82</div>
+            <div class="xc rownum">3</div><div class="xc excluded">Hadir</div>
+            <div class="xc rownum">4</div><div class="xc excluded">(kosong)</div>
+            <div class="xc rownum">5</div><div class="xc included">90</div>
+            <div class="xc rownum">6</div><div class="xc included">75</div>
+          </div>
+          <div class="cf-caption">Rentang <b>A2:A6</b> — hanya sel hijau (angka) yang dihitung → hasil <b>3</b></div>
+        </div>
+        <ol>
+          <li>Klik sel kosong tempat hasil ingin ditampilkan.</li>
+          <li>Ketik <code>=COUNT(</code> lalu blok rentang sel yang ingin dihitung.</li>
+          <li>Tutup kurung <code>)</code>, tekan Enter.</li>
+        </ol>
+        <div class="tips"><b>Sering terjadi:</b> sel yang diisi tanda "-" atau kata seperti "izin" dianggap TEKS oleh Excel, jadi tidak ikut dihitung oleh COUNT.</div>
+      </div>
+
+      <div class="fitur-card">
+        <h4><span class="fico">🗂️</span> COUNTA — Menghitung Sel yang TIDAK KOSONG</h4>
+        <p class="apagunanya"><b>Pengertian &amp; fungsi:</b> COUNTA menghitung banyaknya sel yang tidak kosong, apa pun jenis isinya — angka, teks, maupun nilai logika. Cocok dipakai untuk mengetahui berapa baris yang sudah terisi datanya.</p>
+        <p class="sintaks"><b>Sintaks:</b> <code>=COUNTA(rentang_sel)</code></p>
+        <div class="mini-illus">
+          <div class="xl-mock-formula"><span class="fx-cell">A8</span><span class="fx-bar">=COUNTA(A2:A6)</span></div>
+          <div class="mx-grid" style="grid-template-columns:22px 100px;">
+            <div class="xc corner"></div><div class="xc colhead">A</div>
+            <div class="xc rownum">1</div><div class="xc dataheader">Nilai</div>
+            <div class="xc rownum">2</div><div class="xc included">82</div>
+            <div class="xc rownum">3</div><div class="xc included">Hadir</div>
+            <div class="xc rownum">4</div><div class="xc excluded">(kosong)</div>
+            <div class="xc rownum">5</div><div class="xc included">90</div>
+            <div class="xc rownum">6</div><div class="xc included">75</div>
+          </div>
+          <div class="cf-caption">Rentang <b>A2:A6</b> — semua sel hijau (asal tidak kosong) dihitung → hasil <b>4</b></div>
+        </div>
+        <ol>
+          <li>Klik sel kosong tempat hasil ingin ditampilkan.</li>
+          <li>Ketik <code>=COUNTA(</code> lalu blok rentang sel yang ingin dihitung.</li>
+          <li>Tutup kurung <code>)</code>, tekan Enter.</li>
+        </ol>
+        <div class="tips"><b>Sering terjadi:</b> sel yang hanya berisi spasi tetap dianggap "terisi" oleh COUNTA, meskipun terlihat kosong di layar.</div>
+      </div>
+
+      <div class="fitur-card">
+        <h4><span class="fico">🕳️</span> COUNTBLANK — Menghitung Sel yang KOSONG</h4>
+        <p class="apagunanya"><b>Pengertian &amp; fungsi:</b> COUNTBLANK adalah kebalikan dari COUNTA — menghitung banyaknya sel yang benar-benar KOSONG pada suatu rentang. Berguna untuk memeriksa data yang belum lengkap.</p>
+        <p class="sintaks"><b>Sintaks:</b> <code>=COUNTBLANK(rentang_sel)</code></p>
+        <div class="mini-illus">
+          <div class="xl-mock-formula"><span class="fx-cell">A8</span><span class="fx-bar">=COUNTBLANK(A2:A6)</span></div>
+          <div class="mx-grid" style="grid-template-columns:22px 100px;">
+            <div class="xc corner"></div><div class="xc colhead">A</div>
+            <div class="xc rownum">1</div><div class="xc dataheader">Nilai</div>
+            <div class="xc rownum">2</div><div class="xc excluded">82</div>
+            <div class="xc rownum">3</div><div class="xc excluded">Hadir</div>
+            <div class="xc rownum">4</div><div class="xc included">(kosong)</div>
+            <div class="xc rownum">5</div><div class="xc excluded">90</div>
+            <div class="xc rownum">6</div><div class="xc excluded">75</div>
+          </div>
+          <div class="cf-caption">Rentang <b>A2:A6</b> — hanya sel hijau (benar-benar kosong) yang dihitung → hasil <b>1</b></div>
+        </div>
+        <ol>
+          <li>Klik sel kosong tempat hasil ingin ditampilkan.</li>
+          <li>Ketik <code>=COUNTBLANK(</code> lalu blok rentang sel yang ingin diperiksa.</li>
+          <li>Tutup kurung <code>)</code>, tekan Enter.</li>
+        </ol>
+        <div class="tips"><b>Tips:</b> cara cepat memeriksa kelengkapan data — jumlah <code>COUNTA</code> + <code>COUNTBLANK</code> pada rentang yang sama akan selalu sama dengan total barisnya.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2. MENJUMLAH & MERATA-RATAKAN ================= -->
+<section id="jumlah">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">02 · Menjumlah &amp; Merata-ratakan</span>
+      <h2>SUM dan AVERAGE — dua fungsi statistik yang paling sering dipakai</h2>
+      <p>Kalau COUNT dkk. menjawab "ada berapa banyak", SUM dan AVERAGE menjawab "berapa totalnya" dan "berapa rata-ratanya" dari sekumpulan angka.</p>
+    </div>
+    <div class="fitur-grid reveal">
+
+      <div class="fitur-card">
+        <h4><span class="fico">➕</span> SUM — Menjumlahkan Angka</h4>
+        <p class="apagunanya"><b>Pengertian &amp; fungsi:</b> SUM menjumlahkan seluruh angka pada suatu rentang sel. Jauh lebih praktis dibanding menjumlahkan satu per satu dengan tanda <code>+</code>, apalagi kalau datanya banyak.</p>
+        <p class="sintaks"><b>Sintaks:</b> <code>=SUM(rentang_sel)</code></p>
+        <div class="mini-illus">
+          <div class="xl-mock-formula"><span class="fx-cell">B8</span><span class="fx-bar">=SUM(B2:B6)</span></div>
+          <div class="mx-grid" style="grid-template-columns:22px 100px;">
+            <div class="xc corner"></div><div class="xc colhead">B</div>
+            <div class="xc rownum">1</div><div class="xc dataheader">Nilai</div>
+            <div class="xc rownum">2</div><div class="xc">78</div>
+            <div class="xc rownum">3</div><div class="xc">85</div>
+            <div class="xc rownum">4</div><div class="xc">92</div>
+            <div class="xc rownum">5</div><div class="xc">66</div>
+            <div class="xc rownum">6</div><div class="xc">74</div>
+            <div class="xc rownum">8</div><div class="xc included">395</div>
+          </div>
+          <div class="cf-caption">Rentang <b>B2:B6</b> dijumlahkan → hasil di B8 = <b>395</b></div>
+        </div>
+        <ol>
+          <li>Klik sel kosong tempat hasil ingin ditampilkan.</li>
+          <li>Ketik <code>=SUM(</code> lalu blok rentang sel angka yang ingin dijumlahkan.</li>
+          <li>Tutup kurung <code>)</code>, tekan Enter.</li>
+        </ol>
+        <div class="tips"><b>Tips:</b> SUM otomatis menyesuaikan rentangnya kalau ada baris baru disisipkan di tengah data — beda dengan rumus manual <code>=B2+B3+B4</code> yang harus diedit ulang.</div>
+      </div>
+
+      <div class="fitur-card">
+        <h4><span class="fico">📊</span> AVERAGE — Menghitung Nilai Rata-rata</h4>
+        <p class="apagunanya"><b>Pengertian &amp; fungsi:</b> AVERAGE menghitung nilai rata-rata (rata-rata hitung) dari sekumpulan angka — yaitu total dibagi banyaknya data. Excel menghitungnya otomatis tanpa kita perlu tahu dulu berapa banyak datanya.</p>
+        <p class="sintaks"><b>Sintaks:</b> <code>=AVERAGE(rentang_sel)</code></p>
+        <div class="mini-illus">
+          <div class="xl-mock-formula"><span class="fx-cell">B8</span><span class="fx-bar">=AVERAGE(B2:B6)</span></div>
+          <div class="mx-grid" style="grid-template-columns:22px 100px;">
+            <div class="xc corner"></div><div class="xc colhead">B</div>
+            <div class="xc rownum">1</div><div class="xc dataheader">Nilai</div>
+            <div class="xc rownum">2</div><div class="xc">78</div>
+            <div class="xc rownum">3</div><div class="xc">85</div>
+            <div class="xc rownum">4</div><div class="xc">92</div>
+            <div class="xc rownum">5</div><div class="xc">66</div>
+            <div class="xc rownum">6</div><div class="xc">74</div>
+            <div class="xc rownum">8</div><div class="xc included">79</div>
+          </div>
+          <div class="cf-caption">Rentang <b>B2:B6</b> dirata-ratakan (395 ÷ 5) → hasil di B8 = <b>79</b></div>
+        </div>
+        <ol>
+          <li>Klik sel kosong tempat hasil ingin ditampilkan.</li>
+          <li>Ketik <code>=AVERAGE(</code> lalu blok rentang sel angka yang ingin dirata-ratakan.</li>
+          <li>Tutup kurung <code>)</code>, tekan Enter.</li>
+        </ol>
+        <div class="tips"><b>Perlu diperhatikan:</b> AVERAGE mengabaikan sel kosong dan teks saat menghitung rata-rata — tidak dianggap sebagai nol, sehingga hasilnya tetap akurat.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3. MERAPIKAN SPASI BERLEBIH ================= -->
+<section id="rapikan">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">03 · Merapikan &amp; Mengukur Teks</span>
+      <h2>TRIM dan LEN — merapikan spasi dan mengukur panjang teks</h2>
+      <p>Data yang diketik manual atau disalin dari sumber lain sering membawa spasi tersembunyi di depan, di belakang, atau di antara kata — yang sekilas tidak kelihatan tapi bisa membuat rumus lain (seperti pencocokan data) gagal bekerja. LEN membantu memeriksa hal ini dengan menghitung persis berapa karakter yang ada di suatu sel.</p>
+    </div>
+    <div class="fitur-grid reveal">
+
+      <div class="fitur-card">
+        <h4><span class="fico">✂️</span> TRIM — Merapikan Spasi pada Teks</h4>
+        <p class="apagunanya"><b>Pengertian &amp; fungsi:</b> TRIM membuang semua spasi berlebih dari sebuah teks — spasi di awal, di akhir, dan spasi ganda di antara kata dirapikan menjadi satu spasi saja. TRIM tidak mengubah huruf atau kata, hanya spasinya.</p>
+        <p class="sintaks"><b>Sintaks:</b> <code>=TRIM(teks)</code></p>
+        <div class="mini-illus">
+          <div class="xl-mock-formula"><span class="fx-cell">B2</span><span class="fx-bar">=TRIM(A2)</span></div>
+          <div class="mx-grid" style="grid-template-columns:22px 128px 106px;">
+            <div class="xc corner"></div><div class="xc colhead">A</div><div class="xc colhead">B</div>
+            <div class="xc rownum">1</div><div class="xc dataheader">Nama (asli)</div><div class="xc dataheader">Hasil TRIM</div>
+            <div class="xc rownum">2</div>
+            <div class="xc excluded">"<span class="spasi">··</span>Made<span class="spasi">···</span>Wirawan<span class="spasi">··</span>"</div>
+            <div class="xc included">Made Wirawan</div>
+          </div>
+          <div class="cf-caption">A2 berisi teks dengan spasi berlebih (titik merah menandai spasi) → hasil di B2 = <b>"Made Wirawan"</b></div>
+        </div>
+        <ol>
+          <li>Klik sel kosong tempat hasil ingin ditampilkan.</li>
+          <li>Ketik <code>=TRIM(</code> lalu klik sel yang berisi teks bermasalah.</li>
+          <li>Tutup kurung <code>)</code>, tekan Enter.</li>
+        </ol>
+        <div class="tips"><b>Perlu diperhatikan:</b> TRIM tetap menyisakan SATU spasi di antara kata (tidak menghapus semuanya) — hanya spasi di awal/akhir dan spasi ganda yang dirapikan.</div>
+      </div>
+
+      <div class="fitur-card">
+        <h4><span class="fico">📏</span> LEN — Menghitung Panjang (Jumlah Karakter) Teks</h4>
+        <p class="apagunanya"><b>Pengertian &amp; fungsi:</b> LEN menghitung banyaknya karakter dalam sebuah teks — huruf, angka, tanda baca, bahkan SPASI ikut dihitung sebagai satu karakter. Berguna untuk memeriksa apakah panjang suatu data (misalnya NIS atau kode) sudah sesuai jumlah digit yang seharusnya.</p>
+        <p class="sintaks"><b>Sintaks:</b> <code>=LEN(teks)</code></p>
+        <div class="mini-illus">
+          <div class="xl-mock-formula"><span class="fx-cell">B2</span><span class="fx-bar">=LEN(A2)</span></div>
+          <div class="mx-grid" style="grid-template-columns:22px 96px 90px;">
+            <div class="xc corner"></div><div class="xc colhead">A</div><div class="xc colhead">B</div>
+            <div class="xc rownum">1</div><div class="xc dataheader">NIS Diketik</div><div class="xc dataheader">Panjang</div>
+            <div class="xc rownum">2</div>
+            <div class="xc">2507002</div>
+            <div class="xc included">7</div>
+          </div>
+          <div class="cf-caption">NIS seharusnya 8 digit, tapi <code>=LEN(A2)</code> di B2 menghasilkan <b>7</b> — berarti ada digit yang kurang atau salah ketik.</div>
+        </div>
+        <ol>
+          <li>Klik sel kosong tempat hasil ingin ditampilkan.</li>
+          <li>Ketik <code>=LEN(</code> lalu klik sel yang berisi teks/angka yang ingin dihitung panjangnya.</li>
+          <li>Tutup kurung <code>)</code>, tekan Enter.</li>
+        </ol>
+        <div class="tips"><b>Tips:</b> gabungkan dengan TRIM untuk mendeteksi spasi tersembunyi — kalau <code>LEN(A2)</code> lebih besar daripada <code>LEN(TRIM(A2))</code>, berarti masih ada spasi berlebih di teks tersebut.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= MAIN & KUIS ================= -->
+<section id="main">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">04 · Main &amp; Kuis</span>
+      <h2>🚚 Kurir Data Kilat</h2>
+      <p>Kamu berperan sebagai kurir yang harus mengirim 10 "paket data"! Setiap paket adalah soal singkat tentang COUNT, COUNTA, COUNTBLANK, SUM, AVERAGE, TRIM, atau LEN. Jawab BENAR supaya truk maju, jawab SALAH dan truk mundur — soal yang salah akan muncul lagi sampai kamu jawab dengan benar!</p>
+    </div>
+
+    <div class="game-panel reveal">
+      <div class="rules-box">
+        <h4>Aturan permainan</h4>
+        <ul>
+          <li>Ada 10 "paket data" (soal) yang dipilih acak dari bank soal, mencakup ketujuh fungsi (COUNT, COUNTA, COUNTBLANK, SUM, AVERAGE, TRIM, LEN).</li>
+          <li>Jawaban <b>BENAR</b> membuat truk maju satu langkah. Jawaban <b>SALAH</b> membuat truk mundur satu langkah, dan soal itu akan diulang lagi nanti.</li>
+          <li>Jawaban benar berturut-turut akan menaikkan KOMBO dan memberi bonus poin tambahan.</li>
+          <li>Kamu punya 3 ❤️. Jawaban salah mengurangi 1 nyawa dan mereset kombo.</li>
+          <li>Kalau nyawa habis, misi berhenti dan truk berhenti di posisi terakhir — hasil belum bisa dikirim ke guru.</li>
+          <li>Jawab semua 10 paket dengan benar (termasuk yang diulang) dan capai garis finish untuk bisa mengirim hasil ke guru dan menjadi Kurir Kilat Legendaris!</li>
+        </ul>
+      </div>
+
+      <div class="guru-banner hidden" id="guruBanner">
+        <span class="gi">🧑‍🏫</span>
+        <div><b>Mode Guru aktif.</b> Kamu bisa langsung mencoba game ini tanpa mengisi identitas siswa. Hasil permainan pada mode ini <b>tidak dikirim</b> ke rekap nilai — halaman ini murni untuk uji coba tampilan dan soal.</div>
+      </div>
+
+      <div id="gIdentityBlock">
+        <div id="gIdentityForms">
+          <div class="mode-toggle hidden">
+            <button class="pill-btn mode-btn active" id="gModeIndividu" type="button">👤 Individu</button>
+            <button class="pill-btn mode-btn" id="gModeKelompok" type="button">👥 Kelompok</button>
+          </div>
+          <div class="idform" id="gFormIndividu">
+            <div class="field">
+              <label for="gNis">NIS</label>
+              <div class="field-nis-row">
+                <input id="gNis" type="text" placeholder="Ketik NIS (min. 4 digit)" inputmode="numeric">
+                <button type="button" class="btn-cek-nis" id="gCekNisBtn">🔍 Cek</button>
+              </div>
+              <div id="gStatusNis" class="status-nis"></div>
+            </div>
+            <div class="field"><label for="gNama">Nama Lengkap</label><input id="gNama" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
+            <div class="field"><label for="gKelas">Kelas</label><input id="gKelas" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
+            <div class="field"><label for="gAbsen">No. Absen</label><input id="gAbsen" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
+          </div>
+          <div class="idform hidden" id="gFormKelompok">
+            <div class="field"><label for="gNamaKelompok">Nama Kelompok</label><input id="gNamaKelompok" type="text" placeholder="Contoh: Kelompok 3"></div>
+            <div class="field"><label for="gKelasKelompok">Kelas</label><input id="gKelasKelompok" type="text" placeholder="Contoh: XII 1"></div>
+            <div class="field" style="grid-column:1 / -1;"><label for="gAnggota">Anggota Kelompok (pisahkan dengan koma)</label><input id="gAnggota" type="text" placeholder="Contoh: Ani, Budi, Citra, Deni"></div>
+          </div>
+        </div>
+        <button class="btn" id="gStartBtn">🚚 Mulai Misi Pengiriman</button>
+      </div>
+
+      <div id="gPlayBlock" class="hidden">
+        <div class="game-hud">
+          <div class="hud-cat" id="gameCatLabel">Paket 1 / 12</div>
+          <div class="hud-right">
+            <div class="streak-pill" id="streakPill">🔥 Kombo x2</div>
+            <div class="hearts" id="gameHearts">❤️❤️❤️</div>
+            <div class="score-pill">Poin: <span id="gameScore">0</span></div>
+          </div>
+        </div>
+
+        <div class="route-wrap">
+          <div class="route-track"></div>
+          <div class="route-fill" id="routeFill"></div>
+          <div class="route-flag">🏁</div>
+          <div class="route-truck" id="routeTruck">🚚</div>
+        </div>
+
+        <div class="q-card">
+          <span class="qcat" id="qCatLabel">Kategori</span>
+          <div class="qtext" id="qText">—</div>
+          <div class="q-options" id="qOptions"></div>
+          <div class="q-feedback" id="qFeedback"></div>
+          <div class="q-nextrow">
+            <button class="btn" id="qNextBtn" disabled>Paket Berikutnya →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-box" id="gResultBox">
+        <div class="badge" id="gResultBadge">📦</div>
+        <div class="eyebrow" style="color:var(--amber);" id="gResultTitle">Misi selesai</div>
+        <div class="big" id="gResultScore">0/12</div>
+        <div class="sub-big" id="gResultPoin">Total Poin Kurir: 0</div>
+        <p id="gResultMsg"></p>
+        <div class="result-actions">
+          <button class="btn-send" id="gSendBtn">📨 Kirim Hasil ke Guru</button>
+          <button class="btn-playagain" id="gPlayAgainBtn">Main Lagi</button>
+        </div>
+        <div class="sendnote" id="gSendNote"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SUMBER MATERI ================= -->
+<section id="sumber">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">05 · Sumber Materi</span>
+      <h2>Referensi yang digunakan</h2>
+      <p>Materi di halaman ini disusun berdasarkan sumber-sumber resmi berikut agar sintaks dan istilahnya tetap akurat.</p>
+    </div>
+    <div class="src-grid reveal">
+      <div class="src-card">
+        <div class="ico">📘</div>
+        <h4>Buku Panduan Mata Pelajaran Informatika</h4>
+        <p>Pusat Kurikulum dan Pembelajaran, Badan Standar, Kurikulum, dan Asesmen Pendidikan, Kemendikbudristek (2025) — acuan kurikulum Fase F.</p>
+      </div>
+      <a class="src-card" href="https://support.microsoft.com/en-us/office/count-function-a59cd7fc-b623-4d93-87a4-d23bf411294c" target="_blank" rel="noopener">
+        <div class="ico">🔢</div>
+        <h4>COUNT function</h4>
+        <p>Microsoft Support — sintaks dan contoh penggunaan fungsi COUNT.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/office/counta-function-7dc98875-d5c1-46f1-9a82-53f3219e2509" target="_blank" rel="noopener">
+        <div class="ico">🗂️</div>
+        <h4>COUNTA function</h4>
+        <p>Microsoft Support — sintaks dan contoh penggunaan fungsi COUNTA.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/office/countblank-function-6a92d772-675c-4bee-b346-24af6bd3ac22" target="_blank" rel="noopener">
+        <div class="ico">🕳️</div>
+        <h4>COUNTBLANK function</h4>
+        <p>Microsoft Support — sintaks dan contoh penggunaan fungsi COUNTBLANK.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/excel/functions/sum-function" target="_blank" rel="noopener">
+        <div class="ico">➕</div>
+        <h4>SUM function</h4>
+        <p>Microsoft Support — sintaks dan contoh penggunaan fungsi SUM.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/excel/functions/average-function" target="_blank" rel="noopener">
+        <div class="ico">📊</div>
+        <h4>AVERAGE function</h4>
+        <p>Microsoft Support — sintaks dan contoh penggunaan fungsi AVERAGE.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/excel/functions/trim-function" target="_blank" rel="noopener">
+        <div class="ico">✂️</div>
+        <h4>TRIM function</h4>
+        <p>Microsoft Support — sintaks dan contoh penggunaan fungsi TRIM.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/office/len-lenb-functions-29236f94-cedc-429d-affd-b5e33d2c67cb" target="_blank" rel="noopener">
+        <div class="ico">📏</div>
+        <h4>LEN function</h4>
+        <p>Microsoft Support — sintaks dan contoh penggunaan fungsi LEN.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>Dibuat untuk Informatika Kelas XII · SMA Negeri 8 Denpasar</footer>
+
+</div><!-- /#konten-utama -->
+
+<script>const MODUL_ID = "XII-107";</script>
+<script src="../config.js"></script>
+<script src="../guard.js"></script>
+<script src="../siswa.js"></script>
+<script>
+// Failsafe pratinjau: kalau config.js / guard.js gagal dimuat (misalnya saat
+// file ini dibuka sendirian tanpa struktur folder GitHub Pages di sebelahnya),
+// paksa tampilkan konten setelah 1.5 detik supaya tidak macet selamanya di
+// layar "Memuat materi...". Setelah diunggah ke folder modules/ yang benar
+// (dengan config.js & guard.js di sebelahnya), guard.js akan sempat berjalan
+// duluan dan failsafe ini tidak berpengaruh.
+setTimeout(function(){
+  var k = document.getElementById('konten-utama');
+  if(k && k.style.visibility !== 'visible'){ k.style.visibility = 'visible'; }
+  var l = document.getElementById('guard-loading');
+  if(l) l.remove();
+}, 1500);
+</script>
+
+<script>
+/* ---------- Reveal on scroll ---------- */
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+},{threshold:0.1});
+revealEls.forEach(el=>io.observe(el));
+
+/* ---------- Navigasi anchor internal (scroll manual) ---------- */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click', function(e){
+    const id = this.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if(target){
+      e.preventDefault();
+      target.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+});
+
+/* ---------- Mode Guru (uji coba) — aktif lewat ?guru=1 di alamat halaman ---------- */
+const modeGuru = new URLSearchParams(window.location.search).get('guru') === '1';
+if(modeGuru){
+  document.getElementById('guruBanner').classList.remove('hidden');
+  document.getElementById('gIdentityForms').classList.add('hidden');
+  document.getElementById('gStartBtn').textContent = '🧪 Coba Game (Mode Guru)';
+}
+
+/* ---------- Mode Individu / Kelompok (identitas) ---------- */
+let modeAktif = 'Individu';
+const btnIndividu = document.getElementById('gModeIndividu');
+const btnKelompok = document.getElementById('gModeKelompok');
+const formIndividu = document.getElementById('gFormIndividu');
+const formKelompok = document.getElementById('gFormKelompok');
+btnIndividu.addEventListener('click', ()=>{
+  modeAktif = 'Individu';
+  btnIndividu.classList.add('active'); btnKelompok.classList.remove('active');
+  formIndividu.classList.remove('hidden'); formKelompok.classList.add('hidden');
+});
+btnKelompok.addEventListener('click', ()=>{
+  modeAktif = 'Kelompok';
+  btnKelompok.classList.add('active'); btnIndividu.classList.remove('active');
+  formKelompok.classList.remove('hidden'); formIndividu.classList.add('hidden');
+});
+if(typeof pasangAutoisiSiswa === 'function'){
+  pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen', 'gCekNisBtn', 'gStatusNis');
+}
+
+/* ---------- Kirim hasil ke Google Sheet (lewat Apps Script di config.js) ---------- */
+const MATERI_LABEL = "Fungsi Menghitung, Menjumlah & Merapikan Data (COUNT, COUNTA, COUNTBLANK, SUM, AVERAGE, TRIM, LEN)";
+
+// fetch dengan batas waktu — kalau server tidak merespons dalam
+// timeoutMs, permintaan dibatalkan otomatis (tidak menggantung selamanya)
+function fetchDenganTimeout(url, opsi, timeoutMs){
+  const kontrol = new AbortController();
+  const id = setTimeout(()=> kontrol.abort(), timeoutMs);
+  return fetch(url, Object.assign({}, opsi, { signal: kontrol.signal }))
+    .finally(()=> clearTimeout(id));
+}
+
+// Cek apakah identitas ini sudah pernah mengisi kuis ini sebelumnya.
+// Timeout pendek (6 detik) — kalau lambat/gagal, LEWATI saja pengecekan
+// ini dan lanjut kirim, supaya siswa tidak menunggu tanpa kepastian.
+async function cekHasilSebelumnya(materi, identitas){
+  if(typeof CONTROL_URL === 'undefined') return { ada:false };
+  try{
+    const params = new URLSearchParams({
+      action: 'cekHasil', mode: identitas.mode, materi,
+      nis: identitas.nis || '', nama: identitas.nama || '', kelas: identitas.kelas || ''
+    });
+    const res = await fetchDenganTimeout(CONTROL_URL + '?' + params.toString(), {}, 6000);
+    return await res.json();
+  }catch(err){
+    console.warn('Gagal memeriksa hasil sebelumnya (dilewati, lanjut kirim):', err);
+    return { ada:false };
+  }
+}
+
+// Kirim hasil. Return true = terkirim, false = gagal, null = dibatalkan siswa.
+// onStatus(teks) opsional, dipanggil untuk kasih tahu tahap yang sedang berjalan.
+// cekRiwayatAwal (opsional) = Promise dari cekHasilSebelumnya() yang sudah
+// dimulai LEBIH DULU (mis. sejak kuis dimulai) — kalau dikirim, dipakai
+// langsung tanpa mengulang fetch, jadi biasanya sudah selesai duluan.
+async function kirimKeSheet(materi, skor, total, identitas, onStatus, cekRiwayatAwal){
+  const status = onStatus || function(){};
+  if(typeof CONTROL_URL === 'undefined'){
+    console.warn('CONTROL_URL belum tersedia — lewati pengiriman ke Sheet.');
+    return false;
+  }
+
+  status('Memeriksa riwayat...');
+  const cekLama = await (cekRiwayatAwal || cekHasilSebelumnya(materi, identitas));
+  if(cekLama.ada){
+    const lanjut = confirm(
+      'Kamu sudah pernah mengirim hasil kuis ini sebelumnya (skor ' + cekLama.skor + '/' + cekLama.total + ', ' + cekLama.waktu + ').\n\n' +
+      'Kirim ulang untuk mengganti dengan hasil yang baru (' + skor + '/' + total + ')?'
+    );
+    if(!lanjut) return null;
+  }
+
+  const payload = {
+    waktu: new Date().toLocaleString('id-ID'),
+    mode: identitas.mode,
+    nama: identitas.nama,
+    nis: identitas.nis || '',
+    absen: identitas.absen || '',
+    kelas: identitas.kelas,
+    anggota: identitas.anggota || '',
+    materi: materi,
+    skor: skor,
+    total: total
+  };
+
+  status('Mengirim...');
+  // Coba kirim (maks 15 detik per percobaan), verifikasi respons server,
+  // ulangi sekali kalau gagal/timeout
+  for(let percobaan = 1; percobaan <= 2; percobaan++){
+    try{
+      const res = await fetchDenganTimeout(CONTROL_URL, { method: 'POST', body: JSON.stringify(payload) }, 15000);
+      const hasil = await res.json();
+      if(hasil.status === 'ok') return true;
+      console.warn('Server menolak pengiriman:', hasil);
+    }catch(err){
+      console.error('Percobaan ' + percobaan + ' gagal mengirim hasil (timeout/gagal):', materi, err);
+    }
+    if(percobaan === 1){ status('Mencoba lagi...'); await new Promise(r => setTimeout(r, 1000)); }
+  }
+  return false;
+}
+
+/* ==================================================================
+   GAME: KURIR DATA KILAT
+   Setiap soal (SOAL[i]) menyimpan indeks jawaban benar berdasarkan
+   URUTAN ASLI opsi (s.opsi), BUKAN urutan tampilan setelah diacak.
+   Setiap tombol pilihan diberi dataset.optIndex = indeks aslinya, dan
+   semua pengecekan (skor maupun highlight jawaban benar) mengacu ke
+   dataset.optIndex itu — bukan ke posisi tombol di layar — supaya
+   pengacakan opsi tidak pernah salah menyorot jawaban.
+   ================================================================== */
+// Grid mini ala-Excel yang ditampilkan di dalam soal (dipakai lewat innerHTML,
+// jadi cukup aman karena isinya ditulis sendiri, bukan input dari pengguna).
+function gridSoal(kolomHeader, dataRows, colWidth, formulaBar){
+  const w = colWidth || 96;
+  let html = `<div class="mini-illus q-excel">`;
+  if(formulaBar){
+    html += `<div class="xl-mock-formula"><span class="fx-cell">${formulaBar.cell}</span><span class="fx-bar">${formulaBar.formula}</span></div>`;
+  }
+  html += `<div class="mx-grid" style="grid-template-columns:22px ${w}px;">`;
+  html += `<div class="xc corner"></div><div class="xc colhead">${kolomHeader.huruf}</div>`;
+  html += `<div class="xc rownum">1</div><div class="xc dataheader">${kolomHeader.judul}</div>`;
+  dataRows.forEach((val, i) => {
+    html += `<div class="xc rownum">${i+2}</div><div class="xc">${val}</div>`;
+  });
+  html += `</div></div>`;
+  return html;
+}
+function gridSelTunggal(kolomHeader, isi, colWidth, formulaBar){
+  const w = colWidth || 150;
+  let html = `<div class="mini-illus q-excel">`;
+  if(formulaBar){
+    html += `<div class="xl-mock-formula"><span class="fx-cell">${formulaBar.cell}</span><span class="fx-bar">${formulaBar.formula}</span></div>`;
+  }
+  html += `<div class="mx-grid" style="grid-template-columns:22px ${w}px;">` +
+    `<div class="xc corner"></div><div class="xc colhead">${kolomHeader}</div>` +
+    `<div class="xc rownum">2</div><div class="xc">${isi}</div>` +
+    `</div></div>`;
+  return html;
+}
+
+const SOAL = [
+  { kat:"COUNT", teks:"Manakah pernyataan yang paling tepat menjelaskan fungsi <b>COUNT</b>?",
+    opsi:["Menghitung banyaknya sel yang berisi ANGKA saja","Menghitung banyaknya sel yang tidak kosong, apa pun isinya","Menghitung banyaknya sel yang benar-benar kosong","Menjumlahkan seluruh angka dalam suatu rentang"], jawaban:0,
+    penjelasan:"COUNT khusus menghitung sel yang isinya ANGKA; sel berisi teks atau yang kosong tidak ikut dihitung." },
+
+  { kat:"COUNT", teks:"Perhatikan data berikut:" +
+      gridSoal({huruf:"B", judul:"Nilai"}, ["78","Izin","(kosong)","90","75"], null, {cell:"B7", formula:"?"}) +
+      "Rumus manakah yang tepat digunakan untuk mengetahui ADA BERAPA sel yang berisi ANGKA pada rentang B2:B6 ini?",
+    opsi:["=COUNT(B2:B6)","=COUNTA(B2:B6)","=COUNTBLANK(B2:B6)","=SUM(B2:B6)"], jawaban:0,
+    penjelasan:"COUNT adalah fungsi yang tepat untuk menghitung banyaknya sel berisi angka pada suatu rentang." },
+
+  { kat:"COUNTA", teks:"Apa yang membedakan <b>COUNTA</b> dari COUNT?",
+    opsi:["COUNTA menghitung SEMUA sel yang tidak kosong (termasuk teks), COUNT hanya sel berangka","COUNTA hanya menghitung sel berisi teks, COUNT hanya sel berisi angka","COUNTA dan COUNT hasilnya selalu sama","COUNTA menghitung sel yang kosong, COUNT menghitung sel yang terisi"], jawaban:0,
+    penjelasan:"COUNTA menghitung SEMUA sel yang tidak kosong apa pun isinya, sedangkan COUNT hanya menghitung sel berisi angka." },
+
+  { kat:"COUNTA", teks:"Perhatikan data presensi berikut:" +
+      gridSoal({huruf:"A", judul:"Nama"}, ["Ani","(kosong)","Budi","(kosong)","Citra"], null, {cell:"A7", formula:"?"}) +
+      "Rumus manakah yang tepat untuk mengetahui BERAPA BANYAK siswa yang SUDAH mengisi nama (sel tidak kosong) pada rentang A2:A6?",
+    opsi:["=COUNTA(A2:A6)","=COUNT(A2:A6)","=COUNTBLANK(A2:A6)","=LEN(A2:A6)"], jawaban:0,
+    penjelasan:"COUNTA cocok untuk menghitung sel yang sudah terisi, apa pun isinya (di sini berupa nama/teks)." },
+
+  { kat:"COUNTBLANK", teks:"<b>COUNTBLANK</b> digunakan untuk menghitung...",
+    opsi:["Banyaknya sel yang benar-benar KOSONG","Banyaknya sel yang berisi ANGKA","Banyaknya sel yang berisi TEKS","Total dari sel yang kosong (dianggap 0)"], jawaban:0,
+    penjelasan:"COUNTBLANK khusus menghitung sel yang benar-benar tidak ada isinya." },
+
+  { kat:"COUNTBLANK", teks:"Sebuah rentang data terdiri dari 10 baris. Jika hasil <code>=COUNTA(rentang)</code> adalah 8, berapa hasil <code>=COUNTBLANK(rentang)</code> pada rentang yang sama?",
+    opsi:["2","8","10","18"], jawaban:0,
+    penjelasan:"COUNTA + COUNTBLANK selalu sama dengan total baris data. Karena COUNTA = 8 dan total = 10, maka COUNTBLANK = 10 − 8 = 2." },
+
+  { kat:"SUM", teks:"Manakah penulisan rumus yang BENAR untuk menjumlahkan seluruh angka pada rentang B2:B6?",
+    opsi:["=SUM(B2:B6)","=SUM(B2,B6)","=TOTAL(B2:B6)","=ADD(B2:B6)"], jawaban:0,
+    penjelasan:"=SUM(B2:B6) menjumlahkan seluruh angka dalam rentang. TOTAL dan ADD bukan nama fungsi Excel, dan =SUM(B2,B6) hanya menjumlahkan 2 sel (B2 dan B6) saja." },
+
+  { kat:"SUM", teks:"Perhatikan data berikut:" +
+      gridSoal({huruf:"B", judul:"Nilai"}, ["78","Izin","92","66","74"], null, {cell:"B8", formula:"=SUM(B2:B6)"}) +
+      "Jika rumus <code>=SUM(B2:B6)</code> diterapkan pada data ini, apa yang terjadi pada sel berisi teks \"Izin\"?",
+    opsi:["Diabaikan (dianggap 0), hanya angka yang dijumlahkan","Menyebabkan rumus menghasilkan error #VALUE!","Dihitung sebagai angka 1","SUM tidak bisa dipakai sama sekali jika ada teks dalam rentang"], jawaban:0,
+    penjelasan:"SUM otomatis mengabaikan sel berisi teks dan tidak menganggapnya error — hanya sel berangka yang dijumlahkan." },
+
+  { kat:"AVERAGE", teks:"<b>AVERAGE</b> menghitung nilai rata-rata dengan cara...",
+    opsi:["Total seluruh angka dibagi BANYAKNYA ANGKA (sel teks/kosong tidak ikut menjadi pembagi)","Total seluruh angka dibagi banyaknya SEMUA SEL termasuk yang kosong","Mengambil nilai tengah (median) dari data","Mengambil nilai yang paling sering muncul (modus)"], jawaban:0,
+    penjelasan:"AVERAGE mengabaikan sel kosong dan teks — baik saat menjumlahkan maupun saat menentukan pembaginya." },
+
+  { kat:"AVERAGE", teks:"Rumus manakah yang benar untuk mencari nilai rata-rata pada rentang C2:C6?",
+    opsi:["=AVERAGE(C2:C6)","=AVERAGE(C2,C6)","=MEAN(C2:C6)","=SUM(C2:C6)/5"], jawaban:0,
+    penjelasan:"=AVERAGE(C2:C6) otomatis menjumlahkan dan membaginya dengan banyaknya data berangka. MEAN bukan nama fungsi Excel, dan membagi manual dengan angka tetap (seperti /5) berisiko salah kalau ternyata ada sel kosong/teks dalam rentang tersebut." },
+
+  { kat:"TRIM", teks:"<b>TRIM</b> berfungsi untuk...",
+    opsi:["Merapikan spasi berlebih (di awal, akhir, dan spasi ganda di tengah teks)","Mengubah semua huruf menjadi kapital","Menghapus SEMUA spasi termasuk yang di antara kata","Menghitung jumlah karakter dalam teks"], jawaban:0,
+    penjelasan:"TRIM hanya merapikan spasi berlebih; huruf dan kata di dalam teks tidak diubah." },
+
+  { kat:"TRIM", teks:"Perhatikan sel berikut:" +
+      gridSelTunggal("A", `"<span class="spasi">··</span>Kelas<span class="spasi">···</span>XI<span class="spasi">···</span>IPA<span class="spasi">··</span>1<span class="spasi">··</span>"`, 190, {cell:"B2", formula:"=TRIM(A2)"}) +
+      "Hasil yang benar dari <code>=TRIM(A2)</code> untuk data pada gambar tersebut adalah...",
+    opsi:["Kelas XI IPA 1","Kelas   XI   IPA  1","kelas xi ipa 1","KelasXIIPA1"], jawaban:0,
+    penjelasan:"TRIM merapikan seluruh spasi berlebih (awal, akhir, dan spasi ganda di tengah) menjadi satu spasi saja." },
+
+  { kat:"LEN", teks:"<b>LEN</b> digunakan untuk menghitung...",
+    opsi:["Banyaknya KARAKTER dalam sebuah teks (termasuk spasi)","Banyaknya KATA dalam sebuah teks","Banyaknya ANGKA yang ada dalam teks","Posisi sebuah huruf tertentu dalam teks"], jawaban:0,
+    penjelasan:"LEN menghitung setiap karakter apa adanya, termasuk spasi — bukan menghitung kata atau posisi huruf." },
+
+  { kat:"LEN", teks:"Perhatikan sel berikut:" +
+      gridSelTunggal("A", `"<span class="spasi">··</span>SMA<span class="spasi">··</span>"`, 110, {cell:"B2", formula:"=LEN(A2)"}) +
+      "Berapa hasil dari <code>=LEN(A2)</code> untuk data pada gambar tersebut?",
+    opsi:["3","5","7","9"], jawaban:2,
+    penjelasan:"LEN turut menghitung spasi sebagai karakter: 2 spasi + \"SMA\" (3 huruf) + 2 spasi = 7 karakter." },
+];
+
+const TOTAL_BANK_SOAL = SOAL.length; // jumlah soal di bank (14)
+const TOTAL_SOAL = 10; // jumlah soal yang dimainkan tiap sesi (dipilih acak dari bank)
+let identitas = null;
+let cekRiwayatPromise = null; // mulai dicek sejak kuis dimulai, bukan saat klik Kirim
+let antrianSoal = [];  // antrian indeks soal yang masih harus dijawab BENAR; soal yang
+                        // dijawab salah akan dimasukkan lagi ke akhir antrian ini.
+let posisiTruk = 0;    // posisi truk di jalur (0..TOTAL_SOAL) — maju saat benar, mundur saat salah
+let skorBenar = 0;   // jumlah paket unik yang sudah dijawab BENAR (dikirim ke guru sebagai skor/total)
+let poinKurir = 0;   // skor gamifikasi (kombo), hanya untuk tampilan
+let kombo = 0;
+let nyawa = 3;
+let terkunci = false;
+
+function shuffleIdx(n){
+  const arr = Array.from({length:n}, (_,i)=>i);
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function initKuis(){
+  antrianSoal = shuffleIdx(TOTAL_BANK_SOAL).slice(0, TOTAL_SOAL);
+  posisiTruk = 0;
+  skorBenar = 0;
+  poinKurir = 0;
+  kombo = 0;
+  nyawa = 3;
+  terkunci = false;
+  document.getElementById('gResultBox').style.display = 'none';
+  updateRoute();
+  tampilkanSoal();
+}
+
+function updateHUD(){
+  document.getElementById('gameCatLabel').textContent = `Terkirim ${skorBenar} / ${TOTAL_SOAL}`;
+  document.getElementById('gameHearts').textContent = '❤️'.repeat(Math.max(0,nyawa)) + '🖤'.repeat(3-nyawa);
+  document.getElementById('gameScore').textContent = poinKurir;
+  const streakPill = document.getElementById('streakPill');
+  if(kombo >= 2){
+    streakPill.textContent = `🔥 Kombo x${kombo}`;
+    streakPill.classList.add('show');
+  } else {
+    streakPill.classList.remove('show');
+  }
+}
+
+function updateRoute(){
+  const pct = Math.round((posisiTruk/TOTAL_SOAL)*100);
+  document.getElementById('routeFill').style.width = pct + '%';
+  document.getElementById('routeTruck').style.left = `calc(${pct}% - 4px)`;
+}
+
+function tampilkanSoal(){
+  updateHUD();
+  updateRoute();
+  const s = SOAL[antrianSoal[0]];
+  document.getElementById('qCatLabel').textContent = s.kat;
+  document.getElementById('qText').innerHTML = s.teks;
+  const optWrap = document.getElementById('qOptions');
+  optWrap.innerHTML = '';
+  const urutanOpsi = shuffleIdx(s.opsi.length);
+  urutanOpsi.forEach(oi=>{
+    const btn = document.createElement('button');
+    btn.className = 'q-opt';
+    btn.type = 'button';
+    btn.textContent = s.opsi[oi];
+    btn.dataset.optIndex = oi; // indeks ASLI opsi ini (sebelum diacak)
+    btn.addEventListener('click', ()=> jawabSoal(oi, s, btn, optWrap));
+    optWrap.appendChild(btn);
+  });
+  const fb = document.getElementById('qFeedback');
+  fb.className = 'q-feedback';
+  fb.textContent = '';
+  document.getElementById('qNextBtn').disabled = true;
+  terkunci = false;
+}
+
+function sorotJawabanBenar(semuaBtn, s){
+  // Cari tombol dengan dataset.optIndex yang cocok dengan s.jawaban (indeks
+  // ASLI), bukan berdasarkan posisi tampilan yang sudah diacak.
+  const correctBtn = Array.from(semuaBtn).find(b => Number(b.dataset.optIndex) === s.jawaban);
+  if(correctBtn) correctBtn.classList.add('correct');
+}
+
+function kuncilOpsiInternal(optWrap){
+  const semuaBtn = optWrap.querySelectorAll('.q-opt');
+  semuaBtn.forEach(b=> b.disabled = true);
+  return semuaBtn;
+}
+
+function jawabSoal(dipilih, s, btnDipilih, optWrap){
+  if(terkunci) return;
+  terkunci = true;
+  const semuaBtn = kuncilOpsiInternal(optWrap);
+
+  const fb = document.getElementById('qFeedback');
+  if(dipilih === s.jawaban){
+    skorBenar++;
+    kombo++;
+    posisiTruk = Math.min(TOTAL_SOAL, posisiTruk + 1);
+    antrianSoal.shift(); // soal ini sudah terjawab benar, tidak diulang lagi
+
+    const bonusKombo = kombo >= 2 ? (kombo - 1) * 10 : 0;
+    const poinSoalIni = 100 + bonusKombo;
+    poinKurir += poinSoalIni;
+
+    btnDipilih.classList.add('correct');
+    fb.className = 'q-feedback show ok';
+    let teksBonus = ` (+${poinSoalIni} poin`;
+    if(bonusKombo > 0) teksBonus += `, termasuk bonus kombo x${kombo}`;
+    teksBonus += ')';
+    fb.textContent = '✓ Benar! Truk maju satu langkah.' + teksBonus + ' ' + s.penjelasan;
+  } else {
+    nyawa--;
+    kombo = 0;
+    posisiTruk = Math.max(0, posisiTruk - 1);
+    antrianSoal.push(antrianSoal.shift()); // soal ini diulang lagi nanti di akhir antrian
+
+    btnDipilih.classList.add('wrong');
+    sorotJawabanBenar(semuaBtn, s);
+    fb.className = 'q-feedback show bad';
+    fb.textContent = '✗ Belum tepat, truk mundur satu langkah. Soal ini akan muncul lagi nanti. ' + s.penjelasan;
+  }
+  updateHUD();
+  updateRoute();
+
+  if(nyawa <= 0){
+    document.getElementById('qNextBtn').disabled = true;
+    setTimeout(()=> selesaiKuis(false), 1100);
+    return;
+  }
+  document.getElementById('qNextBtn').disabled = false;
+}
+
+document.getElementById('qNextBtn').addEventListener('click', ()=>{
+  if(antrianSoal.length === 0){
+    updateRoute();
+    selesaiKuis(true);
+  } else {
+    tampilkanSoal();
+  }
+});
+
+function selesaiKuis(tuntas){
+  document.getElementById('gPlayBlock').classList.add('hidden');
+  const box = document.getElementById('gResultBox');
+  const title = document.getElementById('gResultTitle');
+  const msg = document.getElementById('gResultMsg');
+  const badge = document.getElementById('gResultBadge');
+
+  if(!tuntas){
+    badge.textContent = '🛑';
+    title.textContent = 'Misi Berhenti';
+    msg.textContent = 'Nyawa habis setelah 3 kali jawaban salah. Paket terkirim: ' + skorBenar + '/' + TOTAL_SOAL + '.';
+  } else if(skorBenar === TOTAL_SOAL){
+    badge.textContent = '🏆';
+    title.textContent = 'Kurir Kilat Legendaris!';
+    msg.textContent = 'Semua ' + TOTAL_SOAL + ' paket terkirim dengan sempurna. Luar biasa!';
+  } else if(skorBenar >= Math.ceil(TOTAL_SOAL * 0.7)){
+    badge.textContent = '🚀';
+    title.textContent = 'Kurir Andal';
+    msg.textContent = skorBenar + ' dari ' + TOTAL_SOAL + ' paket berhasil dikirim. Sedikit lagi sempurna!';
+  } else {
+    badge.textContent = '📦';
+    title.textContent = 'Misi Selesai';
+    msg.textContent = skorBenar + ' dari ' + TOTAL_SOAL + ' paket berhasil dikirim. Yuk latihan lagi supaya makin kilat!';
+  }
+  document.getElementById('gResultScore').textContent = skorBenar + '/' + TOTAL_SOAL;
+  document.getElementById('gResultPoin').textContent = 'Total Poin Kurir: ' + poinKurir;
+  box.style.display = 'block';
+  const sendBtn = document.getElementById('gSendBtn');
+  const sendNote = document.getElementById('gSendNote');
+  if(modeGuru){
+    // Mode guru hanya untuk uji coba, jadi tombol kirim disembunyikan
+    // sepenuhnya supaya tidak ada hasil percobaan guru yang tercatat.
+    sendBtn.style.display = 'none';
+    sendNote.textContent = '🧪 Mode guru — hasil uji coba ini tidak dikirim ke spreadsheet.';
+  } else if(!tuntas){
+    // Truk belum sampai garis finish (nyawa habis di tengah jalan) — hasil
+    // belum boleh dikirim, siswa harus mengulang sampai tuntas.
+    sendBtn.style.display = 'none';
+    sendNote.textContent = '🚧 Truk belum sampai garis finish. Klik "Main Lagi" dan selesaikan seluruh paket untuk bisa mengirim hasil ke guru.';
+  } else {
+    sendBtn.style.display = '';
+    sendBtn.disabled = false;
+    sendNote.textContent = '';
+  }
+  box.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+/* ---------- Mulai kuis (validasi identitas terlebih dahulu) ---------- */
+document.getElementById('gStartBtn').addEventListener('click', ()=>{
+  let ident;
+  if(modeGuru){
+    // Mode guru: lewati form identitas & pengecekan riwayat, langsung main.
+    ident = { mode: 'Guru', nama: 'Guru (Uji Coba)', kelas: '-' };
+    identitas = ident;
+    cekRiwayatPromise = Promise.resolve({ ada:false });
+    document.getElementById('gIdentityBlock').classList.add('hidden');
+    document.getElementById('gPlayBlock').classList.remove('hidden');
+    initKuis();
+    return;
+  }
+  ident = { mode: modeAktif };
+  if(modeAktif === 'Individu'){
+    const nama = document.getElementById('gNama').value.trim();
+    const kelas = document.getElementById('gKelas').value.trim();
+    const nis = document.getElementById('gNis').value.trim();
+    const absen = document.getElementById('gAbsen').value.trim();
+    if(!nis){
+      alert('Mohon isi NIS terlebih dahulu.');
+      return;
+    }
+    if(!nama || !kelas || !absen){
+      alert('NIS tidak ditemukan di data siswa, atau data belum lengkap. Periksa kembali NIS-mu, atau hubungi guru.');
+      return;
+    }
+    ident.nama = nama; ident.kelas = kelas; ident.nis = nis; ident.absen = absen;
+  } else {
+    const nama = document.getElementById('gNamaKelompok').value.trim();
+    const kelas = document.getElementById('gKelasKelompok').value.trim();
+    const anggota = document.getElementById('gAnggota').value.trim();
+    if(!nama || !kelas || !anggota){
+      alert('Mohon lengkapi Nama Kelompok, Kelas, dan Anggota Kelompok terlebih dahulu.');
+      return;
+    }
+    ident.nama = nama; ident.kelas = kelas; ident.anggota = anggota;
+  }
+  identitas = ident;
+  // Mulai cek riwayat pengiriman DARI SEKARANG, berjalan di belakang layar
+  // selagi siswa mengerjakan kuis — supaya saat nanti klik "Kirim", hasil
+  // pengecekan biasanya sudah siap dan tidak perlu menunggu lagi.
+  cekRiwayatPromise = cekHasilSebelumnya(MATERI_LABEL + ' — Kurir Data Kilat', identitas);
+  document.getElementById('gIdentityBlock').classList.add('hidden');
+  document.getElementById('gPlayBlock').classList.remove('hidden');
+  initKuis();
+});
+
+document.getElementById('gPlayAgainBtn').addEventListener('click', ()=>{
+  document.getElementById('gPlayBlock').classList.remove('hidden');
+  // Main lagi = percobaan baru -> cek ulang riwayat dari sekarang juga,
+  // supaya kalau tadi sempat kirim, pengecekan kedua ini tahu itu. Mode guru
+  // tidak pernah mengirim ke Sheet, jadi tidak perlu cek riwayat sama sekali.
+  cekRiwayatPromise = modeGuru ? Promise.resolve({ ada:false }) : cekHasilSebelumnya(MATERI_LABEL + ' — Kurir Data Kilat', identitas);
+  initKuis();
+});
+
+document.getElementById('gSendBtn').addEventListener('click', async ()=>{
+  if(!identitas || modeGuru) return;
+  const btn = document.getElementById('gSendBtn');
+  const note = document.getElementById('gSendNote');
+  btn.disabled = true;
+  const ok = await kirimKeSheet(
+    MATERI_LABEL + ' — Kurir Data Kilat', skorBenar, TOTAL_SOAL, identitas,
+    (teks)=>{ note.textContent = teks; },
+    cekRiwayatPromise
+  );
+  if(ok === true){
+    note.textContent = '✓ Hasil terkirim ke guru.';
+  } else if(ok === null){
+    note.textContent = 'Dibatalkan — hasil lama tetap tersimpan.';
+    btn.disabled = false;
+  } else {
+    note.textContent = 'Gagal mengirim — coba lagi (periksa koneksi internet).';
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
