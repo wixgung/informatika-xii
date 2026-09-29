@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fungsi Logika — IF, IF Bertingkat, AND, OR, NOT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2a2e;
+  --paper:#f6f1e6;
+  --paper-2:#efe7d4;
+  --amber:#e2a333;
+  --teal:#2f6f66;
+  --teal-dark:#1e4a44;
+  --coral:#dc5b41;
+  --line: rgba(28,42,46,0.16);
+  --card: #fffdf8;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Work Sans',sans-serif;
+  line-height:1.55;
+  background-image:
+    radial-gradient(circle, rgba(28,42,46,0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+h1,h2,h3,h4{font-family:'Fraunces',serif; margin:0 0 .4em 0; line-height:1.08; color:var(--teal-dark);}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:.72rem;
+  color:var(--coral);
+  font-weight:600;
+  display:inline-block;
+  margin-bottom:.6em;
+}
+p{margin:0 0 1em 0;}
+a{color:var(--teal-dark);}
+code{background:var(--paper-2);padding:1px 6px;border-radius:5px;font-family:'IBM Plex Mono',monospace;font-size:.88em;overflow-wrap:break-word;word-break:break-word;}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+section{padding:64px 0;border-bottom:1px dashed var(--line);}
+section:last-of-type{border-bottom:none;}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(246,241,230,0.92);
+  backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line);
+}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;max-width:1080px;flex-wrap:wrap;gap:8px;}
+.brand{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.85rem;letter-spacing:.04em;display:flex;align-items:center;gap:8px;}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--coral);display:inline-block;}
+.navlinks{display:flex;gap:14px;flex-wrap:wrap;}
+.navlinks a{font-size:.78rem;text-decoration:none;color:var(--ink);opacity:.75;font-weight:500;}
+.navlinks a:hover{opacity:1;color:var(--coral);}
+@media(max-width:900px){.navlinks{display:none;}}
+
+/* HERO */
+.hero{padding:60px 0 46px;}
+.hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center;}
+@media(max-width:800px){.hero-grid{grid-template-columns:1fr;}}
+.hero h1{font-size:clamp(1.7rem,4.2vw,2.7rem);}
+.hero .lede{font-size:1.06rem;max-width:56ch;color:#33474a;}
+.callback{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-left:4px solid var(--coral);
+  border-radius:6px;
+  padding:16px 18px;
+  font-size:.92rem;
+  margin-top:20px;
+}
+.callback b{color:var(--coral);}
+.hero-visual{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;}
+.pipeline-mini{display:flex;flex-direction:column;gap:9px;}
+.pmini{display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.75rem;}
+.pmini .n{width:24px;height:24px;border-radius:50%;background:var(--paper-2);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--teal-dark);flex-shrink:0;font-size:.7rem;}
+.pmini.active .n{background:var(--amber);color:#221805;}
+
+/* SECTION HEADERS */
+.shead{max-width:680px;margin-bottom:32px;}
+.shead h2{font-size:clamp(1.4rem,2.9vw,1.9rem);}
+
+/* CATEGORY LEGEND CARDS */
+.src-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:10px;}
+.src-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;}
+.src-card .ico{font-size:1.4rem;}
+.src-card h4{font-size:1rem;margin:8px 0 4px;color:var(--ink);}
+.src-card p{font-size:.87rem;color:#4a4238;margin:0;}
+a.src-card{text-decoration:none;display:block;transition:transform .15s, box-shadow .15s;}
+a.src-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(28,42,46,0.1);}
+
+/* FITUR CARDS */
+.fitur-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:6px;}
+.fitur-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;}
+.fitur-card .tag{font-family:'IBM Plex Mono',monospace;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--coral);display:block;margin-bottom:6px;}
+.fitur-card h4{font-size:1.06rem;margin:0 0 8px;display:flex;align-items:center;gap:8px;}
+.fitur-card h4 .fico{font-size:1.15rem;}
+.fitur-card p.apagunanya{font-size:.89rem;color:#33474a;margin-bottom:10px;}
+.fitur-card .sintaks{font-size:.85rem;margin-bottom:10px;}
+.fitur-card ol{margin:0 0 12px 20px;padding:0;font-size:.86rem;color:#3a3327;}
+.fitur-card ol li{margin-bottom:4px;}
+.fitur-card .tips{background:var(--paper-2);border-radius:8px;padding:8px 12px;font-size:.79rem;color:#4a4238;}
+.fitur-card .tips b{color:var(--coral);}
+
+/* BUTTONS */
+.btn{
+  font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:.02em;font-size:.85rem;
+  background:var(--teal-dark);color:#fff;border:none;border-radius:8px;padding:11px 22px;cursor:pointer;
+}
+.btn:hover{background:var(--coral);}
+.btn.ghost{background:transparent;color:var(--teal-dark);border:1.5px solid var(--teal-dark);}
+.btn.ghost:hover{background:var(--teal-dark);color:#fff;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+
+/* GAME PANEL */
+.game-panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px;}
+.idform{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+@media(max-width:600px){.idform{grid-template-columns:1fr;}}
+.mode-toggle{display:flex;gap:10px;margin-bottom:20px;}
+.pill-btn{
+  border:1.5px solid var(--line);background:#fff;border-radius:20px;padding:9px 20px;font-family:'Work Sans',sans-serif;
+  font-size:.85rem;cursor:pointer;font-weight:600;transition:.15s;
+}
+.mode-btn.active{background:var(--teal);border-color:var(--teal);color:#fff;}
+.field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;color:#5b5344;}
+.field input{
+  width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:'Work Sans',sans-serif;
+  font-size:.95rem;background:#fff;
+}
+.field input:focus{outline:2px solid var(--amber);border-color:var(--amber);}
+.field input[readonly]{background:var(--paper-2);color:#6b6355;cursor:not-allowed;}
+.field-nis-row{display:flex;gap:8px;align-items:stretch;}
+.field-nis-row input{flex:1;}
+.btn-cek-nis{
+  flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.82rem;
+  background:var(--teal);color:#fff;border:none;border-radius:8px;padding:0 16px;cursor:pointer;white-space:nowrap;
+}
+.btn-cek-nis:hover{background:var(--teal-dark);}
+.btn-cek-nis:disabled{opacity:.6;cursor:default;}
+.status-nis{font-size:.76rem;margin-top:5px;min-height:1.1em;color:var(--coral);}
+.hidden{display:none !important;}
+
+.rules-box{background:#fbf3e2;border:1px solid #e9cf95;border-radius:10px;padding:16px 18px;font-size:.87rem;margin-bottom:22px;}
+.rules-box h4{margin:0 0 8px;font-size:.9rem;color:#7a6a3a;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;}
+.rules-box ul{margin:0;padding-left:18px;}
+.rules-box li{margin-bottom:4px;}
+
+.game-hud{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.hud-cat{font-weight:600;font-size:.92rem;font-family:'IBM Plex Mono',monospace;color:var(--teal-dark);}
+.hud-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.hearts{font-size:1.05rem;letter-spacing:2px;}
+.score-pill{font-family:'IBM Plex Mono',monospace;font-size:.85rem;background:var(--paper-2);padding:6px 14px;border-radius:20px;white-space:nowrap;}
+.streak-pill{font-family:'IBM Plex Mono',monospace;font-size:.78rem;background:var(--amber);color:#221805;padding:5px 12px;border-radius:20px;white-space:nowrap;font-weight:700;opacity:0;transition:opacity .2s;}
+.streak-pill.show{opacity:1;}
+
+/* Rute pengiriman (progress bar bertema kurir) */
+.route-wrap{position:relative;background:var(--paper-2);border-radius:20px;height:30px;margin-bottom:10px;overflow:hidden;border:1px solid var(--line);}
+.route-track{position:absolute;inset:0;background:repeating-linear-gradient(90deg, transparent, transparent 26px, rgba(28,42,46,0.10) 26px, rgba(28,42,46,0.10) 30px);}
+.route-fill{position:absolute;top:0;left:0;bottom:0;background:linear-gradient(90deg, #dfeee9, #cdeade);width:0%;transition:width .5s ease;}
+.route-truck{position:absolute;top:50%;transform:translate(-50%,-50%) scaleX(-1);font-size:1.25rem;left:0%;transition:left .5s ease;filter:drop-shadow(0 1px 1px rgba(0,0,0,0.25));}
+.route-flag{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:1.1rem;}
+
+.q-card{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:26px 24px;}
+.q-card .qcat{font-family:'IBM Plex Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--coral);display:block;margin-bottom:10px;}
+.q-card .qtext{font-size:1.04rem;color:var(--ink);margin-bottom:16px;font-weight:600;line-height:1.45;}
+.q-card .qtext .q-excel{font-weight:400;font-size:1rem;margin:10px 0;max-width:300px;}
+.q-options{display:grid;gap:10px;grid-template-columns:1fr 1fr;}
+@media(max-width:560px){.q-options{grid-template-columns:1fr;}}
+.q-opt{
+  text-align:center;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:15px 16px;
+  font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.98rem;cursor:pointer;transition:.15s;color:var(--ink);
+  white-space:pre-wrap;
+}
+.q-opt:hover:not(:disabled){border-color:var(--teal);background:#f4faf8;transform:translateY(-2px);}
+.q-opt.correct{border-color:var(--teal);background:#e5f3ee;color:var(--teal-dark);}
+.q-opt.wrong{border-color:var(--coral);background:#fdece6;color:var(--coral);}
+.q-opt:disabled{cursor:default;}
+.q-feedback{margin-top:16px;padding:14px 16px;border-radius:10px;font-size:.87rem;display:none;}
+.q-feedback.show{display:block;}
+.q-feedback.ok{background:#e5f3ee;color:var(--teal-dark);}
+.q-feedback.bad{background:#fdece6;color:var(--coral);}
+.q-nextrow{margin-top:18px;text-align:right;}
+
+.result-box{display:none;background:var(--teal-dark);color:#fff;border-radius:14px;padding:32px 28px;text-align:center;margin-top:22px;}
+.result-box .badge{font-size:2.6rem;margin-bottom:4px;}
+.result-box .big{font-family:'Fraunces',serif;font-size:2.2rem;color:var(--amber);}
+.result-box .sub-big{font-family:'IBM Plex Mono',monospace;font-size:.95rem;color:#cfe3dd;margin-top:2px;}
+.result-box p{color:#e5ede7;}
+.result-actions{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:20px;}
+.btn-send{
+  font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:.02em;font-size:1rem;
+  background:var(--amber);color:#221805;border:none;border-radius:12px;padding:17px 38px;cursor:pointer;
+  box-shadow:0 6px 0 #a9761e, 0 14px 26px rgba(0,0,0,0.28);
+  transform:translateY(0);
+  transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+.btn-send:hover:not(:disabled){ transform:translateY(-3px); box-shadow:0 9px 0 #a9761e, 0 18px 30px rgba(0,0,0,0.32); }
+.btn-send:active:not(:disabled){ transform:translateY(3px); box-shadow:0 3px 0 #a9761e, 0 8px 16px rgba(0,0,0,0.25); }
+.btn-send:disabled{ opacity:.5; box-shadow:none; transform:none; cursor:not-allowed; }
+.btn-playagain{
+  background:transparent;border:none;color:#cfe3dd;text-decoration:underline;
+  font-family:'Work Sans',sans-serif;font-size:.85rem;cursor:pointer;padding:4px;
+}
+.btn-playagain:hover{ color:#fff; }
+.sendnote{font-size:.8rem;color:var(--amber);margin-top:10px;min-height:1.2em;}
+
+footer{padding:30px 0;text-align:center;font-size:.8rem;color:#7c7461;}
+
+.reveal{opacity:1;transform:none;}
+.reveal.in{opacity:1;transform:none;}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  .reveal{transition:none;opacity:1;transform:none;}
+}
+
+/* Loading indicator shown while guard.js checks visibility status */
+#guard-loading{
+  position:fixed;inset:0;background:#f6f1e6;z-index:999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  font-family:'IBM Plex Mono',monospace;color:#5b5344;font-size:.85rem;
+}
+#guard-loading .spin{
+  width:34px;height:34px;border-radius:50%;
+  border:3px solid rgba(28,42,46,0.15);border-top-color:#dc5b41;
+  animation:guardspin .8s linear infinite;
+}
+@keyframes guardspin{to{transform:rotate(360deg);}}
+
+/* ================= ILUSTRASI MINI-EXCEL ================= */
+.xl-mock{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 10px 26px rgba(28,42,46,0.1);}
+.xl-mock-bar{background:#e9e2d0;padding:8px 12px;display:flex;align-items:center;gap:6px;}
+.xl-dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+.xl-dot.r{background:#e2685b;}
+.xl-dot.y{background:#e2b33f;}
+.xl-dot.g{background:#59b37a;}
+.xl-mock-title{margin-left:8px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:#6b6350;}
+.xl-mock-ribbon{background:var(--teal-dark);display:flex;gap:2px;padding:0 8px;}
+.xl-mock-ribbon .rb{color:#dff2ec;font-size:.65rem;padding:6px 10px;font-family:'Work Sans',sans-serif;}
+.xl-mock-ribbon .rb.active{background:#fff;color:var(--teal-dark);border-radius:4px 4px 0 0;font-weight:600;}
+.xl-mock-formula{display:flex;align-items:flex-start;gap:8px;background:#faf7ef;border-bottom:1px solid var(--line);padding:5px 10px;}
+.fx-cell{flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:.65rem;background:#fff;border:1px solid var(--line);border-radius:3px;padding:2px 8px;color:#5b5344;}
+.fx-bar{flex:1;min-width:0;min-height:14px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:#8a8270;display:block;white-space:normal;overflow-wrap:break-word;line-height:1.35;padding:2px 0;}
+.xl-mock-grid{position:relative;display:grid;grid-template-columns:28px repeat(4,84px);font-family:'IBM Plex Mono',monospace;font-size:.68rem;}
+.xc{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px 6px;color:#3a3327;background:#fff;display:flex;align-items:center;height:16px;}
+.xc.corner,.xc.colhead,.xc.rownum{background:var(--paper-2);font-weight:600;justify-content:center;color:#5b5344;}
+.xc.dataheader{background:#dfeee9;font-weight:600;color:var(--teal-dark);}
+.xl-cursor{position:absolute;width:80px;height:24px;border:2px solid var(--coral);border-radius:2px;pointer-events:none;animation:moveCursor 6s ease-in-out infinite;}
+@keyframes moveCursor{
+  0%,16%{transform:translate(114px,54px);}
+  25%,41%{transform:translate(198px,54px);}
+  50%,66%{transform:translate(198px,80px);}
+  75%,91%{transform:translate(114px,80px);}
+  100%{transform:translate(114px,54px);}
+}
+@media (prefers-reduced-motion: reduce){.xl-cursor{animation:none;}}
+
+.mini-illus{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;margin:14px 0;}
+
+/* Ilustrasi data di dalam kartu fitur — dibuat semirip mungkin tampilan lembar kerja
+   Excel sungguhan (baris angka, kolom huruf, formula bar) memakai ulang komponen .xc
+   dari mockup hero di atas, hanya lebar kolomnya diatur lewat inline style tiap kartu. */
+.mx-grid{position:relative;display:grid;font-family:'IBM Plex Mono',monospace;font-size:.7rem;}
+/* display:block (bukan flex) supaya teks panjang bisa membungkus ke baris baru —
+   flex item anonim tidak akan menyusut di bawah lebar kontennya (min-width:auto
+   bawaan flex), sehingga teks malah meluber alih-alih membungkus. */
+.mx-grid .xc{display:block;height:auto;min-height:20px;min-width:0;white-space:normal;overflow-wrap:break-word;line-height:1.3;padding-top:6px;padding-bottom:6px;}
+.mx-grid .xc.corner,.mx-grid .xc.colhead,.mx-grid .xc.rownum,.mx-grid .xc.dataheader{display:flex;align-items:center;justify-content:center;}
+.mx-grid .xc.dataheader{justify-content:flex-start;}
+.mx-grid .xc.included{background:#e5f3ee;color:var(--teal-dark);font-weight:700;}
+.mx-grid .xc.excluded{background:var(--paper-2);color:#b3a992;font-style:italic;}
+.cf-caption{font-size:.76rem;color:#5b5344;font-style:italic;padding:8px 10px 10px;border-top:1px solid var(--line);}
+.spasi{color:var(--coral);font-weight:700;}
+
+/* Banner mode guru (aktif lewat ?guru=1 di alamat halaman) */
+.guru-banner{display:flex;gap:10px;align-items:flex-start;background:#fff4d9;border:1px solid var(--amber);border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:.86rem;color:#6b5416;line-height:1.5;}
+.guru-banner .gi{font-size:1.3rem;line-height:1;}
+.guru-banner b{color:#8a6a12;}
+</style>
+</head>
+<body>
+
+<div id="guard-loading">
+  <div class="spin"></div>
+  <div>Memuat materi…</div>
+</div>
+
+<div id="konten-utama" style="visibility:hidden">
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> FUNGSI LOGIKA</div>
+    <div class="navlinks">
+      <a href="../index.html" style="opacity:.55;">← Portal</a>
+      <a href="#keputusan">IF &amp; IF Bertingkat</a>
+      <a href="#gabungan">AND, OR, NOT</a>
+      <a href="#main">Main &amp; Kuis</a>
+      <a href="#sumber">Sumber</a>
+    </div>
+  </div>
+</nav>
+
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">LKPD Informatika · Fungsi Logika</span>
+      <h1>IF, IF Bertingkat, AND, OR, NOT</h1>
+      <p class="lede">Setelah bisa menghitung dan merapikan data (COUNT, SUM, TRIM, dst.), sekarang giliran membuat Excel "mengambil keputusan" sendiri. Kalian akan belajar <b>5 fungsi</b>: dua fungsi untuk mengambil keputusan (IF, IF Bertingkat), dan tiga fungsi untuk menggabungkan atau membalik syarat (AND, OR, NOT).</p>
+      <div class="callback">
+        🧭 <b>Mengapa ini penting?</b> Banyak keputusan dalam data tidak bisa dijawab dengan satu rumus hitung biasa — misalnya "siswa ini lulus atau remedial?", "apakah ia berhak beasiswa kalau nilainya tinggi ATAU kehadirannya sempurna?". Fungsi logika inilah yang membuat Excel bisa menjawab pertanyaan semacam itu secara otomatis, untuk ribuan baris data sekaligus.
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="xl-mock reveal">
+        <div class="xl-mock-bar">
+          <span class="xl-dot r"></span><span class="xl-dot y"></span><span class="xl-dot g"></span>
+          <span class="xl-mock-title">Rekap Nilai Ujian.xlsx — Excel</span>
+        </div>
+        <div class="xl-mock-ribbon">
+          <span class="rb active">Beranda</span><span class="rb">Sisipkan</span><span class="rb">Rumus</span><span class="rb">Data</span><span class="rb">Tinjau</span>
+        </div>
+        <div class="xl-mock-formula">
+          <span class="fx-cell">C2</span><span class="fx-bar">=IF(B2&gt;=75,"Lulus","Remedial")</span>
+        </div>
+        <div class="xl-mock-grid">
+          <div class="xc corner"></div>
+          <div class="xc colhead">A</div>
+          <div class="xc colhead">B</div>
+          <div class="xc colhead">C</div>
+          <div class="xc colhead">D</div>
+
+          <div class="xc rownum">1</div>
+          <div class="xc dataheader">Nama</div>
+          <div class="xc dataheader">Nilai</div>
+          <div class="xc dataheader">Status</div>
+          <div class="xc dataheader"></div>
+
+          <div class="xc rownum">2</div>
+          <div class="xc">Ana</div>
+          <div class="xc">82</div>
+          <div class="xc">Lulus</div>
+          <div class="xc"></div>
+
+          <div class="xc rownum">3</div>
+          <div class="xc">Budi</div>
+          <div class="xc">68</div>
+          <div class="xc">Remedial</div>
+          <div class="xc"></div>
+
+          <div class="xl-cursor" aria-hidden="true"></div>
+        </div>
+      </div>
+      <span class="eyebrow" style="margin:16px 0 14px;display:block;">2 kelompok fungsi</span>
+      <div class="pipeline-mini">
+        <div class="pmini active"><span class="n">1</span> Mengambil Keputusan (IF)</div>
+        <div class="pmini"><span class="n">2</span> Menggabungkan Syarat (AND, OR, NOT)</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= 1. MENGAMBIL KEPUTUSAN DENGAN IF ================= -->
+<section id="keputusan">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">01 · Mengambil Keputusan</span>
+      <h2>IF dan IF Bertingkat — membuat Excel memilih jawaban</h2>
+      <p>IF adalah fungsi yang menguji sebuah syarat, lalu memilih salah satu dari dua kemungkinan hasil. Kalau ternyata ada LEBIH dari dua kemungkinan, beberapa IF bisa disusun berjenjang (IF Bertingkat / Nested IF).</p>
+    </div>
+    <div class="fitur-grid reveal">
+
+      <div class="fitur-card">
+        <h4><span class="fico">🔀</span> IF — Menguji Satu Syarat</h4>
+        <p class="apagunanya"><b>Pengertian &amp; fungsi:</b> IF menguji apakah suatu syarat (logika) bernilai BENAR atau SALAH, lalu menampilkan salah satu dari dua hasil tergantung hasil pengujian tersebut.</p>
+        <p class="sintaks"><b>Sintaks:</b> <code>=IF(logika_uji, nilai_jika_benar, nilai_jika_salah)</code></p>
+        <div class="mini-illus">
+          <div class="xl-mock-formula"><span class="fx-cell">C2</span><span class="fx-bar">=IF(B2&gt;=75,"Lulus","Remedial")</span></div>
+          <div class="mx-grid" style="grid-template-columns:22px 64px 96px;">
+            <div class="xc corner"></div><div class="xc colhead">B</div><div class="xc colhead">C</div>
+            <div class="xc rownum">1</div><div class="xc dataheader">Nilai</div><div class="xc dataheader">Status</div>
+            <div class="xc rownum">2</div><div class="xc">82</div><div class="xc included">Lulus</div>
+            <div class="xc rownum">3</div><div class="xc">68</div><div class="xc excluded">Remedial</div>
+          </div>
+          <div class="cf-caption">B2 (82) memenuhi syarat ≥75 → "Lulus". B3 (68) tidak memenuhi → "Remedial".</div>
+        </div>
+        <ol>
+          <li>Klik sel kosong tempat hasil ingin ditampilkan.</li>
+          <li>Ketik <code>=IF(</code> lalu tulis syaratnya, misalnya <code>B2&gt;=75</code>.</li>
+          <li>Tambahkan koma, nilai jika BENAR (diapit kutip kalau berupa teks), koma, nilai jika SALAH, tutup kurung, Enter.</li>
+        </ol>
+        <div class="tips"><b>Perlu diperhatikan:</b> hasil berupa TEKS wajib diapit tanda kutip ("Lulus"), tapi hasil berupa ANGKA tidak perlu tanda kutip.</div>
+      </div>
+
+      <div class="fitur-card">
+        <h4><span class="fico">🪜</span> IF Bertingkat — Lebih dari Dua Kemungkinan</h4>
+        <p class="apagunanya"><b>Pengertian &amp; fungsi:</b> Dipakai kalau ada LEBIH dari dua kemungkinan hasil. Sebuah IF diletakkan di dalam IF lain (bersarang/nested), disusun berjenjang dari syarat paling ketat ke syarat paling longgar.</p>
+        <p class="sintaks"><b>Sintaks:</b> <code>=IF(syarat1,hasil1,IF(syarat2,hasil2,IF(syarat3,hasil3,hasil_lain)))</code></p>
+        <div class="mini-illus">
+          <div class="xl-mock-formula"><span class="fx-cell">C2</span><span class="fx-bar">=IF(B2&gt;=90,"A",IF(B2&gt;=80,"B",IF(B2&gt;=70,"C","D")))</span></div>
+          <div class="mx-grid" style="grid-template-columns:22px 64px 90px;">
+            <div class="xc corner"></div><div class="xc colhead">B</div><div class="xc colhead">C</div>
+            <div class="xc rownum">1</div><div class="xc dataheader">Nilai</div><div class="xc dataheader">Predikat</div>
+            <div class="xc rownum">2</div><div class="xc">95</div><div class="xc included">A</div>
+            <div class="xc rownum">3</div><div class="xc">82</div><div class="xc included">B</div>
+            <div class="xc rownum">4</div><div class="xc">74</div><div class="xc included">C</div>
+            <div class="xc rownum">5</div><div class="xc">68</div><div class="xc included">D</div>
+          </div>
+          <div class="cf-caption">Setiap nilai diuji berurutan dari syarat tertinggi (≥90) — begitu satu syarat terpenuhi, IF berhenti dan langsung memberi hasilnya.</div>
+        </div>
+        <ol>
+          <li>Susun urutan syarat dari nilai TERTINGGI ke TERENDAH.</li>
+          <li>Tulis IF pertama; pada bagian "nilai jika salah", isi dengan IF berikutnya (bukan hasil biasa).</li>
+          <li>Ulangi sampai kemungkinan terakhir cukup diisi hasil biasa (tanpa IF lagi), lalu tutup SEMUA tanda kurung di ujung rumus.</li>
+        </ol>
+        <div class="tips"><b>Sering terjadi:</b> lupa menutup kurung. Kalau ada 3 fungsi IF yang dipakai, rumus itu butuh tepat 3 tanda kurung tutup di bagian akhir.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2. MENGGABUNGKAN BEBERAPA SYARAT ================= -->
+<section id="gabungan">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">02 · Menggabungkan Syarat</span>
+      <h2>AND, OR, dan NOT — menguji lebih dari satu syarat sekaligus</h2>
+      <p>Kadang satu syarat saja tidak cukup. AND, OR, dan NOT membantu menggabungkan atau membalik beberapa syarat logika — hasilnya berupa TRUE/FALSE, dan biasa dibungkus di dalam IF supaya keluar sebagai teks yang mudah dibaca.</p>
+    </div>
+    <div class="fitur-grid reveal">
+
+      <div class="fitur-card">
+        <h4><span class="fico">🤝</span> AND — SEMUA Syarat Harus Benar</h4>
+        <p class="apagunanya"><b>Pengertian &amp; fungsi:</b> AND menghasilkan TRUE hanya jika SEMUA syarat di dalamnya benar. Kalau ada satu saja syarat yang salah, hasilnya langsung FALSE.</p>
+        <p class="sintaks"><b>Sintaks:</b> <code>=AND(logika1, logika2, ...)</code></p>
+        <div class="mini-illus">
+          <div class="xl-mock-formula"><span class="fx-cell">D2</span><span class="fx-bar">=IF(AND(B2&gt;=75,C2&gt;=80),"Lulus","Tidak Lulus")</span></div>
+          <div class="mx-grid" style="grid-template-columns:22px 52px 60px 100px;">
+            <div class="xc corner"></div><div class="xc colhead">B</div><div class="xc colhead">C</div><div class="xc colhead">D</div>
+            <div class="xc rownum">1</div><div class="xc dataheader">Nilai</div><div class="xc dataheader">Hadir%</div><div class="xc dataheader">Status</div>
+            <div class="xc rownum">2</div><div class="xc">82</div><div class="xc">90</div><div class="xc included">Lulus</div>
+            <div class="xc rownum">3</div><div class="xc">74</div><div class="xc">60</div><div class="xc excluded">Tidak Lulus</div>
+          </div>
+          <div class="cf-caption">Baris 2: Nilai≥75 DAN Hadir≥80 — keduanya benar → Lulus. Baris 3: keduanya salah → Tidak Lulus.</div>
+        </div>
+        <ol>
+          <li>Klik sel kosong, ketik <code>=IF(AND(</code>.</li>
+          <li>Tulis semua syarat yang harus benar, dipisahkan koma, lalu tutup kurung AND.</li>
+          <li>Lanjutkan dengan nilai jika benar, nilai jika salah, tutup kurung IF, Enter.</li>
+        </ol>
+        <div class="tips"><b>Perlu diperhatikan:</b> AND sendirian hanya menghasilkan TRUE/FALSE — supaya keluar sebagai teks seperti "Lulus", AND perlu dibungkus di dalam IF.</div>
+      </div>
+
+      <div class="fitur-card">
+        <h4><span class="fico">🔓</span> OR — SALAH SATU Syarat Cukup</h4>
+        <p class="apagunanya"><b>Pengertian &amp; fungsi:</b> OR menghasilkan TRUE jika SALAH SATU saja dari syaratnya benar (tidak perlu semua). Hanya bernilai FALSE kalau semua syaratnya salah.</p>
+        <p class="sintaks"><b>Sintaks:</b> <code>=OR(logika1, logika2, ...)</code></p>
+        <div class="mini-illus">
+          <div class="xl-mock-formula"><span class="fx-cell">E2</span><span class="fx-bar">=IF(OR(B2&gt;=90,C2=100),"Berhak","Tidak Berhak")</span></div>
+          <div class="mx-grid" style="grid-template-columns:22px 52px 60px 106px;">
+            <div class="xc corner"></div><div class="xc colhead">B</div><div class="xc colhead">C</div><div class="xc colhead">E</div>
+            <div class="xc rownum">1</div><div class="xc dataheader">Nilai</div><div class="xc dataheader">Hadir%</div><div class="xc dataheader">Beasiswa</div>
+            <div class="xc rownum">2</div><div class="xc">90</div><div class="xc">85</div><div class="xc included">Berhak</div>
+            <div class="xc rownum">3</div><div class="xc">68</div><div class="xc">75</div><div class="xc excluded">Tidak Berhak</div>
+          </div>
+          <div class="cf-caption">Baris 2: Nilai≥90 sudah cukup benar sendiri (meski Hadir≠100) → Berhak. Baris 3: kedua syarat salah → Tidak Berhak.</div>
+        </div>
+        <ol>
+          <li>Klik sel kosong, ketik <code>=IF(OR(</code>.</li>
+          <li>Tulis syarat-syarat yang cukup salah satunya benar, dipisahkan koma, tutup kurung OR.</li>
+          <li>Lanjutkan nilai jika benar, nilai jika salah, tutup kurung IF, Enter.</li>
+        </ol>
+        <div class="tips"><b>Beda AND vs OR:</b> AND butuh SEMUA syarat benar, sedangkan OR cukup SATU saja yang benar.</div>
+      </div>
+
+      <div class="fitur-card">
+        <h4><span class="fico">🔁</span> NOT — Membalik Hasil Logika</h4>
+        <p class="apagunanya"><b>Pengertian &amp; fungsi:</b> NOT membalik hasil sebuah logika — TRUE menjadi FALSE, dan sebaliknya. Berguna untuk menyatakan syarat "kebalikan dari" sesuatu tanpa menulis ulang syaratnya dari awal.</p>
+        <p class="sintaks"><b>Sintaks:</b> <code>=NOT(logika)</code></p>
+        <div class="mini-illus">
+          <div class="xl-mock-formula"><span class="fx-cell">F2</span><span class="fx-bar">=IF(NOT(B2&gt;=75),"Perlu Perhatian","Aman")</span></div>
+          <div class="mx-grid" style="grid-template-columns:22px 64px 116px;">
+            <div class="xc corner"></div><div class="xc colhead">B</div><div class="xc colhead">F</div>
+            <div class="xc rownum">1</div><div class="xc dataheader">Nilai</div><div class="xc dataheader">Keterangan</div>
+            <div class="xc rownum">2</div><div class="xc">68</div><div class="xc included">Perlu Perhatian</div>
+            <div class="xc rownum">3</div><div class="xc">82</div><div class="xc excluded">Aman</div>
+          </div>
+          <div class="cf-caption">B2 (68) TIDAK memenuhi ≥75, NOT membalik FALSE→TRUE → "Perlu Perhatian". B3 sudah memenuhi, dibalik jadi "Aman".</div>
+        </div>
+        <ol>
+          <li>Klik sel kosong, ketik <code>=IF(NOT(</code> lalu tulis syarat yang ingin dibalik.</li>
+          <li>Tutup kurung NOT, lanjutkan nilai jika benar, nilai jika salah, tutup kurung IF, Enter.</li>
+        </ol>
+        <div class="tips"><b>Tips:</b> <code>NOT(B2&gt;=75)</code> artinya sama dengan menulis <code>B2&lt;75</code> secara langsung — NOT biasanya lebih mudah dibaca kalau syaratnya sudah panjang atau rumit.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= MAIN & KUIS ================= -->
+<section id="main">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">03 · Main &amp; Kuis</span>
+      <h2>🚦 Kurir Keputusan Logika</h2>
+      <p>Kamu berperan sebagai kurir yang harus mengirim 10 "paket keputusan"! Setiap paket adalah soal singkat tentang IF, IF Bertingkat, AND, OR, atau NOT. Jawab BENAR supaya truk maju, jawab SALAH dan truk mundur — soal yang salah akan muncul lagi sampai kamu jawab dengan benar!</p>
+    </div>
+
+    <div class="game-panel reveal">
+      <div class="rules-box">
+        <h4>Aturan permainan</h4>
+        <ul>
+          <li>Ada 10 "paket keputusan" (soal) yang dipilih acak dari bank soal, mencakup kelima fungsi (IF, IF Bertingkat, AND, OR, NOT).</li>
+          <li>Jawaban <b>BENAR</b> membuat truk maju satu langkah. Jawaban <b>SALAH</b> membuat truk mundur satu langkah, dan soal itu akan diulang lagi nanti.</li>
+          <li>Jawaban benar berturut-turut akan menaikkan KOMBO dan memberi bonus poin tambahan.</li>
+          <li>Kamu punya 3 ❤️. Jawaban salah mengurangi 1 nyawa dan mereset kombo.</li>
+          <li>Kalau nyawa habis, misi berhenti dan truk berhenti di posisi terakhir — hasil belum bisa dikirim ke guru.</li>
+          <li>Jawab semua 10 paket dengan benar (termasuk yang diulang) dan capai garis finish untuk bisa mengirim hasil ke guru dan menjadi Kurir Kilat Legendaris!</li>
+        </ul>
+      </div>
+
+      <div class="guru-banner hidden" id="guruBanner">
+        <span class="gi">🧑‍🏫</span>
+        <div><b>Mode Guru aktif.</b> Kamu bisa langsung mencoba game ini tanpa mengisi identitas siswa. Hasil permainan pada mode ini <b>tidak dikirim</b> ke rekap nilai — halaman ini murni untuk uji coba tampilan dan soal.</div>
+      </div>
+
+      <div id="gIdentityBlock">
+        <div id="gIdentityForms">
+          <div class="mode-toggle hidden">
+            <button class="pill-btn mode-btn active" id="gModeIndividu" type="button">👤 Individu</button>
+            <button class="pill-btn mode-btn" id="gModeKelompok" type="button">👥 Kelompok</button>
+          </div>
+          <div class="idform" id="gFormIndividu">
+            <div class="field">
+              <label for="gNis">NIS</label>
+              <div class="field-nis-row">
+                <input id="gNis" type="text" placeholder="Ketik NIS (min. 4 digit)" inputmode="numeric">
+                <button type="button" class="btn-cek-nis" id="gCekNisBtn">🔍 Cek</button>
+              </div>
+              <div id="gStatusNis" class="status-nis"></div>
+            </div>
+            <div class="field"><label for="gNama">Nama Lengkap</label><input id="gNama" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
+            <div class="field"><label for="gKelas">Kelas</label><input id="gKelas" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
+            <div class="field"><label for="gAbsen">No. Absen</label><input id="gAbsen" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
+          </div>
+          <div class="idform hidden" id="gFormKelompok">
+            <div class="field"><label for="gNamaKelompok">Nama Kelompok</label><input id="gNamaKelompok" type="text" placeholder="Contoh: Kelompok 3"></div>
+            <div class="field"><label for="gKelasKelompok">Kelas</label><input id="gKelasKelompok" type="text" placeholder="Contoh: XII 1"></div>
+            <div class="field" style="grid-column:1 / -1;"><label for="gAnggota">Anggota Kelompok (pisahkan dengan koma)</label><input id="gAnggota" type="text" placeholder="Contoh: Ani, Budi, Citra, Deni"></div>
+          </div>
+        </div>
+        <button class="btn" id="gStartBtn">🚚 Mulai Misi Pengiriman</button>
+      </div>
+
+      <div id="gPlayBlock" class="hidden">
+        <div class="game-hud">
+          <div class="hud-cat" id="gameCatLabel">Terkirim 0 / 10</div>
+          <div class="hud-right">
+            <div class="streak-pill" id="streakPill">🔥 Kombo x2</div>
+            <div class="hearts" id="gameHearts">❤️❤️❤️</div>
+            <div class="score-pill">Poin: <span id="gameScore">0</span></div>
+          </div>
+        </div>
+
+        <div class="route-wrap">
+          <div class="route-track"></div>
+          <div class="route-fill" id="routeFill"></div>
+          <div class="route-flag">🏁</div>
+          <div class="route-truck" id="routeTruck">🚚</div>
+        </div>
+
+        <div class="q-card">
+          <span class="qcat" id="qCatLabel">Kategori</span>
+          <div class="qtext" id="qText">—</div>
+          <div class="q-options" id="qOptions"></div>
+          <div class="q-feedback" id="qFeedback"></div>
+          <div class="q-nextrow">
+            <button class="btn" id="qNextBtn" disabled>Paket Berikutnya →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-box" id="gResultBox">
+        <div class="badge" id="gResultBadge">📦</div>
+        <div class="eyebrow" style="color:var(--amber);" id="gResultTitle">Misi selesai</div>
+        <div class="big" id="gResultScore">0/10</div>
+        <div class="sub-big" id="gResultPoin">Total Poin Kurir: 0</div>
+        <p id="gResultMsg"></p>
+        <div class="result-actions">
+          <button class="btn-send" id="gSendBtn">📨 Kirim Hasil ke Guru</button>
+          <button class="btn-playagain" id="gPlayAgainBtn">Main Lagi</button>
+        </div>
+        <div class="sendnote" id="gSendNote"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SUMBER MATERI ================= -->
+<section id="sumber">
+  <div class="wrap">
+    <div class="shead reveal">
+      <span class="eyebrow">04 · Sumber Materi</span>
+      <h2>Referensi yang digunakan</h2>
+      <p>Materi di halaman ini disusun berdasarkan sumber-sumber resmi berikut agar sintaks dan istilahnya tetap akurat.</p>
+    </div>
+    <div class="src-grid reveal">
+      <div class="src-card">
+        <div class="ico">📘</div>
+        <h4>Buku Panduan Mata Pelajaran Informatika</h4>
+        <p>Pusat Kurikulum dan Pembelajaran, Badan Standar, Kurikulum, dan Asesmen Pendidikan, Kemendikbudristek (2025) — acuan kurikulum Fase F.</p>
+      </div>
+      <a class="src-card" href="https://support.microsoft.com/en-us/office/if-function-69aed7c9-4e8a-4755-a9bc-aa8bbff73be2" target="_blank" rel="noopener">
+        <div class="ico">🔀</div>
+        <h4>IF function</h4>
+        <p>Microsoft Support — sintaks dan contoh penggunaan fungsi IF (termasuk IF Bertingkat).</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/office/and-function-5f19b2e8-e1df-4408-897a-ce285a19e9d9" target="_blank" rel="noopener">
+        <div class="ico">🤝</div>
+        <h4>AND function</h4>
+        <p>Microsoft Support — sintaks dan contoh penggunaan fungsi AND.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/office/or-function-7d17ad14-8700-4281-b308-00b131e22af0" target="_blank" rel="noopener">
+        <div class="ico">🔓</div>
+        <h4>OR function</h4>
+        <p>Microsoft Support — sintaks dan contoh penggunaan fungsi OR.</p>
+      </a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/office/not-function-9cfc6011-a054-40c7-a140-cd4ba2d87d77" target="_blank" rel="noopener">
+        <div class="ico">🔁</div>
+        <h4>NOT function</h4>
+        <p>Microsoft Support — sintaks dan contoh penggunaan fungsi NOT.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<footer>Dibuat untuk Informatika Kelas XII · SMA Negeri 8 Denpasar</footer>
+
+
+</div><!-- /#konten-utama -->
+
+
+<script>const MODUL_ID = "XII-108";</script>
+<script src="../config.js"></script>
+<script src="../guard.js"></script>
+<script src="../siswa.js"></script>
+<script>
+// Failsafe pratinjau: kalau config.js / guard.js gagal dimuat (misalnya saat
+// file ini dibuka sendirian tanpa struktur folder GitHub Pages di sebelahnya),
+// paksa tampilkan konten setelah 1.5 detik supaya tidak macet selamanya di
+// layar "Memuat materi...". Setelah diunggah ke folder modules/ yang benar
+// (dengan config.js & guard.js di sebelahnya), guard.js akan sempat berjalan
+// duluan dan failsafe ini tidak berpengaruh.
+setTimeout(function(){
+  var k = document.getElementById('konten-utama');
+  if(k && k.style.visibility !== 'visible'){ k.style.visibility = 'visible'; }
+  var l = document.getElementById('guard-loading');
+  if(l) l.remove();
+}, 1500);
+</script>
+
+<script>
+/* ---------- Reveal on scroll ---------- */
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+},{threshold:0.1});
+revealEls.forEach(el=>io.observe(el));
+
+/* ---------- Navigasi anchor internal (scroll manual) ---------- */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click', function(e){
+    const id = this.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if(target){
+      e.preventDefault();
+      target.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+});
+
+/* ---------- Mode Guru (uji coba) — aktif lewat ?guru=1 di alamat halaman ---------- */
+const modeGuru = new URLSearchParams(window.location.search).get('guru') === '1';
+if(modeGuru){
+  document.getElementById('guruBanner').classList.remove('hidden');
+  document.getElementById('gIdentityForms').classList.add('hidden');
+  document.getElementById('gStartBtn').textContent = '🧪 Coba Game (Mode Guru)';
+}
+
+/* ---------- Mode Individu / Kelompok (identitas) ---------- */
+let modeAktif = 'Individu';
+const btnIndividu = document.getElementById('gModeIndividu');
+const btnKelompok = document.getElementById('gModeKelompok');
+const formIndividu = document.getElementById('gFormIndividu');
+const formKelompok = document.getElementById('gFormKelompok');
+btnIndividu.addEventListener('click', ()=>{
+  modeAktif = 'Individu';
+  btnIndividu.classList.add('active'); btnKelompok.classList.remove('active');
+  formIndividu.classList.remove('hidden'); formKelompok.classList.add('hidden');
+});
+btnKelompok.addEventListener('click', ()=>{
+  modeAktif = 'Kelompok';
+  btnKelompok.classList.add('active'); btnIndividu.classList.remove('active');
+  formKelompok.classList.remove('hidden'); formIndividu.classList.add('hidden');
+});
+if(typeof pasangAutoisiSiswa === 'function'){
+  pasangAutoisiSiswa('gNis', 'gNama', 'gKelas', 'gAbsen', 'gCekNisBtn', 'gStatusNis');
+}
+
+/* ---------- Kirim hasil ke Google Sheet (lewat Apps Script di config.js) ---------- */
+const MATERI_LABEL = "Fungsi Logika (IF, IF Bertingkat, AND, OR, NOT)";
+
+// fetch dengan batas waktu — kalau server tidak merespons dalam
+// timeoutMs, permintaan dibatalkan otomatis (tidak menggantung selamanya)
+function fetchDenganTimeout(url, opsi, timeoutMs){
+  const kontrol = new AbortController();
+  const id = setTimeout(()=> kontrol.abort(), timeoutMs);
+  return fetch(url, Object.assign({}, opsi, { signal: kontrol.signal }))
+    .finally(()=> clearTimeout(id));
+}
+
+// Cek apakah identitas ini sudah pernah mengisi kuis ini sebelumnya.
+// Timeout pendek (6 detik) — kalau lambat/gagal, LEWATI saja pengecekan
+// ini dan lanjut kirim, supaya siswa tidak menunggu tanpa kepastian.
+async function cekHasilSebelumnya(materi, identitas){
+  if(typeof CONTROL_URL === 'undefined') return { ada:false };
+  try{
+    const params = new URLSearchParams({
+      action: 'cekHasil', mode: identitas.mode, materi,
+      nis: identitas.nis || '', nama: identitas.nama || '', kelas: identitas.kelas || ''
+    });
+    const res = await fetchDenganTimeout(CONTROL_URL + '?' + params.toString(), {}, 6000);
+    return await res.json();
+  }catch(err){
+    console.warn('Gagal memeriksa hasil sebelumnya (dilewati, lanjut kirim):', err);
+    return { ada:false };
+  }
+}
+
+// Kirim hasil. Return true = terkirim, false = gagal, null = dibatalkan siswa.
+// onStatus(teks) opsional, dipanggil untuk kasih tahu tahap yang sedang berjalan.
+// cekRiwayatAwal (opsional) = Promise dari cekHasilSebelumnya() yang sudah
+// dimulai LEBIH DULU (mis. sejak kuis dimulai) — kalau dikirim, dipakai
+// langsung tanpa mengulang fetch, jadi biasanya sudah selesai duluan.
+async function kirimKeSheet(materi, skor, total, identitas, onStatus, cekRiwayatAwal){
+  const status = onStatus || function(){};
+  if(typeof CONTROL_URL === 'undefined'){
+    console.warn('CONTROL_URL belum tersedia — lewati pengiriman ke Sheet.');
+    return false;
+  }
+
+  status('Memeriksa riwayat...');
+  const cekLama = await (cekRiwayatAwal || cekHasilSebelumnya(materi, identitas));
+  if(cekLama.ada){
+    const lanjut = confirm(
+      'Kamu sudah pernah mengirim hasil kuis ini sebelumnya (skor ' + cekLama.skor + '/' + cekLama.total + ', ' + cekLama.waktu + ').\n\n' +
+      'Kirim ulang untuk mengganti dengan hasil yang baru (' + skor + '/' + total + ')?'
+    );
+    if(!lanjut) return null;
+  }
+
+  const payload = {
+    waktu: new Date().toLocaleString('id-ID'),
+    mode: identitas.mode,
+    nama: identitas.nama,
+    nis: identitas.nis || '',
+    absen: identitas.absen || '',
+    kelas: identitas.kelas,
+    anggota: identitas.anggota || '',
+    materi: materi,
+    skor: skor,
+    total: total
+  };
+
+  status('Mengirim...');
+  // Coba kirim (maks 15 detik per percobaan), verifikasi respons server,
+  // ulangi sekali kalau gagal/timeout
+  for(let percobaan = 1; percobaan <= 2; percobaan++){
+    try{
+      const res = await fetchDenganTimeout(CONTROL_URL, { method: 'POST', body: JSON.stringify(payload) }, 15000);
+      const hasil = await res.json();
+      if(hasil.status === 'ok') return true;
+      console.warn('Server menolak pengiriman:', hasil);
+    }catch(err){
+      console.error('Percobaan ' + percobaan + ' gagal mengirim hasil (timeout/gagal):', materi, err);
+    }
+    if(percobaan === 1){ status('Mencoba lagi...'); await new Promise(r => setTimeout(r, 1000)); }
+  }
+  return false;
+}
+
+/* ==================================================================
+   GAME: KURIR KEPUTUSAN LOGIKA
+   Setiap soal (SOAL[i]) menyimpan indeks jawaban benar berdasarkan
+   URUTAN ASLI opsi (s.opsi), BUKAN urutan tampilan setelah diacak.
+   Setiap tombol pilihan diberi dataset.optIndex = indeks aslinya, dan
+   semua pengecekan (skor maupun highlight jawaban benar) mengacu ke
+   dataset.optIndex itu — bukan ke posisi tombol di layar — supaya
+   pengacakan opsi tidak pernah salah menyorot jawaban.
+
+   Mekanik: TIDAK ada batas waktu. Jawaban BENAR membuat truk maju satu
+   langkah; jawaban SALAH membuat truk mundur satu langkah dan soal itu
+   dimasukkan lagi ke akhir antrian supaya diulang nanti. Sesi hanya
+   berisi 10 soal yang dipilih acak dari bank soal (bisa lebih banyak).
+   Hasil hanya bisa dikirim ke guru kalau truk mencapai garis finish
+   (seluruh soal sesi akhirnya terjawab benar sebelum nyawa habis).
+   ================================================================== */
+// Grid mini ala-Excel yang ditampilkan di dalam soal (dipakai lewat innerHTML,
+// jadi cukup aman karena isinya ditulis sendiri, bukan input dari pengguna).
+function gridSoal(kolomHeader, dataRows, colWidth, formulaBar){
+  const w = colWidth || 96;
+  let html = `<div class="mini-illus q-excel">`;
+  if(formulaBar){
+    html += `<div class="xl-mock-formula"><span class="fx-cell">${formulaBar.cell}</span><span class="fx-bar">${formulaBar.formula}</span></div>`;
+  }
+  html += `<div class="mx-grid" style="grid-template-columns:22px ${w}px;">`;
+  html += `<div class="xc corner"></div><div class="xc colhead">${kolomHeader.huruf}</div>`;
+  html += `<div class="xc rownum">1</div><div class="xc dataheader">${kolomHeader.judul}</div>`;
+  dataRows.forEach((val, i) => {
+    html += `<div class="xc rownum">${i+2}</div><div class="xc">${val}</div>`;
+  });
+  html += `</div></div>`;
+  return html;
+}
+// Grid dua kolom (mis. Kategori + Bulan, atau Nilai + Hadir%) untuk soal
+// yang butuh lebih dari satu kolom data sekaligus.
+function gridDua(kolA, kolB, dataRows, wA, wB, formulaBar){
+  const w1 = wA || 70, w2 = wB || 70;
+  let html = `<div class="mini-illus q-excel">`;
+  if(formulaBar){
+    html += `<div class="xl-mock-formula"><span class="fx-cell">${formulaBar.cell}</span><span class="fx-bar">${formulaBar.formula}</span></div>`;
+  }
+  html += `<div class="mx-grid" style="grid-template-columns:22px ${w1}px ${w2}px;">`;
+  html += `<div class="xc corner"></div><div class="xc colhead">${kolA.huruf}</div><div class="xc colhead">${kolB.huruf}</div>`;
+  html += `<div class="xc rownum">1</div><div class="xc dataheader">${kolA.judul}</div><div class="xc dataheader">${kolB.judul}</div>`;
+  dataRows.forEach((row, i) => {
+    html += `<div class="xc rownum">${i+2}</div><div class="xc">${row[0]}</div><div class="xc">${row[1]}</div>`;
+  });
+  html += `</div></div>`;
+  return html;
+}
+function gridSelTunggal(kolomHeader, isi, colWidth, formulaBar){
+  const w = colWidth || 150;
+  let html = `<div class="mini-illus q-excel">`;
+  if(formulaBar){
+    html += `<div class="xl-mock-formula"><span class="fx-cell">${formulaBar.cell}</span><span class="fx-bar">${formulaBar.formula}</span></div>`;
+  }
+  html += `<div class="mx-grid" style="grid-template-columns:22px ${w}px;">` +
+    `<div class="xc corner"></div><div class="xc colhead">${kolomHeader}</div>` +
+    `<div class="xc rownum">2</div><div class="xc">${isi}</div>` +
+    `</div></div>`;
+  return html;
+}
+
+const SOAL = [
+  /* ---------------- IF ---------------- */
+  { kat:"IF", teks:"Manakah pernyataan yang paling tepat menjelaskan fungsi <b>IF</b>?",
+    opsi:["Menguji satu syarat, lalu memilih salah satu dari dua kemungkinan hasil","Menjumlahkan angka yang memenuhi suatu syarat","Menggabungkan beberapa syarat menjadi satu","Membalik hasil TRUE menjadi FALSE"], jawaban:0,
+    penjelasan:"IF menguji sebuah syarat (logika), lalu menampilkan salah satu dari dua hasil tergantung syarat itu benar atau salah." },
+
+  { kat:"IF", teks:"Perhatikan data berikut:" +
+      gridSoal({huruf:"B", judul:"Nilai"}, ["68","82"], null, {cell:"C2", formula:"=IF(B2>=75,\"Lulus\",\"Remedial\")"}) +
+      "Rumus <code>=IF(B2&gt;=75,\"Lulus\",\"Remedial\")</code> pada B2 (berisi 68) akan menghasilkan...",
+    opsi:["Remedial","Lulus","TRUE","68"], jawaban:0,
+    penjelasan:"68 tidak memenuhi syarat ≥75, sehingga IF mengambil nilai \"jika salah\", yaitu \"Remedial\"." },
+
+  { kat:"IF", teks:"Manakah penulisan sintaks IF yang BENAR?",
+    opsi:["=IF(logika_uji, nilai_jika_benar, nilai_jika_salah)","=IF(nilai_jika_benar, logika_uji, nilai_jika_salah)","=IF(logika_uji, nilai_jika_salah, nilai_jika_benar)","=IF(nilai_jika_benar, nilai_jika_salah, logika_uji)"], jawaban:0,
+    penjelasan:"Urutan penulisan IF selalu: syarat yang diuji dulu, baru nilai jika benar, baru nilai jika salah." },
+
+  /* ---------------- IF BERTINGKAT ---------------- */
+  { kat:"IF Bertingkat", teks:"Kapan sebaiknya kita menggunakan <b>IF Bertingkat</b> (nested IF) dibanding IF biasa?",
+    opsi:["Ketika ada LEBIH dari dua kemungkinan hasil yang perlu diuji","Ketika hanya ada satu syarat sederhana","Ketika ingin menjumlahkan data bersyarat","Ketika ingin menghitung banyaknya sel yang tidak kosong"], jawaban:0,
+    penjelasan:"IF Bertingkat dipakai saat ada lebih dari dua kemungkinan hasil, dengan menempatkan IF baru di posisi \"nilai jika salah\" dari IF sebelumnya." },
+
+  { kat:"IF Bertingkat", teks:"Perhatikan data berikut:" +
+      gridSoal({huruf:"B", judul:"Nilai"}, ["74"], null, {cell:"C2", formula:"=IF(B2>=90,\"A\",IF(B2>=80,\"B\",IF(B2>=70,\"C\",\"D\")))"}) +
+      "Untuk B2 berisi 74, hasil rumus IF Bertingkat di atas adalah...",
+    opsi:["C","B","A","D"], jawaban:0,
+    penjelasan:"74 tidak memenuhi ≥90 dan ≥80, tapi memenuhi ≥70, sehingga hasilnya \"C\"." },
+
+  { kat:"IF Bertingkat", teks:"Perhatikan data berikut:" +
+      gridSoal({huruf:"B", judul:"Nilai"}, ["90"], null, {cell:"C2", formula:"=IF(B2>=90,\"A\",IF(B2>=80,\"B\",IF(B2>=70,\"C\",\"D\")))"}) +
+      "Untuk B2 berisi 90, hasil rumus IF Bertingkat di atas adalah...",
+    opsi:["A","B","C","D"], jawaban:0,
+    penjelasan:"90 sudah memenuhi syarat pertama (≥90), sehingga IF langsung berhenti dan memberi hasil \"A\" tanpa menguji syarat berikutnya." },
+
+  /* ---------------- AND ---------------- */
+  { kat:"AND", teks:"Fungsi <b>AND</b> akan menghasilkan TRUE apabila...",
+    opsi:["SEMUA syarat di dalamnya benar","SALAH SATU syarat di dalamnya benar","SEMUA syarat di dalamnya salah","Hasilnya selalu berupa teks, bukan TRUE/FALSE"], jawaban:0,
+    penjelasan:"AND hanya menghasilkan TRUE kalau seluruh syarat di dalamnya benar; satu saja salah, hasilnya FALSE." },
+
+  { kat:"AND", teks:"Perhatikan data berikut:" +
+      gridDua({huruf:"B", judul:"Nilai"}, {huruf:"C", judul:"Hadir%"}, [["74","60"]], 60, 66, {cell:"D2", formula:"=IF(AND(B2>=75,C2>=80),\"Lulus\",\"Tidak Lulus\")"}) +
+      "Untuk baris ini (Nilai 74, Hadir 60%), hasil rumus di atas adalah...",
+    opsi:["Tidak Lulus","Lulus","TRUE","FALSE"], jawaban:0,
+    penjelasan:"Nilai 74 tidak memenuhi ≥75 dan Hadir 60 tidak memenuhi ≥80 — AND butuh KEDUANYA benar, jadi hasilnya \"Tidak Lulus\"." },
+
+  { kat:"AND", teks:"Perhatikan data berikut:" +
+      gridDua({huruf:"B", judul:"Nilai"}, {huruf:"C", judul:"Hadir%"}, [["95","95"]], 60, 66, {cell:"D2", formula:"=IF(AND(B2>=75,C2>=80),\"Lulus\",\"Tidak Lulus\")"}) +
+      "Untuk baris ini (Nilai 95, Hadir 95%), hasil rumus di atas adalah...",
+    opsi:["Lulus","Tidak Lulus","TRUE","FALSE"], jawaban:0,
+    penjelasan:"Nilai 95≥75 DAN Hadir 95≥80 — keduanya benar, sehingga AND bernilai TRUE dan hasilnya \"Lulus\"." },
+
+  /* ---------------- OR ---------------- */
+  { kat:"OR", teks:"Apa perbedaan utama antara <b>OR</b> dan AND?",
+    opsi:["OR cukup satu syarat benar, AND butuh semua syarat benar","OR butuh semua syarat benar, AND cukup satu syarat benar","OR dan AND selalu menghasilkan hasil yang sama","OR hanya bisa dipakai untuk data angka"], jawaban:0,
+    penjelasan:"OR menghasilkan TRUE kalau salah satu syaratnya sudah benar, sedangkan AND butuh semua syaratnya benar." },
+
+  { kat:"OR", teks:"Perhatikan data berikut:" +
+      gridDua({huruf:"B", judul:"Nilai"}, {huruf:"C", judul:"Hadir%"}, [["90","70"]], 60, 66, {cell:"E2", formula:"=IF(OR(B2>=90,C2=100),\"Berhak\",\"Tidak Berhak\")"}) +
+      "Untuk baris ini (Nilai 90, Hadir 70%), hasil rumus di atas adalah...",
+    opsi:["Berhak","Tidak Berhak","TRUE","FALSE"], jawaban:0,
+    penjelasan:"Meskipun Hadir tidak 100%, Nilai 90 sudah memenuhi syarat ≥90 — OR cukup salah satu syarat benar, jadi hasilnya \"Berhak\"." },
+
+  { kat:"OR", teks:"Perhatikan data berikut:" +
+      gridDua({huruf:"B", judul:"Nilai"}, {huruf:"C", judul:"Hadir%"}, [["60","100"]], 60, 66, {cell:"E2", formula:"=IF(OR(B2>=90,C2=100),\"Berhak\",\"Tidak Berhak\")"}) +
+      "Untuk baris ini (Nilai 60, Hadir 100%), hasil rumus di atas adalah...",
+    opsi:["Berhak","Tidak Berhak","TRUE","FALSE"], jawaban:0,
+    penjelasan:"Meskipun Nilai tidak ≥90, Hadir sudah 100 — OR cukup salah satu syarat benar, jadi hasilnya \"Berhak\"." },
+
+  /* ---------------- NOT ---------------- */
+  { kat:"NOT", teks:"Fungsi <b>NOT</b> digunakan untuk...",
+    opsi:["Membalik hasil logika: TRUE menjadi FALSE, dan sebaliknya","Menggabungkan dua syarat menjadi satu","Menghitung banyaknya sel yang memenuhi syarat","Menjumlahkan angka yang memenuhi syarat"], jawaban:0,
+    penjelasan:"NOT membalik nilai logika — kalau syaratnya TRUE, NOT membuatnya FALSE, begitu juga sebaliknya." },
+
+  { kat:"NOT", teks:"Perhatikan data berikut:" +
+      gridSoal({huruf:"B", judul:"Nilai"}, ["82"], null, {cell:"F2", formula:"=IF(NOT(B2>=75),\"Perlu Perhatian\",\"Aman\")"}) +
+      "Untuk B2 berisi 82, hasil rumus <code>=IF(NOT(B2&gt;=75),\"Perlu Perhatian\",\"Aman\")</code> adalah...",
+    opsi:["Aman","Perlu Perhatian","TRUE","FALSE"], jawaban:0,
+    penjelasan:"82≥75 bernilai TRUE, lalu dibalik oleh NOT menjadi FALSE, sehingga IF mengambil nilai \"jika salah\" yaitu \"Aman\"." },
+
+  { kat:"NOT", teks:"Perhatikan data berikut:" +
+      gridSoal({huruf:"B", judul:"Nilai"}, ["60"], null, {cell:"F2", formula:"=IF(NOT(B2>=75),\"Perlu Perhatian\",\"Aman\")"}) +
+      "Untuk B2 berisi 60, hasil rumus <code>=IF(NOT(B2&gt;=75),\"Perlu Perhatian\",\"Aman\")</code> adalah...",
+    opsi:["Perlu Perhatian","Aman","TRUE","FALSE"], jawaban:0,
+    penjelasan:"60≥75 bernilai FALSE, lalu dibalik oleh NOT menjadi TRUE, sehingga IF mengambil nilai \"jika benar\" yaitu \"Perlu Perhatian\"." },
+];
+
+const TOTAL_BANK_SOAL = SOAL.length; // jumlah soal di bank (15)
+const TOTAL_SOAL = 10; // jumlah soal yang dimainkan tiap sesi (dipilih acak dari bank)
+let identitas = null;
+let cekRiwayatPromise = null; // mulai dicek sejak kuis dimulai, bukan saat klik Kirim
+let antrianSoal = [];  // antrian indeks soal yang masih harus dijawab BENAR; soal yang
+                        // dijawab salah akan dimasukkan lagi ke akhir antrian ini.
+let posisiTruk = 0;    // posisi truk di jalur (0..TOTAL_SOAL) — maju saat benar, mundur saat salah
+let skorBenar = 0;   // jumlah paket unik yang sudah dijawab BENAR (dikirim ke guru sebagai skor/total)
+let poinKurir = 0;   // skor gamifikasi (kombo), hanya untuk tampilan
+let kombo = 0;
+let nyawa = 3;
+let terkunci = false;
+
+function shuffleIdx(n){
+  const arr = Array.from({length:n}, (_,i)=>i);
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function initKuis(){
+  antrianSoal = shuffleIdx(TOTAL_BANK_SOAL).slice(0, TOTAL_SOAL);
+  posisiTruk = 0;
+  skorBenar = 0;
+  poinKurir = 0;
+  kombo = 0;
+  nyawa = 3;
+  terkunci = false;
+  document.getElementById('gResultBox').style.display = 'none';
+  updateRoute();
+  tampilkanSoal();
+}
+
+function updateHUD(){
+  document.getElementById('gameCatLabel').textContent = `Terkirim ${skorBenar} / ${TOTAL_SOAL}`;
+  document.getElementById('gameHearts').textContent = '❤️'.repeat(Math.max(0,nyawa)) + '🖤'.repeat(3-nyawa);
+  document.getElementById('gameScore').textContent = poinKurir;
+  const streakPill = document.getElementById('streakPill');
+  if(kombo >= 2){
+    streakPill.textContent = `🔥 Kombo x${kombo}`;
+    streakPill.classList.add('show');
+  } else {
+    streakPill.classList.remove('show');
+  }
+}
+
+function updateRoute(){
+  const pct = Math.round((posisiTruk/TOTAL_SOAL)*100);
+  document.getElementById('routeFill').style.width = pct + '%';
+  document.getElementById('routeTruck').style.left = `calc(${pct}% - 4px)`;
+}
+
+function tampilkanSoal(){
+  updateHUD();
+  updateRoute();
+  const s = SOAL[antrianSoal[0]];
+  document.getElementById('qCatLabel').textContent = s.kat;
+  document.getElementById('qText').innerHTML = s.teks;
+  const optWrap = document.getElementById('qOptions');
+  optWrap.innerHTML = '';
+  const urutanOpsi = shuffleIdx(s.opsi.length);
+  urutanOpsi.forEach(oi=>{
+    const btn = document.createElement('button');
+    btn.className = 'q-opt';
+    btn.type = 'button';
+    btn.textContent = s.opsi[oi];
+    btn.dataset.optIndex = oi; // indeks ASLI opsi ini (sebelum diacak)
+    btn.addEventListener('click', ()=> jawabSoal(oi, s, btn, optWrap));
+    optWrap.appendChild(btn);
+  });
+  const fb = document.getElementById('qFeedback');
+  fb.className = 'q-feedback';
+  fb.textContent = '';
+  document.getElementById('qNextBtn').disabled = true;
+  terkunci = false;
+}
+
+function sorotJawabanBenar(semuaBtn, s){
+  // Cari tombol dengan dataset.optIndex yang cocok dengan s.jawaban (indeks
+  // ASLI), bukan berdasarkan posisi tampilan yang sudah diacak.
+  const correctBtn = Array.from(semuaBtn).find(b => Number(b.dataset.optIndex) === s.jawaban);
+  if(correctBtn) correctBtn.classList.add('correct');
+}
+
+function kuncilOpsiInternal(optWrap){
+  const semuaBtn = optWrap.querySelectorAll('.q-opt');
+  semuaBtn.forEach(b=> b.disabled = true);
+  return semuaBtn;
+}
+
+function jawabSoal(dipilih, s, btnDipilih, optWrap){
+  if(terkunci) return;
+  terkunci = true;
+  const semuaBtn = kuncilOpsiInternal(optWrap);
+
+  const fb = document.getElementById('qFeedback');
+  if(dipilih === s.jawaban){
+    skorBenar++;
+    kombo++;
+    posisiTruk = Math.min(TOTAL_SOAL, posisiTruk + 1);
+    antrianSoal.shift(); // soal ini sudah terjawab benar, tidak diulang lagi
+
+    const bonusKombo = kombo >= 2 ? (kombo - 1) * 10 : 0;
+    const poinSoalIni = 100 + bonusKombo;
+    poinKurir += poinSoalIni;
+
+    btnDipilih.classList.add('correct');
+    fb.className = 'q-feedback show ok';
+    let teksBonus = ` (+${poinSoalIni} poin`;
+    if(bonusKombo > 0) teksBonus += `, termasuk bonus kombo x${kombo}`;
+    teksBonus += ')';
+    fb.textContent = '✓ Benar! Truk maju satu langkah.' + teksBonus + ' ' + s.penjelasan;
+  } else {
+    nyawa--;
+    kombo = 0;
+    posisiTruk = Math.max(0, posisiTruk - 1);
+    antrianSoal.push(antrianSoal.shift()); // soal ini diulang lagi nanti di akhir antrian
+
+    btnDipilih.classList.add('wrong');
+    sorotJawabanBenar(semuaBtn, s);
+    fb.className = 'q-feedback show bad';
+    fb.textContent = '✗ Belum tepat, truk mundur satu langkah. Soal ini akan muncul lagi nanti. ' + s.penjelasan;
+  }
+  updateHUD();
+  updateRoute();
+
+  if(nyawa <= 0){
+    document.getElementById('qNextBtn').disabled = true;
+    setTimeout(()=> selesaiKuis(false), 1100);
+    return;
+  }
+  document.getElementById('qNextBtn').disabled = false;
+}
+
+document.getElementById('qNextBtn').addEventListener('click', ()=>{
+  if(antrianSoal.length === 0){
+    updateRoute();
+    selesaiKuis(true);
+  } else {
+    tampilkanSoal();
+  }
+});
+
+function selesaiKuis(tuntas){
+  document.getElementById('gPlayBlock').classList.add('hidden');
+  const box = document.getElementById('gResultBox');
+  const title = document.getElementById('gResultTitle');
+  const msg = document.getElementById('gResultMsg');
+  const badge = document.getElementById('gResultBadge');
+
+  if(!tuntas){
+    badge.textContent = '🛑';
+    title.textContent = 'Misi Berhenti';
+    msg.textContent = 'Nyawa habis setelah 3 kali jawaban salah. Paket terkirim: ' + skorBenar + '/' + TOTAL_SOAL + '.';
+  } else if(skorBenar === TOTAL_SOAL){
+    badge.textContent = '🏆';
+    title.textContent = 'Kurir Kilat Legendaris!';
+    msg.textContent = 'Semua ' + TOTAL_SOAL + ' paket terkirim dengan sempurna. Luar biasa!';
+  } else if(skorBenar >= Math.ceil(TOTAL_SOAL * 0.7)){
+    badge.textContent = '🚀';
+    title.textContent = 'Kurir Andal';
+    msg.textContent = skorBenar + ' dari ' + TOTAL_SOAL + ' paket berhasil dikirim. Sedikit lagi sempurna!';
+  } else {
+    badge.textContent = '📦';
+    title.textContent = 'Misi Selesai';
+    msg.textContent = skorBenar + ' dari ' + TOTAL_SOAL + ' paket berhasil dikirim. Yuk latihan lagi supaya makin kilat!';
+  }
+  document.getElementById('gResultScore').textContent = skorBenar + '/' + TOTAL_SOAL;
+  document.getElementById('gResultPoin').textContent = 'Total Poin Kurir: ' + poinKurir;
+  box.style.display = 'block';
+  const sendBtn = document.getElementById('gSendBtn');
+  const sendNote = document.getElementById('gSendNote');
+  if(modeGuru){
+    // Mode guru hanya untuk uji coba, jadi tombol kirim disembunyikan
+    // sepenuhnya supaya tidak ada hasil percobaan guru yang tercatat.
+    sendBtn.style.display = 'none';
+    sendNote.textContent = '🧪 Mode guru — hasil uji coba ini tidak dikirim ke spreadsheet.';
+  } else if(!tuntas){
+    // Truk belum sampai garis finish (nyawa habis di tengah jalan) — hasil
+    // belum boleh dikirim, siswa harus mengulang sampai tuntas.
+    sendBtn.style.display = 'none';
+    sendNote.textContent = '🚧 Truk belum sampai garis finish. Klik "Main Lagi" dan selesaikan seluruh paket untuk bisa mengirim hasil ke guru.';
+  } else {
+    sendBtn.style.display = '';
+    sendBtn.disabled = false;
+    sendNote.textContent = '';
+  }
+  box.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+/* ---------- Mulai kuis (validasi identitas terlebih dahulu) ---------- */
+document.getElementById('gStartBtn').addEventListener('click', ()=>{
+  let ident;
+  if(modeGuru){
+    // Mode guru: lewati form identitas & pengecekan riwayat, langsung main.
+    ident = { mode: 'Guru', nama: 'Guru (Uji Coba)', kelas: '-' };
+    identitas = ident;
+    cekRiwayatPromise = Promise.resolve({ ada:false });
+    document.getElementById('gIdentityBlock').classList.add('hidden');
+    document.getElementById('gPlayBlock').classList.remove('hidden');
+    initKuis();
+    return;
+  }
+  ident = { mode: modeAktif };
+  if(modeAktif === 'Individu'){
+    const nama = document.getElementById('gNama').value.trim();
+    const kelas = document.getElementById('gKelas').value.trim();
+    const nis = document.getElementById('gNis').value.trim();
+    const absen = document.getElementById('gAbsen').value.trim();
+    if(!nis){
+      alert('Mohon isi NIS terlebih dahulu.');
+      return;
+    }
+    if(!nama || !kelas || !absen){
+      alert('NIS tidak ditemukan di data siswa, atau data belum lengkap. Periksa kembali NIS-mu, atau hubungi guru.');
+      return;
+    }
+    ident.nama = nama; ident.kelas = kelas; ident.nis = nis; ident.absen = absen;
+  } else {
+    const nama = document.getElementById('gNamaKelompok').value.trim();
+    const kelas = document.getElementById('gKelasKelompok').value.trim();
+    const anggota = document.getElementById('gAnggota').value.trim();
+    if(!nama || !kelas || !anggota){
+      alert('Mohon lengkapi Nama Kelompok, Kelas, dan Anggota Kelompok terlebih dahulu.');
+      return;
+    }
+    ident.nama = nama; ident.kelas = kelas; ident.anggota = anggota;
+  }
+  identitas = ident;
+  // Mulai cek riwayat pengiriman DARI SEKARANG, berjalan di belakang layar
+  // selagi siswa mengerjakan kuis — supaya saat nanti klik "Kirim", hasil
+  // pengecekan biasanya sudah siap dan tidak perlu menunggu lagi.
+  cekRiwayatPromise = cekHasilSebelumnya(MATERI_LABEL + ' — Kurir Keputusan Logika', identitas);
+  document.getElementById('gIdentityBlock').classList.add('hidden');
+  document.getElementById('gPlayBlock').classList.remove('hidden');
+  initKuis();
+});
+
+document.getElementById('gPlayAgainBtn').addEventListener('click', ()=>{
+  document.getElementById('gPlayBlock').classList.remove('hidden');
+  // Main lagi = percobaan baru -> cek ulang riwayat dari sekarang juga,
+  // supaya kalau tadi sempat kirim, pengecekan kedua ini tahu itu. Mode guru
+  // tidak pernah mengirim ke Sheet, jadi tidak perlu cek riwayat sama sekali.
+  cekRiwayatPromise = modeGuru ? Promise.resolve({ ada:false }) : cekHasilSebelumnya(MATERI_LABEL + ' — Kurir Keputusan Logika', identitas);
+  initKuis();
+});
+
+document.getElementById('gSendBtn').addEventListener('click', async ()=>{
+  if(!identitas || modeGuru) return;
+  const btn = document.getElementById('gSendBtn');
+  const note = document.getElementById('gSendNote');
+  btn.disabled = true;
+  const ok = await kirimKeSheet(
+    MATERI_LABEL + ' — Kurir Keputusan Logika', skorBenar, TOTAL_SOAL, identitas,
+    (teks)=>{ note.textContent = teks; },
+    cekRiwayatPromise
+  );
+  if(ok === true){
+    note.textContent = '✓ Hasil terkirim ke guru.';
+  } else if(ok === null){
+    note.textContent = 'Dibatalkan — hasil lama tetap tersimpan.';
+    btn.disabled = false;
+  } else {
+    note.textContent = 'Gagal mengirim — coba lagi (periksa koneksi internet).';
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
