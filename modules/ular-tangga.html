@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ular Tangga Belajar</title>
+<title>ular-tangga</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -79,21 +79,32 @@ body.sidebar-open .wrap{ padding-right: 356px; }
 }
 .setup-card h2{ margin: 0 0 6px; font-size: 22px; }
 .setup-card p.hint{ color: var(--muted); font-size: 14px; margin: 0 0 22px; }
-.stepper-row{ display:flex; align-items:center; gap:14px; margin-bottom: 20px; }
-.stepper-row label{ font-weight:700; font-size:14px; color: var(--text); flex:1; }
-.stepper{ display:flex; align-items:center; gap:0; border:1px solid var(--panel-border); border-radius:12px; overflow:hidden; }
+.stepper-row{ display:flex; align-items:center; flex-wrap:wrap; gap:10px 14px; margin-bottom: 20px; }
+.stepper-row label{ font-weight:700; font-size:14px; color: var(--text); flex:1 1 auto; min-width:110px; }
+.stepper-row .hint{ flex-basis:100%; margin:2px 0 0; }
+.stepper{ display:flex; align-items:center; gap:0; border:1px solid var(--panel-border); border-radius:12px; overflow:hidden; flex:0 0 auto; }
 .stepper button{
   width:38px; height:38px; border:none; background: var(--panel-soft); color:var(--text);
   font-size:20px; cursor:pointer; font-family:'Baloo 2';
 }
 .stepper button:hover{ background: var(--accent); color:#3a2200; }
 .stepper span{ width:40px; text-align:center; font-family:'Baloo 2'; font-weight:700; font-size:18px; }
-.size-toggle{ display:flex; border:1px solid var(--panel-border); border-radius:12px; overflow:hidden; }
+.size-toggle{
+  display:flex; flex-wrap:wrap; border:1px solid var(--panel-border); border-radius:12px;
+  overflow:hidden; flex:0 1 auto;
+}
 .size-btn{
   padding:8px 14px; border:none; background: var(--panel-soft); color:var(--text);
   font-family:'Baloo 2'; font-weight:700; font-size:13px; cursor:pointer;
+  flex:1 1 auto; white-space:nowrap;
 }
 .size-btn.selected{ background: var(--accent); color:#3a2200; }
+@media (max-width:420px){
+  .stepper-row{ align-items:flex-start; }
+  .stepper-row label{ flex-basis:100%; }
+  .size-toggle{ width:100%; }
+  .size-btn{ flex:1 1 0; padding:8px 6px; font-size:12px; }
+}
 .name-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 24px; }
 .name-item{ display:flex; align-items:center; gap:8px; background: var(--panel-soft); border:1px solid var(--panel-border); border-radius: 10px; padding: 6px 10px; }
 .dot{ width:14px; height:14px; border-radius:50%; flex-shrink:0; }
@@ -374,7 +385,7 @@ body.sidebar-open .wrap{ padding-right: 356px; }
       <div class="reset-link"><button id="resetBtn" type="button">Mulai permainan baru</button></div>
     </div>
   </div>
-  <footer style="text-align:center; padding:24px 0 8px; font-size:12px; color:#9db8ab;">Dibuat untuk Informatika · SMA Negeri 8 Denpasar</footer>
+  <footer style="text-align:center; padding:24px 0 8px; font-size:12px; color:#9db8ab;">SMA Negeri 8 Denpasar</footer>
 </div>
 
 <button id="sidebarToggleBtn" class="sidebar-toggle" type="button" aria-label="Tampilkan/sembunyikan panel">☰</button>
@@ -437,7 +448,7 @@ body.sidebar-open .wrap{ padding-right: 356px; }
 
 </div><!-- /#konten-utama -->
 
-<script>const MODUL_ID = "GANTI_DENGAN_KODE_MODUL";</script>
+<script>const MODUL_ID = "GAME_ULARTANGGA";</script>
 <script src="../config.js"></script>
 <script src="../guard.js"></script>
 <script>
