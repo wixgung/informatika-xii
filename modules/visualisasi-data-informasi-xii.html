@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visualisasi Data dan Informasi — Grafik &amp; Cara Membuatnya di Excel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1c2a2e;--paper:#f6f1e6;--paper-2:#efe7d4;--amber:#e2a333;--teal:#2f6f66;--teal-dark:#1e4a44;--coral:#dc5b41;--line:rgba(28,42,46,0.16);--card:#fffdf8;}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Work Sans',sans-serif;line-height:1.55;background-image:radial-gradient(circle,rgba(28,42,46,0.07) 1px,transparent 1px);background-size:22px 22px;}
+h1,h2,h3,h4{font-family:'Fraunces',serif;margin:0 0 .4em 0;line-height:1.08;color:var(--teal-dark);}
+.eyebrow{font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;color:var(--coral);font-weight:600;display:inline-block;margin-bottom:.6em;}
+p{margin:0 0 1em 0;}
+a{color:var(--teal-dark);}
+code{background:var(--paper-2);padding:1px 6px;border-radius:5px;font-family:'IBM Plex Mono',monospace;font-size:.88em;overflow-wrap:break-word;word-break:break-word;}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+section{padding:64px 0;border-bottom:1px dashed var(--line);}
+section:last-of-type{border-bottom:none;}
+nav{position:sticky;top:0;z-index:50;background:rgba(246,241,230,0.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;max-width:1080px;flex-wrap:wrap;gap:8px;}
+.brand{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.85rem;letter-spacing:.04em;display:flex;align-items:center;gap:8px;}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--coral);display:inline-block;}
+.navlinks{display:flex;gap:14px;flex-wrap:wrap;}
+.navlinks a{font-size:.78rem;text-decoration:none;color:var(--ink);opacity:.75;font-weight:500;}
+.navlinks a:hover{opacity:1;color:var(--coral);}
+@media(max-width:980px){.navlinks{display:none;}}
+.hero{padding:60px 0 46px;}
+.hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center;}
+@media(max-width:800px){.hero-grid{grid-template-columns:1fr;}}
+.hero h1{font-size:clamp(1.7rem,4.2vw,2.7rem);}
+.hero .lede{font-size:1.06rem;max-width:56ch;color:#33474a;}
+.callback{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--coral);border-radius:6px;padding:16px 18px;font-size:.92rem;margin-top:20px;}
+.callback b{color:var(--coral);}
+.hero-visual{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;}
+.pipeline-mini{display:flex;flex-direction:column;gap:9px;}
+.pmini{display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:.75rem;}
+.pmini .n{width:24px;height:24px;border-radius:50%;background:var(--paper-2);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--teal-dark);flex-shrink:0;font-size:.7rem;}
+.pmini.active .n{background:var(--amber);color:#221805;}
+.shead{max-width:700px;margin-bottom:32px;}
+.shead h2{font-size:clamp(1.4rem,2.9vw,1.9rem);}
+.src-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:10px;}
+.src-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;}
+.src-card .ico{font-size:1.4rem;}
+.src-card h4{font-size:1rem;margin:8px 0 4px;color:var(--ink);}
+.src-card p{font-size:.87rem;color:#4a4238;margin:0;}
+a.src-card{text-decoration:none;display:block;transition:transform .15s,box-shadow .15s;}
+a.src-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(28,42,46,0.1);}
+.fitur-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:6px;}
+.fitur-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;min-width:0;}
+.fitur-card h4{font-size:1.06rem;margin:0 0 8px;display:flex;align-items:center;gap:8px;}
+.fitur-card p.apagunanya{font-size:.89rem;color:#33474a;margin-bottom:10px;}
+.fitur-card .sublabel{font-family:'IBM Plex Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--coral);display:block;margin:10px 0 4px;}
+.fitur-card ol{margin:0 0 12px 20px;padding:0;font-size:.86rem;color:#3a3327;}
+.fitur-card ol li{margin-bottom:4px;}
+.fitur-card .tips{background:var(--paper-2);border-radius:8px;padding:8px 12px;font-size:.79rem;color:#4a4238;}
+.fitur-card .tips b{color:var(--coral);}
+.chart-slot{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px;margin:10px 0;}
+.chart-cap{font-size:.76rem;color:#5b5344;font-style:italic;padding:6px 4px 2px;}
+.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media(max-width:700px){.cmp-grid{grid-template-columns:1fr;}}
+.cmp-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;min-width:0;}
+.cmp-box.bad{border-top:4px solid var(--coral);}
+.cmp-box.good{border-top:4px solid var(--teal);}
+.cmp-box h4{font-size:1rem;}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);}
+table.tbl{width:100%;border-collapse:collapse;font-size:.87rem;min-width:560px;}
+.tbl th{background:var(--teal-dark);color:#fff;text-align:left;padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;}
+.tbl td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top;}
+.steps{counter-reset:s;list-style:none;margin:0;padding:0;display:grid;gap:14px;}
+.steps li{counter-increment:s;position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px 16px 64px;font-size:.9rem;}
+.steps li::before{content:counter(s);position:absolute;left:18px;top:15px;width:32px;height:32px;border-radius:50%;background:var(--amber);color:#221805;font-family:'IBM Plex Mono',monospace;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.steps li b.st{display:block;font-family:'Fraunces',serif;font-size:1.04rem;color:var(--teal-dark);margin-bottom:4px;}
+.steps li ul{margin:6px 0 0 18px;padding:0;}
+.mp{font-family:'IBM Plex Mono',monospace;background:#e5f3ee;color:var(--teal-dark);border-radius:6px;padding:1px 7px;font-size:.82em;white-space:nowrap;}
+.note{background:#fbf3e2;border:1px solid #e9cf95;border-radius:10px;padding:12px 16px;font-size:.85rem;margin:16px 0;}
+.btn{font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:.02em;font-size:.85rem;background:var(--teal-dark);color:#fff;border:none;border-radius:8px;padding:11px 22px;cursor:pointer;}
+.btn:hover{background:var(--coral);}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.game-panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px;}
+.idform{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+@media(max-width:600px){.idform{grid-template-columns:1fr;}}
+.mode-toggle{display:flex;gap:10px;margin-bottom:20px;}
+.pill-btn{border:1.5px solid var(--line);background:#fff;border-radius:20px;padding:9px 20px;font-family:'Work Sans',sans-serif;font-size:.85rem;cursor:pointer;font-weight:600;}
+.mode-btn.active{background:var(--teal);border-color:var(--teal);color:#fff;}
+.field label{display:block;font-family:'IBM Plex Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;color:#5b5344;}
+.field input{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:'Work Sans',sans-serif;font-size:.95rem;background:#fff;}
+.field input:focus{outline:2px solid var(--amber);border-color:var(--amber);}
+.field input[readonly]{background:var(--paper-2);color:#6b6355;cursor:not-allowed;}
+.field-nis-row{display:flex;gap:8px;align-items:stretch;}
+.field-nis-row input{flex:1;}
+.btn-cek-nis{flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.82rem;background:var(--teal);color:#fff;border:none;border-radius:8px;padding:0 16px;cursor:pointer;white-space:nowrap;}
+.btn-cek-nis:hover{background:var(--teal-dark);}
+.btn-cek-nis:disabled{opacity:.6;cursor:default;}
+.status-nis{font-size:.76rem;margin-top:5px;min-height:1.1em;color:var(--coral);}
+.hidden{display:none !important;}
+.rules-box{background:#fbf3e2;border:1px solid #e9cf95;border-radius:10px;padding:16px 18px;font-size:.87rem;margin-bottom:22px;}
+.rules-box h4{margin:0 0 8px;font-size:.9rem;color:#7a6a3a;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;}
+.rules-box ul,.rules-box ol{margin:0;padding-left:18px;}
+.rules-box li{margin-bottom:4px;}
+.game-hud{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.hud-cat{font-weight:600;font-size:.92rem;font-family:'IBM Plex Mono',monospace;color:var(--teal-dark);}
+.hud-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.hearts{font-size:1.05rem;letter-spacing:2px;}
+.score-pill{font-family:'IBM Plex Mono',monospace;font-size:.85rem;background:var(--paper-2);padding:6px 14px;border-radius:20px;white-space:nowrap;}
+.streak-pill{font-family:'IBM Plex Mono',monospace;font-size:.78rem;background:var(--amber);color:#221805;padding:5px 12px;border-radius:20px;white-space:nowrap;font-weight:700;opacity:0;transition:opacity .2s;}
+.streak-pill.show{opacity:1;}
+.route-wrap{position:relative;background:var(--paper-2);border-radius:20px;height:30px;margin-bottom:10px;overflow:hidden;border:1px solid var(--line);}
+.route-track{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 26px,rgba(28,42,46,0.10) 26px,rgba(28,42,46,0.10) 30px);}
+.route-fill{position:absolute;top:0;left:0;bottom:0;background:linear-gradient(90deg,#dfeee9,#cdeade);width:0%;transition:width .5s ease;}
+.route-truck{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:1.25rem;left:0%;transition:left .5s ease;}
+.route-flag{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:1.1rem;}
+.q-card{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:26px 24px;}
+.q-card .qcat{font-family:'IBM Plex Mono',monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--coral);display:block;margin-bottom:10px;}
+.q-card .qtext{font-size:1.04rem;color:var(--ink);margin-bottom:16px;font-weight:600;line-height:1.45;}
+.q-chart{max-width:340px;margin:10px 0;font-weight:400;border:1px solid var(--line);border-radius:8px;padding:6px;background:#fff;}
+.q-options{display:grid;gap:10px;grid-template-columns:1fr 1fr;}
+@media(max-width:560px){.q-options{grid-template-columns:1fr;}}
+.q-opt{text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:14px 16px;font-family:'Work Sans',sans-serif;font-weight:600;font-size:.92rem;cursor:pointer;transition:.15s;color:var(--ink);line-height:1.4;}
+.q-opt:hover:not(:disabled){border-color:var(--teal);background:#f4faf8;transform:translateY(-2px);}
+.q-opt.correct{border-color:var(--teal);background:#e5f3ee;color:var(--teal-dark);}
+.q-opt.wrong{border-color:var(--coral);background:#fdece6;color:var(--coral);}
+.q-opt:disabled{cursor:default;}
+.q-feedback{margin-top:16px;padding:14px 16px;border-radius:10px;font-size:.87rem;display:none;}
+.q-feedback.show{display:block;}
+.q-feedback.ok{background:#e5f3ee;color:var(--teal-dark);}
+.q-feedback.bad{background:#fdece6;color:var(--coral);}
+.q-nextrow{margin-top:18px;text-align:right;}
+.result-box{display:none;background:var(--teal-dark);color:#fff;border-radius:14px;padding:32px 28px;text-align:center;margin-top:22px;}
+.result-box .badge{font-size:2.6rem;margin-bottom:4px;}
+.result-box .big{font-family:'Fraunces',serif;font-size:2.2rem;color:var(--amber);}
+.result-box .sub-big{font-family:'IBM Plex Mono',monospace;font-size:.95rem;color:#cfe3dd;margin-top:2px;}
+.result-box p{color:#e5ede7;}
+.result-actions{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:20px;}
+.btn-send{font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:.02em;font-size:1rem;background:var(--amber);color:#221805;border:none;border-radius:12px;padding:17px 38px;cursor:pointer;box-shadow:0 6px 0 #a9761e,0 14px 26px rgba(0,0,0,0.28);transition:transform .12s ease,box-shadow .12s ease;}
+.btn-send:hover:not(:disabled){transform:translateY(-3px);}
+.btn-send:active:not(:disabled){transform:translateY(3px);box-shadow:0 3px 0 #a9761e;}
+.btn-send:disabled{opacity:.5;box-shadow:none;cursor:not-allowed;}
+.btn-playagain{background:transparent;border:none;color:#cfe3dd;text-decoration:underline;font-family:'Work Sans',sans-serif;font-size:.85rem;cursor:pointer;padding:4px;}
+.btn-playagain:hover{color:#fff;}
+.sendnote{font-size:.8rem;color:var(--amber);margin-top:10px;min-height:1.2em;}
+.guru-banner{display:flex;gap:10px;align-items:flex-start;background:#fff4d9;border:1px solid var(--amber);border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:.86rem;color:#6b5416;line-height:1.5;}
+.guru-banner .gi{font-size:1.3rem;line-height:1;}
+footer{padding:30px 0;text-align:center;font-size:.8rem;color:#7c7461;}
+#guard-loading{position:fixed;inset:0;background:#f6f1e6;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font-family:'IBM Plex Mono',monospace;color:#5b5344;font-size:.85rem;}
+#guard-loading .spin{width:34px;height:34px;border-radius:50%;border:3px solid rgba(28,42,46,0.15);border-top-color:#dc5b41;animation:guardspin .8s linear infinite;}
+@keyframes guardspin{to{transform:rotate(360deg);}}
+/* mock Excel */
+.xl-mock{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;box-shadow:0 10px 26px rgba(28,42,46,0.1);}
+.xl-mock-bar{background:#e9e2d0;padding:8px 12px;display:flex;align-items:center;gap:6px;}
+.xl-dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+.xl-dot.r{background:#e2685b;}.xl-dot.y{background:#e2b33f;}.xl-dot.g{background:#59b37a;}
+.xl-mock-title{margin-left:8px;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:#6b6350;}
+.xl-mock-ribbon{background:var(--teal-dark);display:flex;gap:2px;padding:0 8px;flex-wrap:wrap;}
+.xl-mock-ribbon .rb{color:#dff2ec;font-size:.65rem;padding:6px 10px;}
+.xl-mock-ribbon .rb.active{background:#fff;color:var(--teal-dark);border-radius:4px 4px 0 0;font-weight:600;}
+.rib-body{display:flex;flex-wrap:wrap;gap:0;background:#faf7ef;border-bottom:1px solid var(--line);}
+.rib-grp{padding:8px 12px;border-right:1px solid var(--line);font-size:.68rem;text-align:center;}
+.rib-grp.hl{background:#fff4d9;outline:2px solid var(--coral);outline-offset:-2px;}
+.rib-grp .items{display:flex;gap:8px;justify-content:center;margin-bottom:4px;font-size:.66rem;}
+.rib-grp .gl{font-size:.6rem;color:#6b6350;font-family:'IBM Plex Mono',monospace;}
+.xl-mock-formula{display:flex;align-items:flex-start;gap:8px;background:#faf7ef;border-bottom:1px solid var(--line);padding:5px 10px;}
+.fx-cell{flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:.65rem;background:#fff;border:1px solid var(--line);border-radius:3px;padding:2px 8px;color:#5b5344;}
+.fx-bar{flex:1;min-width:0;font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:#8a8270;border-bottom:1px solid var(--line);padding:2px 0;}
+.mx-grid{display:grid;font-family:'IBM Plex Mono',monospace;font-size:.7rem;}
+.xc{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px 6px;color:#3a3327;background:#fff;min-width:0;overflow-wrap:break-word;}
+.xc.corner,.xc.colhead,.xc.rownum{background:var(--paper-2);font-weight:600;text-align:center;color:#5b5344;}
+.xc.dataheader{background:#dfeee9;font-weight:600;color:var(--teal-dark);}
+.mini-illus{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;margin:12px 0;}
+.guru-only{display:none;}
+body.guru .guru-only{display:block;}
+</style>
+</head>
+<body>
+
+<div id="guard-loading"><div class="spin"></div><div>Memuat materi…</div></div>
+
+<div id="konten-utama" style="visibility:hidden">
+
+<nav>
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> VISUALISASI DATA</div>
+    <div class="navlinks">
+      <a href="../index.html" style="opacity:.55;">← Portal</a>
+      <a href="#fungsi">Fungsi</a>
+      <a href="#jenis">Jenis Grafik</a>
+      <a href="#excel">Cara di Excel</a>
+      <a href="#prinsip">Prinsip</a>
+      <a href="#main">Kuis</a>
+      <a href="#sumber">Sumber</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">LKPD Informatika · Visualisasi Data dan Informasi</span>
+      <h1>Visualisasi Data dan Informasi</h1>
+      <p class="lede">Materi ini membahas tiga hal: <b>fungsi</b> visualisasi data, <b>jenis-jenis grafik</b>, dan <b>cara membuatnya di Microsoft Excel</b>.</p>
+      <div class="callback">🧭 <b>Nyambung dengan materi sebelumnya:</b> hasil COUNTIF, SUMIF, dan sejenisnya berupa angka. Sekarang angka itu dibuat <b>terlihat</b> lewat grafik.</div>
+    </div>
+    <div class="hero-visual">
+      <div class="xl-mock">
+        <div class="xl-mock-bar"><span class="xl-dot r"></span><span class="xl-dot y"></span><span class="xl-dot g"></span><span class="xl-mock-title">Pengunjung Perpustakaan.xlsx — Excel</span></div>
+        <div class="chart-slot" style="margin:0;border:none;border-radius:0;" data-chart="hero"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ========== 01 FUNGSI ========== -->
+<section id="fungsi">
+  <div class="wrap">
+    <div class="shead">
+      <span class="eyebrow">01 · Fungsi Visualisasi Data</span>
+      <h2>Mengubah angka menjadi gambar yang mudah dipahami</h2>
+      <p><b>Visualisasi data</b> adalah penyajian data dalam bentuk grafik atau diagram agar pola, tren, dan perbandingan lebih cepat dipahami daripada membaca deretan angka.</p>
+    </div>
+    <div class="src-grid">
+      <div class="src-card"><div class="ico">🧱</div><h4>Data</h4><p>Fakta atau angka mentah yang belum diolah. Contoh: 120, 135, 150, 142, 170, 190.</p></div>
+      <div class="src-card"><div class="ico">💡</div><h4>Informasi</h4><p>Data yang sudah diolah dan bermakna. Contoh: "Pengunjung perpustakaan naik 58% dari Juli ke Desember."</p></div>
+      <div class="src-card"><div class="ico">📊</div><h4>Visualisasi</h4><p>Jembatan dari data ke informasi: grafik membuat pesan dari data cepat tertangkap.</p></div>
+    </div>
+
+    <div class="shead" style="margin-top:36px;margin-bottom:16px;">
+      <h3 style="font-size:1.3rem;">Tabel vs grafik: mana yang lebih cepat menjawab?</h3>
+      <p style="margin:0;">Pertanyaan: <i>"Bagaimana kecenderungan jumlah pengunjung perpustakaan, dan pada bulan apa terjadi penurunan?"</i> Coba jawab dari masing-masing sajian.</p>
+    </div>
+    <div class="cmp-grid">
+      <div class="cmp-box bad">
+        <h4>📋 Sajian tabel</h4>
+        <div class="mini-illus"><div class="mx-grid" style="grid-template-columns:90px 1fr;">
+          <div class="xc dataheader">Bulan</div><div class="xc dataheader">Pengunjung</div>
+          <div class="xc">Juli</div><div class="xc">120</div>
+          <div class="xc">Agustus</div><div class="xc">135</div>
+          <div class="xc">September</div><div class="xc">150</div>
+          <div class="xc">Oktober</div><div class="xc">142</div>
+          <div class="xc">November</div><div class="xc">170</div>
+          <div class="xc">Desember</div><div class="xc">190</div>
+        </div></div>
+        <p style="font-size:.85rem;margin:0;">Kamu harus membaca dan membandingkan angka satu per satu.</p>
+      </div>
+      <div class="cmp-box good">
+        <h4>📈 Sajian grafik garis</h4>
+        <div class="chart-slot" data-chart="cmpline"></div>
+        <p style="font-size:.85rem;margin:0;">Tren naik dan satu-satunya penurunan (Oktober) langsung terlihat. <b>Inilah tujuan visualisasi data:</b> pola dan pesan dari data tertangkap dalam sekejap.</p>
+      </div>
+    </div>
+
+    <div class="shead" style="margin-top:36px;margin-bottom:16px;">
+      <h3 style="font-size:1.3rem;">Lima tujuan visualisasi dan grafik yang cocok</h3>
+      <p style="margin:0;">Mulailah dari pertanyaan yang ingin dijawab, bukan dari jenis grafiknya.</p>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Tujuan</th><th>Pertanyaan yang dijawab</th><th>Grafik yang cocok</th><th>Contoh</th></tr></thead>
+        <tbody>
+          <tr><td><b>Perbandingan</b></td><td>Mana yang lebih besar atau lebih kecil antar kategori?</td><td>Diagram batang / kolom</td><td>Porsi terjual per menu kantin</td></tr>
+          <tr><td><b>Tren</b></td><td>Naik, turun, atau stabil dari waktu ke waktu?</td><td>Diagram garis, diagram area</td><td>Pengunjung perpustakaan per bulan</td></tr>
+          <tr><td><b>Komposisi</b></td><td>Berapa bagian tiap kategori terhadap keseluruhan (100%)?</td><td>Diagram lingkaran (kategori sedikit)</td><td>Moda transportasi siswa</td></tr>
+          <tr><td><b>Hubungan</b></td><td>Apakah dua hal saling berkaitan?</td><td>Diagram sebar + garis tren</td><td>Jam belajar vs nilai</td></tr>
+          <tr><td><b>Sebaran</b></td><td>Nilai banyak menumpuk di rentang mana?</td><td>Histogram</td><td>Nilai ulangan 30 siswa</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 02 JENIS ========== -->
+<section id="jenis">
+  <div class="wrap">
+    <div class="shead">
+      <span class="eyebrow">02 · Jenis-Jenis Grafik</span>
+      <h2>Enam grafik utama, fungsinya, dan cara membuatnya</h2>
+    </div>
+    <div class="fitur-grid">
+
+      <div class="fitur-card">
+        <h4>📊 Diagram Batang / Kolom</h4>
+        <p class="apagunanya"><b>Fungsi:</b> membandingkan nilai antar kategori. Kolom = batang tegak, Bar = batang mendatar (nyaman bila label panjang).</p>
+        <div class="chart-slot" data-chart="kolom"></div>
+        <span class="sublabel">Cara di Excel</span>
+        <ol>
+          <li>Blok data beserta judul kolom.</li>
+          <li><span class="mp">Sisipkan</span> → <span class="mp">Column or Bar Chart</span> → <span class="mp">Clustered Column</span> (atau <span class="mp">Clustered Bar</span>).</li>
+        </ol>
+      </div>
+
+      <div class="fitur-card">
+        <h4>📈 Diagram Garis (Line)</h4>
+        <p class="apagunanya"><b>Fungsi:</b> menunjukkan tren data pada waktu yang berurutan (hari, bulan, tahun).</p>
+        <div class="chart-slot" data-chart="garis"></div>
+        <span class="sublabel">Cara di Excel</span>
+        <ol>
+          <li>Blok data (kolom waktu + kolom nilai).</li>
+          <li><span class="mp">Sisipkan</span> → <span class="mp">Line or Area Chart</span> → <span class="mp">Line with Markers</span>.</li>
+        </ol>
+      </div>
+
+      <div class="fitur-card">
+        <h4>🥧 Diagram Lingkaran (Pie)</h4>
+        <p class="apagunanya"><b>Fungsi:</b> menunjukkan bagian dari keseluruhan. Cocok untuk kategori sedikit (sekitar 5 atau kurang) dan hanya satu seri data.</p>
+        <div class="chart-slot" data-chart="pie"></div>
+        <span class="sublabel">Cara di Excel</span>
+        <ol>
+          <li>Blok dua kolom saja: kategori dan nilai.</li>
+          <li><span class="mp">Sisipkan</span> → <span class="mp">Pie or Doughnut Chart</span> → <span class="mp">Pie</span>.</li>
+          <li><span class="mp">Chart Elements (+)</span> → <span class="mp">Data Labels</span> → centang <span class="mp">Percentage</span>.</li>
+        </ol>
+      </div>
+
+      <div class="fitur-card">
+        <h4>🔵 Diagram Sebar (Scatter)</h4>
+        <p class="apagunanya"><b>Fungsi:</b> melihat hubungan dua variabel angka. Hubungan bukan berarti sebab-akibat.</p>
+        <div class="chart-slot" data-chart="scatter"></div>
+        <span class="sublabel">Cara di Excel</span>
+        <ol>
+          <li>Blok dua kolom angka (kiri = sumbu X, kanan = sumbu Y).</li>
+          <li><span class="mp">Sisipkan</span> → <span class="mp">Scatter (X, Y)</span>.</li>
+          <li><span class="mp">Chart Elements (+)</span> → <span class="mp">Trendline</span> untuk garis tren.</li>
+        </ol>
+      </div>
+
+      <div class="fitur-card">
+        <h4>🏔️ Diagram Area</h4>
+        <p class="apagunanya"><b>Fungsi:</b> seperti diagram garis, tetapi area di bawah garis diarsir untuk menekankan besarnya total dari waktu ke waktu.</p>
+        <div class="chart-slot" data-chart="area"></div>
+        <span class="sublabel">Cara di Excel</span>
+        <ol>
+          <li>Blok data waktu + nilai.</li>
+          <li><span class="mp">Sisipkan</span> → <span class="mp">Line or Area Chart</span> → <span class="mp">Area</span>.</li>
+        </ol>
+      </div>
+
+      <div class="fitur-card">
+        <h4>📶 Histogram</h4>
+        <p class="apagunanya"><b>Fungsi:</b> menunjukkan sebaran data numerik per rentang (bin). Batang saling menempel karena rentangnya berkesinambungan.</p>
+        <div class="chart-slot" data-chart="hist"></div>
+        <span class="sublabel">Cara di Excel</span>
+        <ol>
+          <li>Blok kolom nilai → <span class="mp">Sisipkan</span> → <span class="mp">Insert Statistic Chart</span> → <span class="mp">Histogram</span>.</li>
+          <li>Atau hitung frekuensi per rentang dengan <code>=COUNTIFS(B2:B31,"&gt;=70",B2:B31,"&lt;=79")</code>, lalu buat diagram kolom dengan <i>Gap Width</i> 0–5%.</li>
+        </ol>
+      </div>
+    </div>
+    <p style="margin-top:22px;font-size:.9rem;"><b>Bentuk lain:</b> tabel/PivotTable (angka persis), peta (data per lokasi), infografis, dan dashboard (beberapa grafik dalam satu halaman).</p>
+  </div>
+</section>
+
+<!-- ========== 03 EXCEL ========== -->
+<section id="excel">
+  <div class="wrap">
+    <div class="shead">
+      <span class="eyebrow">03 · Cara Membuat Grafik di Excel</span>
+      <h2>Empat langkah dari data sampai grafik jadi</h2>
+      <p>Untuk Excel 2016 ke atas / Microsoft 365. Nama menu bisa sedikit berbeda menurut bahasa dan versi.</p>
+    </div>
+    <div class="xl-mock" style="margin-bottom:24px;">
+      <div class="xl-mock-ribbon"><span class="rb">Beranda</span><span class="rb active">Sisipkan (Insert)</span><span class="rb">Rumus</span><span class="rb">Data</span><span class="rb">Tinjau</span></div>
+      <div class="rib-body">
+        <div class="rib-grp"><div class="items"><span>🗂️ PivotTable</span><span>▦ Tabel</span></div><div class="gl">Tabel</div></div>
+        <div class="rib-grp hl"><div class="items"><span>⭐ Recommended Charts</span><span>📊 Kolom</span><span>📈 Garis</span><span>🥧 Pie</span><span>▤ Bar</span><span>🏔️ Area</span><span>🔵 Scatter</span></div><div class="gl">Bagan (Charts) ← grafik dibuat di sini</div></div>
+        <div class="rib-grp"><div class="items"><span>Garis</span><span>Kolom</span></div><div class="gl">Sparklines</div></div>
+      </div>
+    </div>
+
+    <ol class="steps">
+      <li><b class="st">Siapkan data yang rapi</b>
+        Judul kolom di baris pertama, satu baris = satu catatan, <u>tanpa baris kosong dan sel gabungan</u>.
+        <div class="mini-illus" style="max-width:240px;"><div class="mx-grid" style="grid-template-columns:28px 1fr 1fr;">
+          <div class="xc corner"></div><div class="xc colhead">A</div><div class="xc colhead">B</div>
+          <div class="xc rownum">1</div><div class="xc dataheader">Bulan</div><div class="xc dataheader">Pengunjung</div>
+          <div class="xc rownum">2</div><div class="xc">Jul</div><div class="xc">120</div>
+          <div class="xc rownum">3</div><div class="xc">Agu</div><div class="xc">135</div>
+        </div></div>
+      </li>
+      <li><b class="st">Blok data, lalu sisipkan grafik</b>
+        Blok data beserta judul kolomnya, lalu <span class="mp">Sisipkan → Recommended Charts</span> (Excel menyarankan grafik yang cocok) atau pilih jenisnya langsung di grup <span class="mp">Bagan (Charts)</span>.
+      </li>
+      <li><b class="st">Tambahkan elemen grafik</b>
+        Klik tombol <span class="mp">+ (Chart Elements)</span> di sudut kanan atas grafik:
+        <ul>
+          <li><b>Chart Title</b> — judul grafik.</li>
+          <li><b>Axis Titles</b> — judul sumbu beserta satuannya.</li>
+          <li><b>Data Labels</b> — angka yang tertulis pada batang/titik.</li>
+          <li><b>Legend</b> — keterangan arti warna tiap seri data.</li>
+        </ul>
+      </li>
+      <li><b class="st">Rapikan atau ubah jenis</b>
+        <span class="mp">Chart Styles</span> untuk gaya dan warna. Salah pilih jenis? <span class="mp">Chart Design → Change Chart Type</span> tanpa mengetik ulang data.
+      </li>
+    </ol>
+
+    <div class="shead" style="margin-top:36px;margin-bottom:14px;">
+      <h3 style="font-size:1.2rem;">Fitur tambahan (singkat)</h3>
+    </div>
+    <div class="fitur-grid">
+      <div class="fitur-card"><h4>✨ Sparklines</h4><p class="apagunanya" style="margin:0;">Grafik mini di dalam satu sel untuk melihat tren satu baris data. <span class="mp">Sisipkan → Sparklines</span></p></div>
+      <div class="fitur-card"><h4>🎨 Conditional Formatting</h4><p class="apagunanya" style="margin:0;">Memberi warna, batang mini, atau ikon pada sel menurut nilainya. <span class="mp">Beranda → Conditional Formatting</span></p></div>
+      <div class="fitur-card"><h4>🎛️ PivotChart</h4><p class="apagunanya" style="margin:0;">Grafik interaktif dari ringkasan data besar. <span class="mp">Sisipkan → PivotChart</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 04 PRINSIP ========== -->
+<section id="prinsip">
+  <div class="wrap">
+    <div class="shead">
+      <span class="eyebrow">04 · Prinsip Grafik yang Baik</span>
+      <h2>Enam hal yang perlu diingat</h2>
+    </div>
+    <div class="fitur-card">
+      <ol style="font-size:.92rem;line-height:1.7;margin:0;">
+        <li><b>Jenis grafik tepat</b> sesuai pertanyaan (lihat tabel tujuan).</li>
+        <li><b>Judul berisi pesan</b>, mis. "Pengunjung naik 58% dari Juli ke Desember", bukan sekadar "Grafik 1".</li>
+        <li><b>Sumbu jujur:</b> diagram batang dimulai dari 0. Sumbu yang dipotong membuat selisih tampak jauh lebih besar dari sebenarnya.</li>
+        <li><b>Warna sedikit:</b> pakai warna kontras hanya untuk data yang ingin disorot.</li>
+        <li><b>Hindari efek 3-D</b> karena memelintir bentuk sehingga nilai sulit dibaca akurat.</li>
+        <li><b>Label lengkap:</b> judul sumbu dengan satuan, legenda bila seri lebih dari satu.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PRAKTIK (Mode Guru) ========== -->
+<section id="praktik" class="guru-only">
+  <div class="wrap">
+    <div class="shead">
+      <span class="eyebrow">Mode Guru · Tantangan Praktik Excel</span>
+      <h2>Tugas praktik</h2>
+      <p>Bagian ini hanya tampil pada Mode Guru.</p>
+    </div>
+    <div class="rules-box">
+      <h4>Tugas</h4>
+      <ol>
+        <li>Buat <b>diagram garis</b> data pengunjung perpustakaan (Juli–Desember) lengkap dengan judul, judul sumbu, dan label data.</li>
+        <li>Buat <b>diagram lingkaran</b> berlabel persentase dari data moda transportasi (Motor 55, Antar-jemput 20, Jalan kaki 15, Sepeda 10).</li>
+        <li>Buat tabel frekuensi nilai dengan <b>COUNTIFS</b>, lalu <b>histogram</b>-nya.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+<!-- ========== KUIS ========== -->
+<section id="main">
+  <div class="wrap">
+    <div class="shead">
+      <span class="eyebrow">05 · Main &amp; Kuis</span>
+      <h2>🎈 Misi Balon Data</h2>
+      <p>Terbangkan balon data menuju garis finish! Setiap soal adalah satu "hembusan angin": jawab benar supaya balon maju, jawab salah dan balon mundur — soal yang salah akan muncul lagi sampai kamu menjawab dengan benar.</p>
+    </div>
+
+    <div class="game-panel">
+      <div class="rules-box">
+        <h4>Aturan permainan</h4>
+        <ul>
+          <li>Ada 10 soal yang dipilih acak dari bank soal (fungsi, jenis grafik, cara di Excel, dan prinsip).</li>
+          <li>Jawaban <b>BENAR</b> membuat balon maju satu langkah. Jawaban <b>SALAH</b> membuat balon mundur satu langkah, dan soal itu diulang nanti.</li>
+          <li>Jawaban benar berturut-turut menaikkan KOMBO dan memberi bonus poin.</li>
+          <li>Kamu punya 3 ❤️. Jawaban salah mengurangi 1 nyawa dan mereset kombo.</li>
+          <li>Kalau nyawa habis, misi berhenti dan hasil belum bisa dikirim ke guru.</li>
+          <li>Jawab semua 10 soal dengan benar dan capai garis finish untuk bisa menekan tombol <b>Kirim Hasil ke Guru</b>. Hasil langsung masuk ke spreadsheet guru.</li>
+        </ul>
+      </div>
+
+      <div class="guru-banner hidden" id="guruBanner">
+        <span class="gi">🧑‍🏫</span>
+        <div><b>Mode Guru aktif.</b> Tantangan praktik ditampilkan. Kamu juga bisa mencoba game tanpa mengisi identitas siswa. Hasil pada mode ini <b>tidak dikirim</b> ke rekap nilai.</div>
+      </div>
+
+      <div id="gIdentityBlock">
+        <div id="gIdentityForms">
+          <div class="mode-toggle hidden">
+            <button class="pill-btn mode-btn active" id="gModeIndividu" type="button">👤 Individu</button>
+            <button class="pill-btn mode-btn" id="gModeKelompok" type="button">👥 Kelompok</button>
+          </div>
+          <div class="idform" id="gFormIndividu">
+            <div class="field">
+              <label for="gNis">NIS</label>
+              <div class="field-nis-row">
+                <input id="gNis" type="text" placeholder="Ketik NIS (min. 4 digit)" inputmode="numeric">
+                <button type="button" class="btn-cek-nis" id="gCekNisBtn">🔍 Cek</button>
+              </div>
+              <div id="gStatusNis" class="status-nis"></div>
+            </div>
+            <div class="field"><label for="gNama">Nama Lengkap</label><input id="gNama" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
+            <div class="field"><label for="gKelas">Kelas</label><input id="gKelas" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
+            <div class="field"><label for="gAbsen">No. Absen</label><input id="gAbsen" type="text" placeholder="Otomatis terisi dari NIS" readonly></div>
+          </div>
+          <div class="idform hidden" id="gFormKelompok">
+            <div class="field"><label for="gNamaKelompok">Nama Kelompok</label><input id="gNamaKelompok" type="text" placeholder="Contoh: Kelompok 3"></div>
+            <div class="field"><label for="gKelasKelompok">Kelas</label><input id="gKelasKelompok" type="text" placeholder="Contoh: XII 1"></div>
+            <div class="field" style="grid-column:1 / -1;"><label for="gAnggota">Anggota Kelompok (pisahkan dengan koma)</label><input id="gAnggota" type="text" placeholder="Contoh: Ani, Budi, Citra, Deni"></div>
+          </div>
+        </div>
+        <button class="btn" id="gStartBtn">🎈 Mulai Misi Balon Data</button>
+      </div>
+
+      <div id="gPlayBlock" class="hidden">
+        <div class="game-hud">
+          <div class="hud-cat" id="gameCatLabel">Terjawab 0 / 10</div>
+          <div class="hud-right">
+            <div class="streak-pill" id="streakPill">🔥 Kombo x2</div>
+            <div class="hearts" id="gameHearts">❤️❤️❤️</div>
+            <div class="score-pill">Poin: <span id="gameScore">0</span></div>
+          </div>
+        </div>
+        <div class="route-wrap">
+          <div class="route-track"></div>
+          <div class="route-fill" id="routeFill"></div>
+          <div class="route-flag">🏁</div>
+          <div class="route-truck" id="routeTruck">🎈</div>
+        </div>
+        <div class="q-card">
+          <span class="qcat" id="qCatLabel">Kategori</span>
+          <div class="qtext" id="qText">—</div>
+          <div class="q-options" id="qOptions"></div>
+          <div class="q-feedback" id="qFeedback"></div>
+          <div class="q-nextrow"><button class="btn" id="qNextBtn" disabled>Soal Berikutnya →</button></div>
+        </div>
+      </div>
+
+      <div class="result-box" id="gResultBox">
+        <div class="badge" id="gResultBadge">📦</div>
+        <div class="eyebrow" style="color:var(--amber);" id="gResultTitle">Misi selesai</div>
+        <div class="big" id="gResultScore">0/10</div>
+        <div class="sub-big" id="gResultPoin">Total Poin: 0</div>
+        <p id="gResultMsg"></p>
+        <div class="result-actions">
+          <button class="btn-send" id="gSendBtn">📨 Kirim Hasil ke Guru</button>
+          <button class="btn-playagain" id="gPlayAgainBtn">Main Lagi</button>
+        </div>
+        <div class="sendnote" id="gSendNote"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== SUMBER ========== -->
+<section id="sumber">
+  <div class="wrap">
+    <div class="shead">
+      <span class="eyebrow">06 · Sumber Materi</span>
+      <h2>Referensi yang digunakan</h2>
+      <p>Materi disusun berdasarkan sumber resmi berikut agar istilah dan langkah di Excel tetap akurat.</p>
+    </div>
+    <div class="src-grid">
+      <div class="src-card"><div class="ico">📘</div><h4>Buku Panduan Mata Pelajaran Informatika</h4><p>Pusat Kurikulum dan Pembelajaran, Badan Standar, Kurikulum, dan Asesmen Pendidikan, Kemendikbudristek (2025) — acuan kurikulum Fase F.</p></div>
+      <a class="src-card" href="https://support.microsoft.com/en-us/office/create-a-chart-from-start-to-finish-0baf399e-dd61-4e18-8a73-b3fd5d5680c2" target="_blank" rel="noopener"><div class="ico">📊</div><h4>Create a chart from start to finish</h4><p>Microsoft Support — membuat grafik dari awal hingga akhir di Excel.</p></a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/office/available-chart-types-in-office-a6187218-807e-4103-9e0a-27cdb19afb90" target="_blank" rel="noopener"><div class="ico">📈</div><h4>Available chart types in Office</h4><p>Microsoft Support — jenis-jenis grafik dan kapan memakainya.</p></a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/office/use-sparklines-to-show-data-trends-1474e169-008c-4783-926b-5c60e620f5ca" target="_blank" rel="noopener"><div class="ico">✨</div><h4>Use sparklines to show data trends</h4><p>Microsoft Support — grafik mini dalam sel.</p></a>
+      <a class="src-card" href="https://support.microsoft.com/Excel/use-conditional-formatting-to-highlight-information-in-excel" target="_blank" rel="noopener"><div class="ico">🎨</div><h4>Use conditional formatting</h4><p>Microsoft Support — data bars, color scales, dan icon sets.</p></a>
+      <a class="src-card" href="https://support.microsoft.com/en-us/topic/c1b1e057-6990-4c38-b52b-8255538e7b1c" target="_blank" rel="noopener"><div class="ico">🎛️</div><h4>Create a PivotChart</h4><p>Microsoft Support — grafik interaktif dari data ringkasan.</p></a>
+    </div>
+  </div>
+</section>
+
+<footer>Dibuat untuk Informatika Kelas XII · SMA Negeri 8 Denpasar</footer>
+
+</div><!-- /#konten-utama -->
+
+<script>const MODUL_ID = "XII-110";</script>
+<script src="../config.js"></script>
+<script src="../guard.js"></script>
+<script src="../siswa.js"></script>
+<script>
+// Failsafe pratinjau: kalau config.js / guard.js gagal dimuat, paksa tampilkan konten setelah 1.5 detik.
+setTimeout(function(){
+  var k = document.getElementById('konten-utama');
+  if(k && k.style.visibility !== 'visible'){ k.style.visibility = 'visible'; }
+  var l = document.getElementById('guard-loading');
+  if(l) l.remove();
+}, 1500);
+</script>
+<script>
+/* ================= PEMBUAT GRAFIK SVG ================= */
+const C={teal:'#2f6f66',tealD:'#1e4a44',amber:'#e2a333',coral:'#dc5b41',ink:'#1c2a2e',grid:'rgba(28,42,46,0.15)',mute:'#5b5344',soft:'#8aa9a3'};
+const PAL=[C.teal,C.amber,C.coral,C.soft,'#b9893a','#9b5b4a','#4d8f85','#d6c28f','#6b6355'];
+const PALE_DARK_TEXT=[C.amber,C.soft,'#d6c28f'];
+function svgWrap(inner,W,H,label){return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+label+'" style="width:100%;height:auto;display:block;font-family:\'IBM Plex Mono\',monospace">'+inner+'</svg>';}
+function titleSvg(t,W){return t?'<text x="'+(W/2)+'" y="15" font-size="10.5" font-weight="700" text-anchor="middle" fill="'+C.tealD+'">'+t+'</text>':'';}
+function gridY(L,T,pw,ph,min,max,ticks){
+  let s='';
+  for(let i=0;i<=ticks;i++){
+    const v=min+(max-min)*i/ticks,y=T+ph-ph*i/ticks;
+    s+='<line x1="'+L+'" x2="'+(L+pw)+'" y1="'+y+'" y2="'+y+'" stroke="'+C.grid+'"/>';
+    s+='<text x="'+(L-5)+'" y="'+(y+3)+'" font-size="8.5" text-anchor="end" fill="'+C.mute+'">'+v+'</text>';
+  }
+  return s;
+}
+function axisTitles(o,H,L,T,pw,ph){
+  let s='';
+  if(o.yTitle) s+='<text transform="translate(10,'+(T+ph/2)+') rotate(-90)" font-size="8.5" text-anchor="middle" fill="'+C.mute+'">'+o.yTitle+'</text>';
+  if(o.xTitle) s+='<text x="'+(L+pw/2)+'" y="'+(H-5)+'" font-size="8.5" text-anchor="middle" fill="'+C.mute+'">'+o.xTitle+'</text>';
+  return s;
+}
+function baseLine(L,T,pw,ph){return '<line x1="'+L+'" x2="'+(L+pw)+'" y1="'+(T+ph)+'" y2="'+(T+ph)+'" stroke="'+C.ink+'"/>';}
+function dims(o){
+  const W=o.W||300,H=o.H||190,L=o.yTitle?44:36,R=12,T=o.title?28:12,B=o.xTitle?44:28;
+  return {W,H,L,R,T,B,pw:W-L-R,ph:H-T-B};
+}
+function svgBar(o){
+  const d=dims(o),min=o.min||0,max=o.max,n=o.values.length,bw=d.pw/n;
+  let s=titleSvg(o.title,d.W)+gridY(d.L,d.T,d.pw,d.ph,min,max,o.ticks||4);
+  o.values.forEach((v,i)=>{
+    const h=(v-min)/(max-min)*d.ph,gap=o.gap==null?0.18:o.gap,x=d.L+i*bw+bw*gap,w=bw*(1-2*gap),y=d.T+d.ph-h;
+    const col=o.hi!=null?(i===o.hi?C.coral:C.teal):C.teal;
+    s+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+h.toFixed(1)+'" fill="'+col+'" rx="1.5"/>';
+    if(o.showVal) s+='<text x="'+(x+w/2).toFixed(1)+'" y="'+(y-3).toFixed(1)+'" font-size="8.5" font-weight="700" text-anchor="middle" fill="'+C.ink+'">'+v+'</text>';
+    s+='<text x="'+(d.L+i*bw+bw/2).toFixed(1)+'" y="'+(d.T+d.ph+12)+'" font-size="8.5" text-anchor="middle" fill="'+C.mute+'">'+o.labels[i]+'</text>';
+  });
+  s+=baseLine(d.L,d.T,d.pw,d.ph)+axisTitles(o,d.H,d.L,d.T,d.pw,d.ph);
+  return svgWrap(s,d.W,d.H,o.title||'diagram batang');
+}
+function svgLine(o){
+  const d=dims(o),min=o.min||0,max=o.max,vals=o.values,n=vals.length,bw=d.pw/n;
+  const px=i=>d.L+bw*i+bw/2,py=v=>d.T+d.ph-(v-min)/(max-min)*d.ph;
+  let s=titleSvg(o.title,d.W)+gridY(d.L,d.T,d.pw,d.ph,min,max,o.ticks||4);
+  const pts=vals.map((v,i)=>px(i).toFixed(1)+','+py(v).toFixed(1)).join(' ');
+  if(o.area) s+='<polygon points="'+px(0).toFixed(1)+','+(d.T+d.ph)+' '+pts+' '+px(n-1).toFixed(1)+','+(d.T+d.ph)+'" fill="'+C.teal+'" fill-opacity="0.3"/>';
+  s+='<polyline points="'+pts+'" fill="none" stroke="'+C.teal+'" stroke-width="2.2" stroke-linejoin="round"/>';
+  vals.forEach((v,i)=>{
+    if(!o.area) s+='<circle cx="'+px(i).toFixed(1)+'" cy="'+py(v).toFixed(1)+'" r="3" fill="#fff" stroke="'+C.teal+'" stroke-width="1.8"/>';
+    if(o.showVal) s+='<text x="'+px(i).toFixed(1)+'" y="'+(py(v)-7).toFixed(1)+'" font-size="8.5" font-weight="700" text-anchor="middle" fill="'+C.ink+'">'+v+'</text>';
+    s+='<text x="'+px(i).toFixed(1)+'" y="'+(d.T+d.ph+12)+'" font-size="8.5" text-anchor="middle" fill="'+C.mute+'">'+o.labels[i]+'</text>';
+  });
+  s+=baseLine(d.L,d.T,d.pw,d.ph)+axisTitles(o,d.H,d.L,d.T,d.pw,d.ph);
+  return svgWrap(s,d.W,d.H,o.title||'diagram garis');
+}
+function svgHist(o){
+  o.gap=0.03;
+  return svgBar(o);
+}
+function svgScatter(o){
+  const d=dims(o),px=x=>d.L+(x-o.xmin)/(o.xmax-o.xmin)*d.pw,py=y=>d.T+d.ph-(y-o.ymin)/(o.ymax-o.ymin)*d.ph;
+  let s=titleSvg(o.title,d.W)+gridY(d.L,d.T,d.pw,d.ph,o.ymin,o.ymax,o.yticks||5);
+  for(let x=o.xmin;x<=o.xmax;x+=1) s+='<text x="'+px(x).toFixed(1)+'" y="'+(d.T+d.ph+12)+'" font-size="8.5" text-anchor="middle" fill="'+C.mute+'">'+x+'</text>';
+  s+=baseLine(d.L,d.T,d.pw,d.ph)+'<line x1="'+d.L+'" x2="'+d.L+'" y1="'+d.T+'" y2="'+(d.T+d.ph)+'" stroke="'+C.ink+'"/>';
+  if(o.trend){
+    const n=o.points.length;let sx=0,sy=0,sxy=0,sxx=0;
+    o.points.forEach(p=>{sx+=p[0];sy+=p[1];sxy+=p[0]*p[1];sxx+=p[0]*p[0];});
+    const m=(n*sxy-sx*sy)/(n*sxx-sx*sx),b=(sy-m*sx)/n,xa=Math.min(...o.points.map(p=>p[0])),xb=Math.max(...o.points.map(p=>p[0]));
+    s+='<line x1="'+px(xa).toFixed(1)+'" y1="'+py(m*xa+b).toFixed(1)+'" x2="'+px(xb).toFixed(1)+'" y2="'+py(m*xb+b).toFixed(1)+'" stroke="'+C.coral+'" stroke-width="1.6" stroke-dasharray="5 3"/>';
+  }
+  o.points.forEach(p=>{s+='<circle cx="'+px(p[0]).toFixed(1)+'" cy="'+py(p[1]).toFixed(1)+'" r="3.2" fill="'+C.teal+'" fill-opacity="0.85"/>';});
+  s+=axisTitles(o,d.H,d.L,d.T,d.pw,d.ph);
+  return svgWrap(s,d.W,d.H,o.title||'diagram sebar');
+}
+function svgPie(o){
+  const W=300,H=o.H||175,cx=84,cy=o.title?98:88,r=62,tot=o.values.reduce((a,b)=>a+b,0);
+  let a0=-Math.PI/2,s=titleSvg(o.title,W);
+  o.values.forEach((v,i)=>{
+    const a1=a0+v/tot*2*Math.PI,col=PAL[i%PAL.length];
+    const x0=cx+r*Math.cos(a0),y0=cy+r*Math.sin(a0),x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1),big=(a1-a0)>Math.PI?1:0;
+    s+='<path d="M'+cx+','+cy+' L'+x0.toFixed(2)+','+y0.toFixed(2)+' A'+r+','+r+' 0 '+big+' 1 '+x1.toFixed(2)+','+y1.toFixed(2)+' Z" fill="'+col+'" stroke="#fff" stroke-width="1.5"/>';
+    const pct=Math.round(v/tot*100);
+    if(pct>=8){const am=(a0+a1)/2;s+='<text x="'+(cx+r*0.64*Math.cos(am)).toFixed(1)+'" y="'+(cy+r*0.64*Math.sin(am)+3).toFixed(1)+'" font-size="9" font-weight="700" text-anchor="middle" fill="'+(PALE_DARK_TEXT.includes(col)?C.ink:'#fff')+'">'+pct+'%</text>';}
+    const ly=(o.title?40:26)+i*(o.values.length>6?14:18);
+    s+='<rect x="170" y="'+(ly-8)+'" width="10" height="10" fill="'+col+'" rx="2"/><text x="186" y="'+ly+'" font-size="8.5" fill="'+C.ink+'">'+o.labels[i]+'</text>';
+    a0=a1;
+  });
+  return svgWrap(s,W,H,o.title||'diagram lingkaran');
+}
+function svgHBar(o){
+  const W=300,n=o.values.length,H=(o.title?30:12)+n*24+26,L=64,R=24,T=o.title?28:10,pw=W-L-R,max=o.max,ticks=o.ticks||4;
+  let s=titleSvg(o.title,W);
+  for(let i=0;i<=ticks;i++){const x=L+pw*i/ticks;s+='<line x1="'+x+'" x2="'+x+'" y1="'+T+'" y2="'+(T+n*24)+'" stroke="'+C.grid+'"/><text x="'+x+'" y="'+(T+n*24+12)+'" font-size="8.5" text-anchor="middle" fill="'+C.mute+'">'+(max*i/ticks)+'</text>';}
+  o.values.forEach((v,i)=>{
+    const y=T+i*24+4,w=v/max*pw;
+    s+='<rect x="'+L+'" y="'+y+'" width="'+w.toFixed(1)+'" height="16" fill="'+(i===0?C.coral:C.teal)+'" rx="1.5"/>';
+    s+='<text x="'+(L-5)+'" y="'+(y+11)+'" font-size="8.5" text-anchor="end" fill="'+C.ink+'">'+o.labels[i]+'</text>';
+    s+='<text x="'+(L+w+4).toFixed(1)+'" y="'+(y+11)+'" font-size="8.5" font-weight="700" fill="'+C.ink+'">'+v+'</text>';
+  });
+  s+='<line x1="'+L+'" x2="'+L+'" y1="'+T+'" y2="'+(T+n*24)+'" stroke="'+C.ink+'"/>';
+  return svgWrap(s,W,H,o.title||'diagram bar horizontal');
+}
+/* Anatomi grafik beranotasi */
+function svgAnatomi(){
+  const bars=[120,135,150,142,170],lab=['Jul','Agu','Sep','Okt','Nov'];
+  let s='<text x="195" y="22" font-size="11" font-weight="700" text-anchor="middle" fill="'+C.tealD+'">Pengunjung Perpustakaan</text>';
+  [0,50,100,150,200].forEach(v=>{const y=190-v/200*150;s+='<line x1="60" x2="330" y1="'+y+'" y2="'+y+'" stroke="'+C.grid+'"/><text x="54" y="'+(y+3)+'" font-size="9" text-anchor="end" fill="'+C.mute+'">'+v+'</text>';});
+  bars.forEach((v,i)=>{const h=v/200*150,x=60+54*i+10;s+='<rect x="'+x+'" y="'+(190-h)+'" width="34" height="'+h+'" fill="'+C.teal+'"/><text x="'+(x+17)+'" y="'+(190-h-4)+'" font-size="9" font-weight="700" text-anchor="middle" fill="'+C.ink+'">'+v+'</text><text x="'+(x+17)+'" y="205" font-size="9" text-anchor="middle" fill="'+C.mute+'">'+lab[i]+'</text>';});
+  s+='<line x1="60" x2="330" y1="190" y2="190" stroke="'+C.ink+'"/>';
+  s+='<text transform="translate(14,115) rotate(-90)" font-size="9" text-anchor="middle" fill="'+C.mute+'">Jumlah pengunjung</text>';
+  s+='<text x="195" y="232" font-size="9" text-anchor="middle" fill="'+C.mute+'">Bulan</text>';
+  s+='<rect x="345" y="92" width="10" height="10" fill="'+C.teal+'"/><text x="359" y="101" font-size="9" fill="'+C.ink+'">Pengunjung</text>';
+  const call=[[1,310,17],[2,14,62],[3,28,152],[4,338,115],[5,195,150],[6,303,43],[7,36,207],[8,226,228],[9,430,96]];
+  call.forEach(c=>{s+='<circle cx="'+c[1]+'" cy="'+c[2]+'" r="8" fill="'+C.amber+'" stroke="#fff" stroke-width="1"/><text x="'+c[1]+'" y="'+(c[2]+3.5)+'" font-size="9.5" font-weight="700" text-anchor="middle" fill="#221805">'+c[0]+'</text>';});
+  return svgWrap(s,445,242,'Anatomi grafik Excel dengan sembilan elemen bernomor');
+}
+
+/* ================= DATA & PRESET ================= */
+const BULAN=['Jul','Agu','Sep','Okt','Nov','Des'],PENGUNJUNG=[120,135,150,142,170,190];
+const TRANSPORT={labels:['Motor','Antar-jemput','Jalan kaki','Sepeda'],values:[55,20,15,10]};
+const SCATTER_PTS=[[1,60],[2,62],[2,67],[3,65],[3,71],[4,70],[4,76],[5,74],[5,79],[6,80],[6,85],[7,83],[7,88],[8,90]];
+const PRESET={
+  hero:()=>svgLine({labels:BULAN,values:PENGUNJUNG,max:200,H:150,showVal:true}),
+  cmpline:()=>svgLine({labels:BULAN,values:PENGUNJUNG,max:200,H:170,showVal:true}),
+  kolom:()=>svgBar({labels:['N. Goreng','M. Ayam','Es Teh','Bakso','Risol'],values:[45,38,62,30,25],max:80,showVal:true,title:'Porsi Terjual per Menu Kantin'}),
+  garis:()=>svgLine({labels:BULAN,values:PENGUNJUNG,max:200,showVal:true,title:'Pengunjung Perpustakaan per Bulan'}),
+  pie:()=>svgPie({labels:TRANSPORT.labels,values:TRANSPORT.values,title:'Moda Transportasi Siswa'}),
+  scatter:()=>svgScatter({points:SCATTER_PTS,xmin:0,xmax:9,ymin:50,ymax:100,yticks:5,trend:true,title:'Jam Belajar vs Nilai',xTitle:'Jam belajar per minggu',yTitle:'Nilai'}),
+  area:()=>svgLine({labels:['M1','M2','M3','M4','M5','M6'],values:[20,28,35,31,42,50],max:60,ticks:3,area:true,title:'Pemakaian Data Lab (GB)'}),
+  hist:()=>svgHist({labels:['50–59','60–69','70–79','80–89','90–100'],values:[2,5,11,9,3],max:12,ticks:4,showVal:true,title:'Sebaran Nilai Ulangan (30 siswa)'}),
+  tipu:()=>svgBar({labels:['Kelas A','Kelas B'],values:[78,81],min:76,max:82,ticks:3,showVal:true,title:'Rata-rata Nilai'}),
+  jujur:()=>svgBar({labels:['Kelas A','Kelas B'],values:[78,81],min:0,max:100,ticks:4,showVal:true,title:'Rata-rata Nilai'}),
+  piebanyak:()=>svgPie({labels:['Mat','Fis','Kim','Bio','Ind','Ing','Sej','Geo','Eko'],values:[14,12,11,11,10,10,12,10,10],H:180,title:'Mata Pelajaran Favorit'}),
+  hbar:()=>svgHBar({labels:['Es Teh','Nasi Goreng','Mie Ayam','Bakso','Risol'],values:[62,45,38,30,25],max:80,title:'Porsi Terjual (terurut)'}),
+  anatomi:()=>svgAnatomi(),
+  garisval:()=>svgLine({labels:BULAN,values:PENGUNJUNG,max:200,showVal:true,title:'Pengunjung Perpustakaan per Bulan',xTitle:'Bulan',yTitle:'Pengunjung'})
+};
+document.querySelectorAll('[data-chart]').forEach(el=>{const f=PRESET[el.dataset.chart];if(f)el.innerHTML=f();});
+
+/* ---------- Navigasi anchor internal ---------- */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',function(e){
+    const t=document.getElementById(this.getAttribute('href').slice(1));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
+});
+
+/* ---------- Mode Guru (?guru=1) ---------- */
+const modeGuru=new URLSearchParams(window.location.search).get('guru')==='1';
+if(modeGuru){
+  document.body.classList.add('guru');
+  document.getElementById('guruBanner').classList.remove('hidden');
+  document.getElementById('gIdentityForms').classList.add('hidden');
+  document.getElementById('gStartBtn').textContent='🧪 Coba Game (Mode Guru)';
+}
+
+/* ---------- Identitas Individu / Kelompok ---------- */
+let modeAktif='Individu';
+const btnIndividu=document.getElementById('gModeIndividu'),btnKelompok=document.getElementById('gModeKelompok');
+const formIndividu=document.getElementById('gFormIndividu'),formKelompok=document.getElementById('gFormKelompok');
+btnIndividu.addEventListener('click',()=>{modeAktif='Individu';btnIndividu.classList.add('active');btnKelompok.classList.remove('active');formIndividu.classList.remove('hidden');formKelompok.classList.add('hidden');});
+btnKelompok.addEventListener('click',()=>{modeAktif='Kelompok';btnKelompok.classList.add('active');btnIndividu.classList.remove('active');formKelompok.classList.remove('hidden');formIndividu.classList.add('hidden');});
+if(typeof pasangAutoisiSiswa==='function'){
+  pasangAutoisiSiswa('gNis','gNama','gKelas','gAbsen','gCekNisBtn','gStatusNis');
+}
+
+/* ---------- Kirim hasil ke Google Sheet (Apps Script di config.js) ---------- */
+const MATERI_LABEL="Visualisasi Data dan Informasi";
+const KUIS_LABEL=MATERI_LABEL+' — Misi Balon Data';
+
+function fetchDenganTimeout(url,opsi,timeoutMs){
+  const kontrol=new AbortController();
+  const id=setTimeout(()=>kontrol.abort(),timeoutMs);
+  return fetch(url,Object.assign({},opsi,{signal:kontrol.signal})).finally(()=>clearTimeout(id));
+}
+async function cekHasilSebelumnya(materi,identitas){
+  if(typeof CONTROL_URL==='undefined') return {ada:false};
+  try{
+    const params=new URLSearchParams({action:'cekHasil',mode:identitas.mode,materi,nis:identitas.nis||'',nama:identitas.nama||'',kelas:identitas.kelas||''});
+    const res=await fetchDenganTimeout(CONTROL_URL+'?'+params.toString(),{},6000);
+    return await res.json();
+  }catch(err){
+    console.warn('Gagal memeriksa hasil sebelumnya (dilewati, lanjut kirim):',err);
+    return {ada:false};
+  }
+}
+// Return true = terkirim, false = gagal, null = dibatalkan siswa
+async function kirimKeSheet(materi,skor,total,identitas,onStatus,cekRiwayatAwal){
+  const status=onStatus||function(){};
+  if(typeof CONTROL_URL==='undefined'){console.warn('CONTROL_URL belum tersedia — lewati pengiriman ke Sheet.');return false;}
+  status('Memeriksa riwayat...');
+  const cekLama=await (cekRiwayatAwal||cekHasilSebelumnya(materi,identitas));
+  if(cekLama.ada){
+    const lanjut=confirm('Kamu sudah pernah mengirim hasil kuis ini sebelumnya (skor '+cekLama.skor+'/'+cekLama.total+', '+cekLama.waktu+').\n\nKirim ulang untuk mengganti dengan hasil yang baru ('+skor+'/'+total+')?');
+    if(!lanjut) return null;
+  }
+  const payload={
+    waktu:new Date().toLocaleString('id-ID'),mode:identitas.mode,nama:identitas.nama,nis:identitas.nis||'',
+    absen:identitas.absen||'',kelas:identitas.kelas,anggota:identitas.anggota||'',materi:materi,skor:skor,total:total
+  };
+  status('Mengirim...');
+  for(let percobaan=1;percobaan<=2;percobaan++){
+    try{
+      const res=await fetchDenganTimeout(CONTROL_URL,{method:'POST',body:JSON.stringify(payload)},15000);
+      const hasil=await res.json();
+      if(hasil.status==='ok') return true;
+      console.warn('Server menolak pengiriman:',hasil);
+    }catch(err){
+      console.error('Percobaan '+percobaan+' gagal mengirim hasil:',materi,err);
+    }
+    if(percobaan===1){status('Mencoba lagi...');await new Promise(r=>setTimeout(r,1000));}
+  }
+  return false;
+}
+
+/* ================= BANK SOAL =================
+   opsi[0] SELALU jawaban benar (jawaban:0); urutan tampilan diacak oleh kode. */
+function G(svg){return '<div class="q-chart">'+svg+'</div>';}
+const SOAL=[
+/* ---- Konsep ---- */
+{kat:"Konsep",teks:"Manakah pernyataan berikut yang merupakan <b>informasi</b> (bukan sekadar data mentah)?",
+ opsi:["Rata-rata nilai ulangan kelas XII 1 naik dari 72 menjadi 80 setelah remedial","78, 85, 90, 67, 72, 88, 91, 70, 83 (daftar nilai tanpa keterangan apa pun)","Kolom NIS, nama, dan nilai mentah milik seluruh siswa dalam satu kelas","Hasil isian formulir ekstrakurikuler sebelum dihitung dan dirangkum"],jawaban:0,
+ penjelasan:"Informasi adalah data yang sudah diolah sehingga bermakna — di sini ada perbandingan (naik dari 72 ke 80). Pilihan lain masih data mentah."},
+{kat:"Konsep",teks:"Visualisasi data adalah...",
+ opsi:["Penyajian data dalam bentuk grafik, diagram, atau gambar agar lebih mudah dipahami","Proses membersihkan salah ketik pada data di lembar kerja Excel","Cara mengunci sel supaya isi data tidak dapat diubah oleh orang lain","Teknik mengurutkan data dari yang terkecil ke yang terbesar"],jawaban:0,
+ penjelasan:"Visualisasi data mengubah angka menjadi bentuk visual supaya pola, tren, dan perbandingan lebih cepat tertangkap."},
+{kat:"Konsep",teks:"Tujuan utama membuat visualisasi data adalah...",
+ opsi:["Membantu pembaca menangkap pola, tren, dan perbandingan dengan cepat","Menambah jumlah angka agar laporan terlihat lebih tebal dan meyakinkan","Menyembunyikan data yang dianggap kurang penting dari pembaca","Memperkecil ukuran file Excel supaya lebih cepat dibuka"],jawaban:0,
+ penjelasan:"Grafik dibuat agar pesan dari data cepat dipahami, bukan untuk memperbanyak angka atau menyembunyikan data."},
+
+/* ---- Memilih Grafik ---- */
+{kat:"Memilih Grafik",teks:"Untuk menampilkan <b>perubahan</b> jumlah pengunjung perpustakaan dari bulan ke bulan (tren waktu), jenis grafik yang paling tepat adalah...",
+ opsi:["Diagram garis","Diagram lingkaran","Diagram sebar","Histogram"],jawaban:0,
+ penjelasan:"Diagram garis menghubungkan titik-titik pada waktu yang berurutan sehingga tren naik/turun terlihat jelas."},
+{kat:"Memilih Grafik",teks:"Data moda transportasi siswa ke sekolah (motor, antar-jemput, jalan kaki, sepeda) ingin ditampilkan sebagai <b>bagian dari keseluruhan</b>. Grafik yang cocok adalah...",
+ opsi:["Diagram lingkaran (pie)","Diagram garis dengan penanda","Diagram sebar (scatter)","Histogram dengan lebar rentang 10"],jawaban:0,
+ penjelasan:"Pie menunjukkan komposisi (total 100%) dan cocok bila kategorinya sedikit."},
+{kat:"Memilih Grafik",teks:"Seorang guru ingin melihat apakah ada <b>hubungan</b> antara jam belajar per minggu dan nilai ulangan siswa. Grafik yang paling tepat adalah...",
+ opsi:["Diagram sebar (scatter) dengan garis tren","Diagram lingkaran dengan label persentase","Diagram batang bertumpuk per siswa","Diagram area dengan warna gradasi"],jawaban:0,
+ penjelasan:"Diagram sebar memasangkan dua variabel angka; garis tren memperlihatkan arah hubungannya."},
+{kat:"Memilih Grafik",teks:"Nilai ulangan 30 siswa ingin dikelompokkan per rentang (50–59, 60–69, dst.) untuk melihat <b>sebaran</b>-nya. Grafik yang tepat adalah...",
+ opsi:["Histogram","Diagram lingkaran","Diagram garis","Diagram sebar"],jawaban:0,
+ penjelasan:"Histogram menampilkan frekuensi data numerik yang dikelompokkan ke dalam rentang (bin)."},
+{kat:"Memilih Grafik",teks:"Kamu ingin <b>membandingkan</b> jumlah porsi yang terjual dari lima menu kantin. Grafik yang paling sesuai adalah...",
+ opsi:["Diagram batang / kolom","Diagram garis antar menu","Diagram sebar","Histogram"],jawaban:0,
+ penjelasan:"Membandingkan nilai antar kategori paling jelas dengan diagram batang/kolom."},
+{kat:"Memilih Grafik",teks:"Perhatikan grafik berikut."+G(svgScatter({points:SCATTER_PTS,xmin:0,xmax:9,ymin:50,ymax:100,yticks:5,W:300,H:170}))+"Grafik tersebut termasuk jenis...",
+ opsi:["Diagram sebar (scatter)","Diagram garis","Diagram batang","Diagram lingkaran"],jawaban:0,
+ penjelasan:"Setiap titik mewakili sepasang nilai (X, Y) tanpa garis penghubung — ciri diagram sebar."},
+{kat:"Memilih Grafik",teks:"Perhatikan grafik berikut."+G(svgLine({labels:['M1','M2','M3','M4','M5','M6'],values:[20,28,35,31,42,50],max:60,ticks:3,area:true,H:170}))+"Grafik yang bagian bawah garisnya diarsir ini disebut...",
+ opsi:["Diagram area","Histogram","Diagram lingkaran","Diagram sebar"],jawaban:0,
+ penjelasan:"Diagram area adalah diagram garis dengan area di bawah garis diwarnai untuk menekankan besarnya total."},
+{kat:"Memilih Grafik",teks:"Diagram lingkaran dengan 12 irisan sulit dibaca. Solusi terbaik adalah...",
+ opsi:["Menggantinya dengan diagram batang yang diurutkan","Menambahkan efek 3-D agar irisan tampak jelas","Memberi 12 warna berbeda yang mencolok","Memperkecil ukuran huruf agar semua label muat"],jawaban:0,
+ penjelasan:"Pie cocok untuk kategori sedikit. Untuk banyak kategori, diagram batang terurut lebih mudah dibandingkan."},
+{kat:"Memilih Grafik",teks:"Nama kategori pada data cukup panjang (mis. nama lengkap mata pelajaran). Jenis grafik yang lebih mudah dibaca adalah...",
+ opsi:["Diagram batang horizontal (Bar)","Diagram lingkaran","Diagram sebar","Diagram garis"],jawaban:0,
+ penjelasan:"Pada bar horizontal, label kategori berada di sisi kiri sehingga muat meski panjang."},
+
+/* ---- Prinsip ---- */
+{kat:"Prinsip",teks:"Rata-rata nilai Kelas A = 78 dan Kelas B = 81."+G(PRESET.tipu())+"Mengapa grafik ini bisa menyesatkan?",
+ opsi:["Sumbu vertikal tidak dimulai dari 0 sehingga selisih tampak jauh lebih besar","Warna batang terlalu terang sehingga angkanya tidak terbaca","Dua kelas terlalu sedikit untuk dibuat menjadi grafik","Label data sebaiknya tidak pernah ditampilkan pada diagram batang"],jawaban:0,
+ penjelasan:"Sumbu dipotong mulai 76, jadi batang Kelas B tampak sekitar 2,5 kali Kelas A padahal selisihnya hanya 3 poin. Diagram batang sebaiknya dimulai dari 0."},
+{kat:"Prinsip",teks:"Judul grafik yang paling <b>informatif</b> untuk data pengunjung perpustakaan adalah...",
+ opsi:["Pengunjung perpustakaan naik 58% dari Juli ke Desember","Grafik Data Jumlah Pengunjung Perpustakaan Sekolah Setiap Bulan","Tabel dan Grafik Pengunjung","Grafik 1: Hasil Pengolahan Data di Lembar Kerja Excel"],jawaban:0,
+ penjelasan:"Judul yang baik langsung menyampaikan temuan, bukan sekadar menyebut jenis atau isi grafik."},
+{kat:"Prinsip",teks:"Cara memakai warna yang baik pada grafik adalah...",
+ opsi:["Warna kontras hanya untuk data yang ingin disorot, sisanya netral","Setiap batang diberi warna berbeda agar grafik tampak meriah","Memakai warna yang sama dengan latar supaya menyatu","Memakai warna neon pada semua elemen agar menarik perhatian"],jawaban:0,
+ penjelasan:"Warna sedikit dan bermakna mengarahkan mata pembaca ke pesan utama."},
+{kat:"Prinsip",teks:"Mengapa efek 3-D pada grafik analisis data sebaiknya dihindari?",
+ opsi:["Efek 3-D dapat memelintir bentuk sehingga nilai sulit dibaca secara akurat","Efek 3-D hanya bisa dipakai di Word, tidak bisa di Excel","Efek 3-D otomatis mengubah nilai pada data sumber","Efek 3-D membuat sumbu grafik selalu hilang"],jawaban:0,
+ penjelasan:"Perspektif 3-D membuat tinggi batang atau ukuran irisan tampak berbeda dari nilai sebenarnya."},
+{kat:"Prinsip",teks:"Elemen grafik yang menjelaskan arti setiap warna atau seri data disebut...",
+ opsi:["Legenda (Legend)","Judul sumbu (Axis Title)","Garis kisi (Gridlines)","Label data (Data Labels)"],jawaban:0,
+ penjelasan:"Legend menerangkan warna/pola mana mewakili seri data yang mana."},
+
+/* ---- Cara di Excel ---- */
+{kat:"Excel",teks:"Menu untuk menyisipkan grafik di Excel terdapat pada tab...",
+ opsi:["Sisipkan (Insert) → grup Bagan (Charts)","Beranda (Home) → grup Gaya Sel (Cell Styles)","Rumus (Formulas) → grup Pustaka Fungsi","Tinjau (Review) → grup Pemeriksaan (Proofing)"],jawaban:0,
+ penjelasan:"Grafik dibuat dari tab Sisipkan (Insert) pada grup Bagan (Charts)."},
+{kat:"Excel",teks:"Cara agar Excel <b>menyarankan</b> jenis grafik yang cocok untuk data yang kamu blok adalah...",
+ opsi:["Sisipkan → Recommended Charts","Beranda → Format Painter lalu klik sel kosong di dekat data","Data → Remove Duplicates untuk menghapus data yang sama","Rumus → AutoSum pada kolom angka paling kanan"],jawaban:0,
+ penjelasan:"Recommended Charts menampilkan pratinjau grafik yang sesuai dengan data terpilih."},
+{kat:"Excel",teks:"Setelah grafik dibuat, cara cepat menambah judul, label data, atau garis tren adalah...",
+ opsi:["Tombol + (Chart Elements) di sudut kanan atas grafik","Tombol Save pada Quick Access Toolbar","Menu File → Print lalu pilih printer","Tombol filter pada baris judul kolom data"],jawaban:0,
+ penjelasan:"Tombol + (Chart Elements) memunculkan daftar elemen yang dapat dicentang."},
+{kat:"Excel",teks:"Grafik mini yang muat di dalam satu sel untuk menunjukkan tren satu baris data disebut...",
+ opsi:["Sparkline","PivotChart","Slicer","Chart Sheet"],jawaban:0,
+ penjelasan:"Sparkline dibuat lewat Sisipkan → Sparklines (Line, Column, Win/Loss)."},
+{kat:"Excel",teks:"Fitur Excel yang mewarnai sel atau menambah batang mini di dalam sel berdasarkan nilainya adalah...",
+ opsi:["Conditional Formatting (Pemformatan Bersyarat)","Data Validation","Freeze Panes","Text to Columns"],jawaban:0,
+ penjelasan:"Conditional Formatting menyediakan Data Bars, Color Scales, dan Icon Sets."},
+{kat:"Excel",teks:"Data yang akan dijadikan grafik sebaiknya disusun sebagai...",
+ opsi:["Tabel dengan judul kolom di baris pertama dan tanpa baris kosong","Satu sel panjang yang dipisah tanda koma antar nilai","Sel gabungan (merge) di setiap baris agar tampak lebih rapi","Baris kosong di antara setiap kelompok data agar lebih lega"],jawaban:0,
+ penjelasan:"Excel paling mudah mengenali rentang data yang berbentuk tabel rapi tanpa baris kosong dan sel gabungan."},
+{kat:"Excel",teks:"Agar diagram lingkaran menampilkan persentase tiap irisan, langkah yang benar adalah...",
+ opsi:["Tambahkan Data Labels lalu centang Percentage","Ganti jenis grafik menjadi diagram garis","Hapus legenda dari grafik","Ubah warna latar plot area menjadi putih"],jawaban:0,
+ penjelasan:"Pada Format Data Labels, centang Percentage (dan hilangkan Value bila tidak perlu)."},
+{kat:"Excel",teks:"Nilai ulangan ada di B2:B31. Rumus untuk menghitung banyak siswa bernilai 70 sampai 79 (data untuk histogram) adalah...",
+ opsi:["=COUNTIFS(B2:B31,\">=70\",B2:B31,\"<=79\")","=COUNTIF(B2:B31,\">=70\",\"<=79\")","=SUMIFS(B2:B31,B2:B31,\">=70\",B2:B31,\"<=79\")","=COUNTIFS(B2:B31,70,B2:B31,79)"],jawaban:0,
+ penjelasan:"COUNTIFS dengan dua kriteria (≥70 dan ≤79) menghitung banyak sel. SUMIFS menjumlahkan nilai, COUNTIF hanya satu kriteria, dan kriteria 70 serta 79 sekaligus tidak pernah terpenuhi."},
+{kat:"Excel",teks:"Grafik kolom yang sudah jadi ingin diubah menjadi garis tanpa mengetik ulang data. Langkahnya...",
+ opsi:["Klik grafik → Chart Design → Change Chart Type","Hapus grafik lalu ketik ulang seluruh datanya","Klik kanan sel data → Delete → Shift cells up","Pilih File → Info → Protect Workbook"],jawaban:0,
+ penjelasan:"Change Chart Type mengganti jenis grafik tanpa mengubah data."}
+];
+
+/* ================= GAME: MISI BALON DATA =================
+   Tanpa batas waktu. Benar → balon maju; salah → mundur dan soal diulang di akhir antrian.
+   Kunci jawaban = indeks ASLI opsi (dataset.optIndex), bukan posisi tampilan setelah diacak.
+   Hasil hanya bisa dikirim jika semua soal sesi terjawab benar sebelum nyawa habis. */
+const TOTAL_BANK_SOAL=SOAL.length;
+const TOTAL_SOAL=10;
+let identitas=null,cekRiwayatPromise=null,antrianSoal=[],posisi=0,skorBenar=0,poin=0,kombo=0,nyawa=3,terkunci=false;
+
+function shuffleIdx(n){
+  const a=Array.from({length:n},(_,i)=>i);
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function initKuis(){
+  antrianSoal=shuffleIdx(TOTAL_BANK_SOAL).slice(0,TOTAL_SOAL);
+  posisi=0;skorBenar=0;poin=0;kombo=0;nyawa=3;terkunci=false;
+  document.getElementById('gResultBox').style.display='none';
+  updateRoute();tampilkanSoal();
+}
+function updateHUD(){
+  document.getElementById('gameCatLabel').textContent='Terjawab '+skorBenar+' / '+TOTAL_SOAL;
+  document.getElementById('gameHearts').textContent='❤️'.repeat(Math.max(0,nyawa))+'🖤'.repeat(3-Math.max(0,nyawa));
+  document.getElementById('gameScore').textContent=poin;
+  const sp=document.getElementById('streakPill');
+  if(kombo>=2){sp.textContent='🔥 Kombo x'+kombo;sp.classList.add('show');}else{sp.classList.remove('show');}
+}
+function updateRoute(){
+  const pct=Math.round(posisi/TOTAL_SOAL*100);
+  document.getElementById('routeFill').style.width=pct+'%';
+  document.getElementById('routeTruck').style.left='calc('+pct+'% - 4px)';
+}
+function tampilkanSoal(){
+  updateHUD();updateRoute();
+  const s=SOAL[antrianSoal[0]];
+  document.getElementById('qCatLabel').textContent=s.kat;
+  document.getElementById('qText').innerHTML=s.teks;
+  const wrap=document.getElementById('qOptions');
+  wrap.innerHTML='';
+  shuffleIdx(s.opsi.length).forEach(oi=>{
+    const b=document.createElement('button');
+    b.className='q-opt';b.type='button';b.textContent=s.opsi[oi];b.dataset.optIndex=oi;
+    b.addEventListener('click',()=>jawabSoal(oi,s,b,wrap));
+    wrap.appendChild(b);
+  });
+  const fb=document.getElementById('qFeedback');fb.className='q-feedback';fb.textContent='';
+  document.getElementById('qNextBtn').disabled=true;
+  terkunci=false;
+}
+function jawabSoal(dipilih,s,btn,wrap){
+  if(terkunci) return;
+  terkunci=true;
+  const semua=wrap.querySelectorAll('.q-opt');
+  semua.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('qFeedback');
+  if(dipilih===s.jawaban){
+    skorBenar++;kombo++;posisi=Math.min(TOTAL_SOAL,posisi+1);antrianSoal.shift();
+    const bonus=kombo>=2?(kombo-1)*10:0,dapat=100+bonus;
+    poin+=dapat;
+    btn.classList.add('correct');
+    fb.className='q-feedback show ok';
+    fb.textContent='✓ Benar! Balon maju satu langkah. (+'+dapat+' poin'+(bonus>0?', termasuk bonus kombo x'+kombo:'')+') '+s.penjelasan;
+  }else{
+    nyawa--;kombo=0;posisi=Math.max(0,posisi-1);antrianSoal.push(antrianSoal.shift());
+    btn.classList.add('wrong');
+    const benar=Array.from(semua).find(b=>Number(b.dataset.optIndex)===s.jawaban);
+    if(benar) benar.classList.add('correct');
+    fb.className='q-feedback show bad';
+    fb.textContent='✗ Belum tepat, balon mundur satu langkah. Soal ini akan muncul lagi nanti. '+s.penjelasan;
+  }
+  updateHUD();updateRoute();
+  if(nyawa<=0){document.getElementById('qNextBtn').disabled=true;setTimeout(()=>selesaiKuis(false),1100);return;}
+  document.getElementById('qNextBtn').disabled=false;
+}
+document.getElementById('qNextBtn').addEventListener('click',()=>{
+  if(antrianSoal.length===0){updateRoute();selesaiKuis(true);}else{tampilkanSoal();}
+});
+function selesaiKuis(tuntas){
+  document.getElementById('gPlayBlock').classList.add('hidden');
+  const box=document.getElementById('gResultBox'),title=document.getElementById('gResultTitle'),msg=document.getElementById('gResultMsg'),badge=document.getElementById('gResultBadge');
+  if(!tuntas){
+    badge.textContent='🛑';title.textContent='Misi Berhenti';
+    msg.textContent='Nyawa habis setelah 3 kali jawaban salah. Soal terjawab benar: '+skorBenar+'/'+TOTAL_SOAL+'.';
+  }else if(skorBenar===TOTAL_SOAL){
+    badge.textContent='🏆';title.textContent='Analis Data Legendaris!';
+    msg.textContent='Semua '+TOTAL_SOAL+' soal terjawab benar sampai garis finish. Luar biasa!';
+  }else{
+    badge.textContent='🚀';title.textContent='Misi Selesai';
+    msg.textContent=skorBenar+' dari '+TOTAL_SOAL+' soal terjawab benar.';
+  }
+  document.getElementById('gResultScore').textContent=skorBenar+'/'+TOTAL_SOAL;
+  document.getElementById('gResultPoin').textContent='Total Poin: '+poin;
+  box.style.display='block';
+  const sendBtn=document.getElementById('gSendBtn'),note=document.getElementById('gSendNote');
+  if(modeGuru){
+    sendBtn.style.display='none';
+    note.textContent='🧪 Mode guru — hasil uji coba ini tidak dikirim ke spreadsheet.';
+  }else if(!tuntas){
+    sendBtn.style.display='none';
+    note.textContent='🚧 Balon belum sampai garis finish. Klik "Main Lagi" dan selesaikan seluruh soal untuk bisa mengirim hasil ke guru.';
+  }else{
+    sendBtn.style.display='';sendBtn.disabled=false;note.textContent='';
+  }
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* ---------- Mulai kuis ---------- */
+document.getElementById('gStartBtn').addEventListener('click',()=>{
+  if(modeGuru){
+    identitas={mode:'Guru',nama:'Guru (Uji Coba)',kelas:'-'};
+    cekRiwayatPromise=Promise.resolve({ada:false});
+    document.getElementById('gIdentityBlock').classList.add('hidden');
+    document.getElementById('gPlayBlock').classList.remove('hidden');
+    initKuis();return;
+  }
+  const ident={mode:modeAktif};
+  if(modeAktif==='Individu'){
+    const nama=document.getElementById('gNama').value.trim(),kelas=document.getElementById('gKelas').value.trim(),
+          nis=document.getElementById('gNis').value.trim(),absen=document.getElementById('gAbsen').value.trim();
+    if(!nis){alert('Mohon isi NIS terlebih dahulu.');return;}
+    if(!nama||!kelas||!absen){alert('NIS tidak ditemukan di data siswa, atau data belum lengkap. Periksa kembali NIS-mu, atau hubungi guru.');return;}
+    ident.nama=nama;ident.kelas=kelas;ident.nis=nis;ident.absen=absen;
+  }else{
+    const nama=document.getElementById('gNamaKelompok').value.trim(),kelas=document.getElementById('gKelasKelompok').value.trim(),anggota=document.getElementById('gAnggota').value.trim();
+    if(!nama||!kelas||!anggota){alert('Mohon lengkapi Nama Kelompok, Kelas, dan Anggota Kelompok terlebih dahulu.');return;}
+    ident.nama=nama;ident.kelas=kelas;ident.anggota=anggota;
+  }
+  identitas=ident;
+  cekRiwayatPromise=cekHasilSebelumnya(KUIS_LABEL,identitas); // dicek di belakang layar selagi siswa main
+  document.getElementById('gIdentityBlock').classList.add('hidden');
+  document.getElementById('gPlayBlock').classList.remove('hidden');
+  initKuis();
+});
+document.getElementById('gPlayAgainBtn').addEventListener('click',()=>{
+  document.getElementById('gPlayBlock').classList.remove('hidden');
+  cekRiwayatPromise=modeGuru?Promise.resolve({ada:false}):cekHasilSebelumnya(KUIS_LABEL,identitas);
+  initKuis();
+});
+document.getElementById('gSendBtn').addEventListener('click',async()=>{
+  if(!identitas||modeGuru) return;
+  const btn=document.getElementById('gSendBtn'),note=document.getElementById('gSendNote');
+  btn.disabled=true;
+  const ok=await kirimKeSheet(KUIS_LABEL,skorBenar,TOTAL_SOAL,identitas,t=>{note.textContent=t;},cekRiwayatPromise);
+  if(ok===true){note.textContent='✓ Hasil terkirim ke guru.';}
+  else if(ok===null){note.textContent='Dibatalkan — hasil lama tetap tersimpan.';btn.disabled=false;}
+  else{note.textContent='Gagal mengirim — coba lagi (periksa koneksi internet).';btn.disabled=false;}
+});
+</script></body></html>
